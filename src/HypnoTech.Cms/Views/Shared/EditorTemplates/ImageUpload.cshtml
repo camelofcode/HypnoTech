@@ -1,0 +1,27 @@
+@model HypnoTech.Cms.Forms.Controls.ImageUploadFormControl
+    <div id="@Model.Anchor">
+        <label for="@Model.Id">@Model.Label</label>
+        <!-- ko if: hasImage -->
+        <div class="card m-w-250 mb-3">
+            <div class="card-header text-right">
+                <button type="button" class="btn btn-secondary btn-sm" data-bind="click: removeImage"><i class="fa fa-times"></i><span class="sr-only">Remove Image</span></button>
+            </div>
+            <div class="card-body">
+                <img class="img-fluid" src="" data-bind="attr: { src: image }" />
+            </div>
+        </div>
+        <input type="hidden" name="@Model.Name" data-bind="value: imagePath" />
+        <!-- /ko -->
+        <div class="input-group mb-3" data-bind="visible: !hasImage()">
+            <div class="custom-file">
+                <input type="file" id="@Model.Id" name="Files" data-bind="fileUpload: file" />
+                <label class="custom-file-label" for="@Model.Id">Choose file</label>
+            </div>
+        </div>
+        <!-- ko if: hasAddedFile -->
+        <input type="hidden" name="AddedFiles" value="@Model.Name" />
+        <!-- /ko -->
+        <!-- ko if: hasRemovedFile -->
+        <input type="hidden" name="RemovedFiles" value="@Model.ImagePath" />
+        <!-- /ko -->
+    </div>

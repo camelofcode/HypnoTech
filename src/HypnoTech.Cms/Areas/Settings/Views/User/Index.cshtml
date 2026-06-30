@@ -1,0 +1,82 @@
+@model HypnoTech.Cms.Areas.Settings.ViewModels.UsersViewModel
+
+@{
+    ViewBag.Title = "Users";
+    Layout = "_SettingsLayout";
+}
+<div class="container">
+    <h1 class="mb-5">Users</h1>
+
+    <table class="table table-striped">
+        <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th class="text-right"><a href="/Settings/User/Add" class="btn btn-sm btn-dark">Add User</a></th>
+        </tr>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.Username</td>
+                <td>@user.Email</td>
+                <td>
+                    @foreach (var role in user.Roles)
+                    {
+                        <h3 class="badge badge-dark"><span class="lead">@role</span></h3>
+                    }
+                </td>
+                <td class="text-right">
+                    <a href="/Settings/User/Edit/@user.Id" class="btn btn-sm btn-dark" data-id="row.Id"><i class="fa fa-pen"></i><span class="sr-only">Edit</span></a>
+
+                    <button class="btn btn-sm btn-dark" data-id="@user.Id" data-title="@user.Username" data-toggle="modal" data-target="#deleteModal"><i class="fa fa-times"></i><span class="sr-only">Remove</span></button>
+                </td>
+            </tr>
+        }
+    </table>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete <strong id="item-title"></strong> from Users?</p>
+
+                </div>
+                <div class="modal-footer">
+                    <form action="" method="POST" id="remove-form" data-action="/Settings/User/Remove/">
+                        @Html.AntiForgeryToken()
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-dark">Delete User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        document.addEventListener('click',
+            function (event) {
+                //Delete modal hookup
+                if (event.target.matches('[data-target="#deleteModal"]') ||
+                    event.target.parentElement.matches('[data-target="#deleteModal"]')) {
+                    var id = event.target.getAttribute("data-id") || event.target.parentElement.getAttribute("data-id");
+                    var title = event.target.getAttribute("data-title") || event.target.parentElement.getAttribute("data-title");
+
+                    document.getElementById("item-title").innerText = title;
+
+                    var removeForm = document.getElementById("remove-form");
+                    removeForm.action = removeForm.getAttribute("data-action") + id;
+                }
+            },
+            false);
+    </script>
+}
+
+

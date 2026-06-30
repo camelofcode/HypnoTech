@@ -1,0 +1,142 @@
+@model HypnoTech.Common.Models.Settings.AdminUser
+
+@{
+    ViewBag.Title = "My Account";
+    Layout = "_SettingsLayout";
+}
+<div class="container">
+    <h1 class="mb-5">
+        <a href="/" class="btn btn-dark rounded-circle mt-n2"><i class="fa fa-arrow-left"></i><span class="sr-only">Back</span></a>
+        My Account
+    </h1>
+    <nav>
+        <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-account-details-tab" data-toggle="tab" href="#nav-account-details" role="tab" aria-controls="nav-account-details" aria-selected="true">Account Details</a>
+            <a class="nav-item nav-link" id="nav-change-password-tab" data-toggle="tab" href="#nav-change-password" role="tab" aria-controls="nav-change-password" aria-selected="false">Change Password</a>
+            <a class="nav-item nav-link" id="nav-help-tab" data-toggle="tab" href="#nav-help" role="tab" aria-controls="nav-help" aria-selected="false">Help</a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-account-details" role="tabpanel" aria-labelledby="nav-account-details-tab">
+            <h2>Account Details</h2>
+            <form class="mb-3" method="post" action="/Home/UpdateAccount">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+                <div class="form-row">
+                    <div class="form-group col-md-6 col-sm-12">
+                        <label for="username-input">Username</label>
+                        <div class="input-group m-w-250">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            </div>
+                            <input class="form-control" type="text" value="@Model.Username" id="username-input" name="Username">
+                        </div>
+                        <div class="invalid-feedback m-w-250">
+                            Username must be unique and not contain special characters
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12">
+                        <label>Roles</label>
+                        <div>
+                            @foreach (var role in Model.Roles)
+                            {
+                                <span class="mb-2 badge badge-dark"><span class="lead">@role</span></span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6 col-sm-12">
+                        <label for="email-input">Email Address</label>
+                        <div class="input-group m-w-250">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                            </div>
+                            <input class="form-control" id="email-input" type="email" value="@Model.Email" name="Email">
+                            <div class="invalid-feedback">
+                                Invalid email
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6 col-sm-12">
+                        <label for="password-input">Enter Password to Update</label>
+                        <div class="input-group m-w-250">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-key"></i></span>
+                            </div>
+                            <input class="form-control" id="password-input" type="password" name="Password">
+                            <div class="invalid-feedback">
+                                Incorrect password
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5 d-flex justify-content-between m-w-250">
+                    <a class="btn btn-secondary" href="/Settings/User">Discard</a>
+                    <button class="btn btn-dark" type="submit">Update Account</button>
+                </div>
+            </form>
+        </div>
+        <div class="tab-pane fade" id="nav-change-password" role="tabpanel" aria-labelledby="nav-change-password-tab">
+            <h2>Change Password</h2>
+            <form class="m-w-250" method="POST" action="/Home/ChangePassword">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+                <div class="form-group">
+                    <label for="old-password-input">Old Password</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-key"></i></span>
+                        </div>
+                        <input class="form-control" id="old-password-input" type="password" name="Password">
+                        <div class="invalid-feedback">
+                            Incorrect password
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group invalid">
+                    <label for="new-password-input">Enter New Password</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-key"></i></span>
+                        </div>
+                        <input class="form-control" id="new-password-input" type="password" name="NewPassword">
+                        <div class="invalid-feedback m-w-250">
+                            Password must be at least 8 characters long
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label for="repeat-new-password-input">Repeat New Password</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-key"></i></span>
+                        </div>
+                        <input class="form-control" id="repeat-new-password-input" type="password" name="ConfirmNewPassword">
+                        <div class="invalid-feedback">
+                            Passwords don't match
+                        </div>
+                    </div>
+
+                </div>
+                <div class="d-flex mt-5 justify-content-between">
+                    <a class="btn btn-secondary" href="/Settings/User">Discard</a>
+                    <button class="btn btn-dark" type="submit">Update Password</button>
+                </div>
+            </form>
+        </div>
+        <div class="tab-pane fade" id="nav-help" role="tabpanel" aria-labelledby="nav-help-tab">
+            <h2>Help</h2>
+            <div class="m-w-250 card">
+                <div class="card-body">
+                    <p>If you require help regarding changing roles, or you have encountered a bug, please contact the administrator</p>
+                    <a class="btn btn-dark" href="mailto:n0652640@googlemail.com">Contact Kris Clayton</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

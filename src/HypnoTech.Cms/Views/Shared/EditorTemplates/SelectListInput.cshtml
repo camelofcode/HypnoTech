@@ -1,0 +1,9 @@
+@model HypnoTech.Cms.Forms.Controls.SelectListInputFormControl
+@using HypnoTech.Cms.Extensions
+<label for="@Model.Id">@Model.Label</label>
+<select id="@Model.Id" name="@Model.Name" class="form-control">
+    @foreach (var item in Model.Values)
+    {
+        @Html.Raw(Html.OptionFor(item.Value, item.Text, item.Selected))
+    }
+</select>

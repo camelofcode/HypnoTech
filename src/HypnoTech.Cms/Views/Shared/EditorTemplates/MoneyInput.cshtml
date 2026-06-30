@@ -1,0 +1,8 @@
+@model HypnoTech.Cms.Forms.Controls.MoneyInputFormControl
+<label for="@Model.Id">@Model.Label</label>
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">£</span>
+    </div>
+    <input class="form-control" type="number" value="@Model.Value" id="@Model.Id" name="@Model.Name"/>
+</div>

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Kris Clayton</Authors>
+    <Company>HypnoTech</Company>
+    <Description>Abstractions of the data later for Media</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HypnoTech.Media.Models\HypnoTech.Media.Models.csproj" />
+  </ItemGroup>
+
+</Project>

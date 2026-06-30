@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Kris Clayton</Authors>
+    <Company>HypnoTech</Company>
+    <Copyright>2020 HypnoTech</Copyright>
+    <Description>Contracts for HypnoTech.Cms</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HypnoTech.Common\HypnoTech.Common.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.9" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.9" />
+  </ItemGroup>
+
+</Project>

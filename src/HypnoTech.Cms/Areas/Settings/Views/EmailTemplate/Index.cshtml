@@ -1,0 +1,29 @@
+@model HypnoTech.Cms.Areas.Settings.ViewModels.EmailTemplatesViewModel
+@using HypnoTech.Common.Extensions
+@{
+    ViewBag.Title = "Email Templates";
+    Layout = "_SettingsLayout";
+}
+<div class="container">
+    <h1 class="mb-5">Email Templates</h1>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th class="text-right">
+                Actions
+            </th>
+        </tr>
+        @foreach (var template in Model.Templates)
+        {
+            <tr>
+                <td>@template.EmailType.ToString()</td>
+                <td>@template.EmailType.GetDescription()</td>
+                <td class="text-right">
+                    <a href="/Settings/EmailTemplate/Edit/@template.Id" class="btn btn-sm btn-dark" title="Edit"><i class="fa fa-pen"></i><span class="sr-only">Edit</span></a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

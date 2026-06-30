@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Kris Clayton</Authors>
+    <Company>HypnoTech</Company>
+    <Description>Mongo Db Implementation of Ecommerce data layer</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common.Models\HypnoTech.Common.Models.csproj" />
+    <ProjectReference Include="..\HypnoTech.Ecommerce.Dal\HypnoTech.Ecommerce.Dal.csproj" />
+    <ProjectReference Include="..\HypnoTech.MongoDb\HypnoTech.MongoDb.csproj" />
+    <PackageReference Include="MongoDB.Driver" Version="2.11.3" />
+    <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+</Project>

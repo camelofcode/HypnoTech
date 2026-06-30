@@ -1,0 +1,86 @@
+@using HypnoTech.Cms.Lists
+@using HypnoTech.Cms.Extensions
+@using InputType = HypnoTech.Cms.InputType
+@model dynamic
+<div id="@Model.Anchor">
+    <label>@Model.Label</label>
+    <div class="card">
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th class=" border-0">Name</th>
+                    <th class=" border-0 text-right"><button type="button" class="btn btn-sm btn-dark" data-toggle="modal" data-target="#addEditModal@(Model.ListName)" data-bind="click: showAddItem">Add @Model.SingularObjectName</button></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ko if: items().length > 0-->
+                @if (Model.Ordered)
+                {
+                    <!-- ko foreach: orderedItems -->
+                }
+                else
+                {
+                    <!-- ko foreach: items-->
+                }
+                <tr>
+                    <td data-bind="text: @Model.NameColumnField"></td>
+                    <td class="text-right">
+                        @if (Model.Ordered)
+                        {
+                            <button type="button" class="btn btn-sm btn-dark" data-bind="enable: $parent.canMoveUp($data), click: $parent.moveUp"><i class="fa fa-arrow-up"></i><span class="sr-only">Move Before</span></button>
+                            <button type="button" class="btn btn-sm btn-dark" data-bind="enable: $parent.canMoveDown($data), click: $parent.moveDown"><i class="fa fa-arrow-down"></i><span class="sr-only">Move After</span></button>
+                        }
+
+                        <button class="btn btn-sm btn-dark" type="button" data-toggle="modal" data-target="#addEditModal@(Model.ListName)" data-bind="click: showEditItem"><i class="fa fa-pen"></i><span class="sr-only">Edit</span></button>
+                        <button class="btn btn-sm btn-dark" type="button" data-toggle="modal" data-target="#deleteModal@(Model.ListName)" data-bind="click: $parent.showRemoveItem"><i class="fa fa-times"></i><span class="sr-only">Remove</span></button>
+                    </td>
+
+                </tr>
+                <!-- /ko -->
+                <!-- /ko -->
+                <!-- ko if: items().length === 0 -->
+                <tr><td colspan="2">No items added yet</td></tr>
+                <!-- /ko -->
+
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ko foreach: items-->
+    <!-- ko foreach: properties-->
+    <input type="hidden" data-bind="attr: { name: name }, value: value" />
+    <!-- /ko -->
+    <!-- /ko -->
+</div>
+<script type="text/html" id="@Model.Template">
+    @foreach (var field in ((List<ListMemberMapping>)Model.MemberMappings).Where(p => p.InputType != InputType.None))
+    {
+        <div class="form-group">
+            <!-- ko if: selectedItem -->
+            <label>@field.MemberName</label>
+            @if (field.InputType == InputType.Text)
+            {
+                <input type="text" class="form-control" id="@field.Id" data-bind="textInput: selectedItem().@field.MemberNameJs" />
+            }
+            else if (field.InputType == InputType.RichText)
+            {
+                <textarea class="form-control" id="@field.Id" data-bind="wysiwyg: selectedItem().@field.MemberNameJs, wysiwygConfig: {@((field as RichTextListMemberMapping)?.TinyMceOptions)}"></textarea>
+            }
+            else if (field.InputType == InputType.StaticSelectList)
+            {
+                <select class="form-control" id="@field.Id" data-bind="value: selectedItem().@field.MemberNameJs">
+                    @if (field is StaticSelectListListMemberMapping mapping)
+                    {
+                        foreach (var item in mapping.Values)
+                        {
+                            @Html.Raw(Html.OptionFor(item.Value, item.Text, item.Selected))
+                        }
+                    }
+                </select>
+            }
+            <!-- /ko -->
+        </div>
+
+    }
+</script>

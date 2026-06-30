@@ -1,0 +1,37 @@
+@model HypnoTech.Ecommerce.Areas.Settings.Models.OrdersViewModel
+
+@{
+    ViewBag.Title = "Orders";
+    Layout = "_SettingsLayout";
+}
+    <div class="container">
+        <h1 class="mb-5">Orders</h1>
+
+        @if (Model.Orders.Count > 0)
+        {
+            <table class="table table-striped">
+                <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Sale Id</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+                @foreach (var order in Model.Orders)
+                {
+                    <tr>
+                        <td>@order.DateTime.ToString("dd MMM yyyy")</td>
+                        <td>@order.Address.Name</td>
+                        <td><a href="@order.SaleUrl" target="_blank" class="badge badge-dark text-monospace"><span class="lead">@order.SaleId</span></a></td>
+                        <td class="text-right">
+                            <a href="/Settings/Order/Details/@order.PaymentId" class="btn btn-sm btn-dark" title="View Details"><i class="fa fa-eye"></i><span class="sr-only">View Details</span></a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        } else {
+            <div class="alert alert-dark">
+                There are no pending orders to show at the moment.
+            </div>
+        }
+    </div>
+@Html.DisplayFor(p => p.Pager)

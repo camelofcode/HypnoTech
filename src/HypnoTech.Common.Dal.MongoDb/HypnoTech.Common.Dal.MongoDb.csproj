@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Kris Clayton</Authors>
+    <Company>HypnoTech</Company>
+    <Description>Mongo Db Implementation of common data layer</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
+    <ProjectReference Include="..\HypnoTech.MongoDb\HypnoTech.MongoDb.csproj" />
+    <PackageReference Include="MongoDB.Driver" Version="2.11.3" />
+    <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+</Project>

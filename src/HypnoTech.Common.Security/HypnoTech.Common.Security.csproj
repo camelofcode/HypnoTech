@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Company>HypnoTech</Company>
+    <Authors>Kris Clayton</Authors>
+    <Description>Security helper functions for HypnoTech web projects</Description>
+    <Copyright>2020 HypnoTech</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+</Project>

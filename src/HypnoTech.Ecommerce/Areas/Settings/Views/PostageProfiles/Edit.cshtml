@@ -1,0 +1,132 @@
+@model HypnoTech.Ecommerce.Models.PostageProfile
+@{
+    ViewBag.Title = "Postage Profiles";
+    Layout = "_SettingsLayout";
+}
+<div class="container">
+    <h1 class="mb-5">
+        <a href="/Settings/PostageProfiles" class="btn btn-dark rounded-circle mt-n2"><i class="fa fa-arrow-left"></i><span class="sr-only">Back</span></a>
+        Postage Profiles Details
+    </h1>
+
+    <form method="POST">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.Name)
+        <div class="form-row">
+            <div class="form-group col">
+                <label for="name-input">Name</label>
+                <input class="form-control form-control-lg" type="text" value="@Model.Name" readonly>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6 col-sm-12">
+                <label for="name-input">UK Postage for First Item</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">£</span>
+                    </div>
+                    <input class="form-control" type="text" value="@Model.UnitedKingdom.Alone.ToString("F")" name="@Html.NameFor(model => model.UnitedKingdom.Alone)">
+                </div>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label for="name-input">UK Postage for Subsequent Item</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">£</span>
+                    </div>
+                    <input class="form-control" type="text" value="@Model.UnitedKingdom.WithOthers.ToString("F")" name="@Html.NameFor(model => model.UnitedKingdom.WithOthers)">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6 col-sm-12">
+                <label for="name-input">EU Postage for First Item</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">£</span>
+                    </div>
+                    <input class="form-control" type="text" value="@Model.EuropeanUnion.Alone.ToString("F")" name="@Html.NameFor(model => model.EuropeanUnion.Alone)">
+                </div>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label for="name-input">EU Postage for Subsequent Item</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">£</span>
+                    </div>
+                    <input class="form-control" type="text" value="@Model.EuropeanUnion.WithOthers.ToString("F")" name="@Html.NameFor(model => model.EuropeanUnion.WithOthers)">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6 col-sm-12">
+                <label for="name-input">Rest of World (Region 1) Postage for First Item</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">£</span>
+                    </div>
+                    <input class="form-control" type="text" value="@Model.RestOfWorld1.Alone.ToString("F")" name="@Html.NameFor(model => model.RestOfWorld1.Alone)">
+                </div>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label for="name-input">Rest of World (Region 1) Postage for Subsequent Item</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">£</span>
+                    </div>
+                    <input class="form-control" type="text" value="@Model.RestOfWorld1.WithOthers.ToString("F")" name="@Html.NameFor(model => model.RestOfWorld1.WithOthers)">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6 col-sm-12">
+                <label for="name-input">Rest of World (Region 2) Postage for First Item</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">£</span>
+                    </div>
+                    <input class="form-control" type="text" value="@Model.RestOfWorld2.Alone.ToString("F")" name="@Html.NameFor(model => model.RestOfWorld2.Alone)">
+                </div>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label for="name-input">Rest of World (Region 2) Postage for Subsequent Item</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">£</span>
+                    </div>
+                    <input class="form-control" type="text" value="@Model.RestOfWorld2.WithOthers.ToString("F")" name="@Html.NameFor(model => model.RestOfWorld2.WithOthers)">
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group col-md-6 col-sm-12">
+                <label for="name-input">Rest of World (Region 3) Postage for First Item</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">£</span>
+                    </div>
+                    <input class="form-control" type="text" value="@Model.RestOfWorld3.Alone.ToString("F")" name="@Html.NameFor(model => model.RestOfWorld3.Alone)">
+                </div>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label for="name-input">Rest of World (Region 3) Postage for Subsequent Item</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">£</span>
+                    </div>
+                    <input class="form-control" type="text" value="@Model.RestOfWorld3.WithOthers.ToString("F")" name="@Html.NameFor(model => model.RestOfWorld3.WithOthers)">
+                </div>
+            </div>
+        </div>
+        <div class="text-center mb-5">
+            <a href="/Settings/PostageProfiles" class="btn btn-secondary">Cancel</a>
+            <button class="btn btn-dark">Save Changes</button>
+        </div>
+    </form>
+</div>

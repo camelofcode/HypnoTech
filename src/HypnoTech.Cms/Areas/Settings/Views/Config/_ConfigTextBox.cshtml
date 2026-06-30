@@ -1,0 +1,32 @@
+@model HypnoTech.Cms.Areas.Settings.ViewModels.ConfigTextBoxModel
+<div class="input-group input-group-sm">
+    @if (Model.HasIcon)
+    {
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="@Model.Icon"></i></span>
+        </div>
+    }
+
+    <!-- ko ifnot: @Model.Editing -->
+    <input type="text" class="form-control" readonly data-bind="value: @Model.Value">
+    <div class="input-group-append">
+        <button type="button" class="input-group btn btn-dark" data-bind="click: @Model.Edit">
+            <i class="fa fa-pen"></i>
+            <span class="sr-only">Edit</span>
+        </button>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: @Model.Editing -->
+    <input type="text" class="form-control" data-bind="textInput: @Model.TextInput">
+    <div class="input-group-append">
+        <button type="button" class="input-group btn btn-dark" data-bind="click: @Model.CancelEdit">
+            <i class="fa fa-undo"></i>
+            <span class="sr-only">Cancel</span>
+        </button>
+        <button type="button" class="input-group btn btn-primary" data-bind="click: @Model.Save">
+            <i class="fa fa-save"></i>
+            <span class="sr-only">Save</span>
+        </button>
+    </div>
+    <!-- /ko -->
+</div>

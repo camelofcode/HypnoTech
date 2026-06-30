@@ -1,0 +1,53 @@
+@model dynamic
+    <div id="@Model.Anchor">
+
+        <div class="row">
+            <div class="col-md-12">
+                <label>@Model.Label</label>
+            </div>
+            <!-- ko if: items().length > 0-->
+            <!-- ko foreach: items-->
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <button type="button" class="float-right btn btn-dark" data-bind="click: $parent.removeFile">
+                            <i class="fa fa-times"></i><span class="sr-only">Remove</span>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <label>Image</label><br />
+                        <img class="img-fluid" src="" data-bind="attr: { src: image }" /><br />
+                        <label>Caption</label><br />
+                        <input type="text" class="form-control" data-bind="textInput: @Model.CaptionNameJs" />
+                    </div>
+                </div>
+            </div>
+            <!-- /ko -->
+            <!-- /ko -->
+            <!-- ko if: items().length === 0 -->
+            <div class="col-md-12">
+                No photos added yet
+            </div>
+            <!-- /ko -->
+
+
+        </div>
+        <label>Upload new photos</label>
+        <div class="input-group mb-3">
+            <div class="custom-file">
+                <input type="file" name="Files" class="custom-file-input" id="customFile" multiple data-bind="fileUploadMultiple: files">
+                <label class="custom-file-label" for="customFile">Choose files...</label>
+            </div>
+        </div>
+        <!-- ko foreach: items-->
+        <!-- ko foreach: properties-->
+        <input type="hidden" data-bind="attr: { name: name }, value: value" />
+        <!-- /ko -->
+        <!-- /ko -->
+        <!-- ko foreach: removedFiles -->
+        <input type="hidden" name="RemovedFiles" data-bind="value: $data" />
+        <!-- /ko -->
+        <!-- ko foreach: addedFiles -->
+        <input type="hidden" name="AddedFiles" data-bind="value: $data" />
+        <!-- /ko -->
+    </div>

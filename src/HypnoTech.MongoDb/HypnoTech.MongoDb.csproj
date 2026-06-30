@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Kris Clayton</Authors>
+    <Company>HypnoTech</Company>
+    <Description>Base MongoDb functionality</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HypnoTech.Common\HypnoTech.Common.csproj" />
+    <PackageReference Include="MongoDB.Driver" Version="2.11.3" />
+    <PackageReference Include="Serilog.Sinks.MongoDB" Version="4.0.0" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Kris Clayton</Authors>
+    <Company>HypnoTech</Company>
+    <Description>Abstractions of the data layer for Ecommerce</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HypnoTech.Common\HypnoTech.Common.csproj" />
+    <ProjectReference Include="..\HypnoTech.Ecommerce.Models\HypnoTech.Ecommerce.Models.csproj" />
+  </ItemGroup>
+
+</Project>

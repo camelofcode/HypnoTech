@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Kris Clayton</Authors>
+    <Company>HypnoTech</Company>
+    <Description>Media support for HypnoTech CMS</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HypnoTech.Cms\HypnoTech.Cms.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common\HypnoTech.Common.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
+    <ProjectReference Include="..\HypnoTech.Media.Models\HypnoTech.Media.Models.csproj" />
+  </ItemGroup>
+
+</Project>

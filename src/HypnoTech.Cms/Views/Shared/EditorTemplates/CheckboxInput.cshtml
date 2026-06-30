@@ -1,0 +1,14 @@
+@model HypnoTech.Cms.Forms.Controls.CheckboxInputFormControl
+<label for="@Model.Id">@Model.Label</label>
+<label class="switch">
+    @if (Model.Value)
+    {
+        <input type="checkbox" id="@Model.Id" name="@Model.Name" value="true" checked="checked">
+    }
+    else
+    {
+        <input type="checkbox" id="@Model.Id" name="@Model.Name" value="true">
+    }
+    <span class="slider"></span>
+    <input type="hidden" value="false" name="@Model.Name" />
+</label>

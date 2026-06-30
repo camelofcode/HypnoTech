@@ -1,0 +1,38 @@
+@*@using BandSiteCore.Web.Framework.Extensions
+    @using BandSiteCore.Web.Framework.Mvc.Cms*@
+@using HypnoTech.Cms
+@using HypnoTech.Common.Extensions
+@using Microsoft.Extensions.Options
+@inject IOptions<CmsOptions> Config
+@{
+    Layout = "_SettingsLayout";
+    ViewData["Title"] = "Home Page";
+}
+<div class="container">
+    <div class="text-center">
+        <h1 class="mb-5">Welcome @User.Identity.Name</h1>
+        <div class="row justify-content-center">
+            @if (User.UserHasSettingsRoles())
+            {
+                foreach (var settingsPage in Config.Value.SettingsPages)
+                {
+                    if (User.UserHasRole(settingsPage.Role))
+                    {
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                            <div class="card h-100">
+                                <a href="@settingsPage.Url">
+                                    <h1 class="display-4 bg-dark text-light py-3">
+                                        <i class="@(string.IsNullOrWhiteSpace(settingsPage.Icon) ? "fa fa-folder-open" : settingsPage.Icon)"></i>
+                                    </h1>
+                                </a>
+                                <a href="@settingsPage.Url" class="card-body">
+                                    @settingsPage.Text
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+</div>

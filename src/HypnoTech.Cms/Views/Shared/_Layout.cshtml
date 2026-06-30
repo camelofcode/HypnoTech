@@ -1,0 +1,30 @@
+@using HypnoTech.Cms
+@using Microsoft.Extensions.Options
+@inject IOptions<CmsOptions> Config
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] | @Config.Value.SiteName Admin</title>
+
+    <link rel="stylesheet" href="~/_content/HypnoTech.Cms/css/style.min.css" />
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+
+    @RenderBody()
+
+    <script src="~/_content/HypnoTech.Cms/lib/tinymce/tinymce.min.js"></script>
+    <script src="~/_content/HypnoTech.Cms/lib/tinymce/plugins/paste/plugin.min.js"></script>
+    <script src="~/_content/HypnoTech.Cms/lib/tinymce/plugins/link/plugin.min.js"></script>
+    <script src="~/_content/HypnoTech.Cms/lib/tinymce/themes/silver/theme.min.js"></script>
+
+    <script src="~/_content/HypnoTech.Cms/js/script.min.js"></script>
+
+
+    @RenderSection("Scripts", required: false)
+
+    <script src="~/_content/HypnoTech.Cms/lib/tinymce/jquery.tinymce.min.js"></script>
+</body>
+</html>

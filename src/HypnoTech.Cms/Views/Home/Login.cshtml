@@ -1,0 +1,43 @@
+@model object
+
+@{
+    Layout = "_LoginLayout";
+    ViewBag.Title = "Login";
+}
+<div class="container">
+    <div class="row  justify-content-center">
+        <div class="col-md-6">
+            <h1 class="mb-5">Admin Login</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Login">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <div class="input-group m-w-250">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                </div>
+                                <input type="text" id="username" name="username" class="form-control" />
+                            </div>
+                            <div class="invalid-feedback m-w-250">
+                                Username must be unique and not contain special characters
+                            </div>
+                            <label for="password">Password</label>
+                            <div class="input-group m-w-250">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-key"></i></span>
+                                </div>
+                                <input type="password" id="password" name="password" class="form-control" />
+                                <div class="invalid-feedback">
+                                    Incorrect password
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-dark">Login</button>
+                        <a href="/Home/ForgotPassword" class="btn btn-link">Forgot my Password</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Company>HypnoTech</Company>
+    <Authors>Kris Clayton</Authors>
+    <Description>Ecommerce related models</Description>
+    <Copyright>2020 HypnoTech</Copyright>
+  </PropertyGroup>
+
+</Project>

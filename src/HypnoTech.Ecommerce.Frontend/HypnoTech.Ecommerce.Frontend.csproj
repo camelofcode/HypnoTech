@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Company>HypnoTech</Company>
+    <Authors>Kris Clayton, Anamaria Miehs</Authors>
+    <Description>Basket and Checkout for HypnoTech sites</Description>
+    <Copyright>2020 HypnoTech</Copyright>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;NU5104</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common.Models\HypnoTech.Common.Models.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common.Emails\HypnoTech.Common.Emails.csproj" />
+    <ProjectReference Include="..\HypnoTech.Ecommerce.Dal\HypnoTech.Ecommerce.Dal.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="PayPal" Version="2.0.0-rc2">
+      <NoWarn>NU5104</NoWarn>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

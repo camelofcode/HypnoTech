@@ -1,0 +1,56 @@
+@using HypnoTech.Cms.Forms.Controls
+@model HypnoTech.Cms.Forms.Form
+@{
+    Layout = "_CmsLayout";
+    ViewData["Title"] = "Add " + Model.DisplayName;
+}
+<div class="container">
+    <h1>
+        <a href="@Model.BackUrl" class="btn btn-dark rounded-circle mt-n2"><i class="fa fa-arrow-left"></i><span class="sr-only">Back</span></a>
+        Add @Model.DisplayName
+    </h1>
+    <form action="@Model.PostUrl" method="POST" enctype="@(Model.HasFileUploads ? "multipart/form-data" : "application/x-www-form-urlencoded")">
+        @Html.AntiForgeryToken()
+        @for (int i = 0; i < Model.Controls.Count; i++)
+        {
+            var hidden = Model.HiddenFields.Contains(Model.Controls[i].Name);
+            <div class="form-group" style="display: @(hidden ? "none" : "block")">
+                @Html.EditorFor(model => model.Controls[i], Model.Controls[i].EditorTemplate)
+                @if (Model.HasBeenValidated)
+                {
+                    if (Model.Controls[i].IsValid && !(Model.Controls[i] is HiddenInputFormControl))
+                     {
+                         <div class="text-success py-2">
+                             <small>Looks good!</small>
+                         </div>
+                     }
+                     else
+                     {
+                         <div class="text-danger py-2">
+                             <small>@Model.Controls[i].ValidationMessage</small>
+                         </div>
+                     }
+                }
+            </div>
+
+        }
+        <hr />
+        <a href="@Model.BackUrl" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-dark">Save Changes</button>
+    </form>
+</div>
+
+
+@foreach (var control in Model.Controls.Where(p => p is ListInputFormControl))
+{
+    <partial name="Cms/Partials/ListModals" model="@control" />
+}
+<partial name="Cms/Partials/TinyMceImageUpload" />
+<partial name="Cms/Partials/TinyMceYouTube" />
+<partial name="Cms/Partials/SlowLoader" />
+
+
+@section Scripts {
+    <partial name="Cms/Partials/AddScriptInitializers" model="@Model" />
+}
+

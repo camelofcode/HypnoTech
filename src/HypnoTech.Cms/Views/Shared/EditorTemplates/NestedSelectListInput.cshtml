@@ -1,0 +1,8 @@
+@model HypnoTech.Cms.Forms.Controls.NestedSelectListInputFormControl
+<div id="@Model.Anchor">
+    <label for="@Model.Id">@Model.Label</label>
+    <select id="@Model.Id" name="@Model.Name" class="form-control" data-bind="options: options, optionsText: 'text', optionsValue: 'value', value: selectedOption"></select>  
+    <br/>
+    <label for="@Model.ChildId">@Model.ChildLabel</label>
+    <select id="@Model.ChildId" name="@Model.ChildName" class="form-control" data-bind="options: childOptions, optionsText: 'text', optionsValue: 'value', value: selectedChildOption"></select>
+</div>

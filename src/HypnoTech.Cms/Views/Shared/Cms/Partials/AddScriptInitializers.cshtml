@@ -1,0 +1,78 @@
+@using HypnoTech.Cms.Forms.Controls
+@model HypnoTech.Cms.Forms.Form
+<script type="text/javascript">
+    @foreach (var richTextEditor in Model.Controls.Where(p => p is RichTextInputFormControl))
+    {
+        <text>
+            tinymce.init({
+                selector: '#@richTextEditor.Id',
+                convert_urls: false,
+                @Html.Raw((richTextEditor as RichTextInputFormControl)?.Options)
+            });
+        </text>
+    }
+    @foreach (var imageUpload in Model.Controls.Where(p => p is ImageUploadFormControl))
+    {
+        var instance = (imageUpload as ImageUploadFormControl);
+        <text>
+            var @instance?.ViewModelName = new ImageUploadViewModel(null, @Html.Raw(Json.Serialize(instance?.AllowedFileTypes)), "@instance?.Id");
+            ko.applyBindings(@(instance?.ViewModelName), document.getElementById("@(instance?.Anchor)"));
+        </text>
+    }
+    @foreach (var fileUpload in Model.Controls.Where(p => p is FileUploadFormControl))
+    {
+        var instance = (fileUpload as FileUploadFormControl);
+        <text>
+            var @instance?.ViewModelName = new FileUploadViewModel(null, @Html.Raw(Json.Serialize(instance?.AllowedFileTypes)), "@instance?.Id");
+            ko.applyBindings(@(instance?.ViewModelName), document.getElementById("@(instance?.Anchor)"));
+        </text>
+    }
+    @foreach (var youtube in Model.Controls.Where(p => p is YouTubeInputFormControl))
+    {
+        var instance = (youtube as YouTubeInputFormControl);
+        <text>
+            var @instance?.ViewModelName = new YouTubeViewModel(null);
+            ko.applyBindings(@(instance?.ViewModelName), document.getElementById("@(instance?.Anchor)"));
+        </text>
+    }
+    @foreach (var youtube in Model.Controls.Where(p => p is NestedSelectListInputFormControl))
+    {
+        var instance = (youtube as NestedSelectListInputFormControl);
+        <text>
+            var @instance?.ViewModelName = new NestedSelectListViewModel(@Html.Raw(Json.Serialize(instance?.Values)));
+            ko.applyBindings(@(instance?.ViewModelName), document.getElementById("@(instance?.Anchor)"));
+        </text>
+    }
+    @foreach (var list in Model.Controls.Where(p => p is ListInputFormControl))
+    {
+        var instance = ((dynamic) list);
+        <text>
+            var @instance?.ViewModelName = new ListInputViewModel("@instance.ListName", [], @Html.Raw(Json.Serialize(instance?.ObjectTemplate)), "@instance?.Template", "@instance?.NameColumnField", "@instance?.SingularObjectName", @Html.Raw(Json.Serialize(instance?.Validation)), @Html.Raw(Json.Serialize(instance?.Ordered)), "@instance?.OrderPropertyJs");
+            ko.applyBindings(@(instance?.ViewModelName), document.getElementById("@(instance?.Anchor)"));
+        </text>
+    }
+    @foreach (var list in Model.Controls.Where(p => p is PhotoGalleryFormControl))
+    {
+        var instance = ((dynamic) list);
+        <text>
+            var @instance?.ViewModelName = new PhotoGalleryViewModel("@instance.ListName", [], "@instance.ImagePathNameJs", @Html.Raw(Json.Serialize(instance?.AllowedFileTypes)), @Html.Raw(Json.Serialize(instance?.ObjectTemplate)));
+            ko.applyBindings(@(instance?.ViewModelName), document.getElementById("@(instance?.Anchor)"));
+        </text>
+    }
+    @foreach (var checkbox in Model.Controls.Where(p => p is CheckboxInputFormControl))
+    {
+        var instance = (checkbox as CheckboxInputFormControl);
+        <text>
+            var @instance?.ViewModelName = new CheckBoxInputViewModel("@instance?.Id", @Html.Raw(Json.Serialize(instance?.HiddenWhenCheckedIds)), @Html.Raw(Json.Serialize(instance?.HiddenWhenUncheckedIds)));
+        </text>
+    }
+
+    @if (Model.HasFileUploads)
+    {
+        <text>
+        $("form").on("submit", function() {
+            $("#slow-loader").show();
+        });
+        </text>
+    }
+</script>

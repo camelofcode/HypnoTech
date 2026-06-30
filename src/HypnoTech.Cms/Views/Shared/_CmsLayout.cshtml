@@ -1,0 +1,84 @@
+@using HypnoTech.Cms
+@using HypnoTech.Cms.Mvc
+@using Microsoft.Extensions.Options
+@inject IOptions<CmsOptions> Config
+@{
+    Layout = "_Layout";
+}
+<div class="d-flex @(Context.Request.Cookies["sidebartoggled"] == "yes" ? "toggled" : string.Empty)" id="wrapper">
+    <aside class="bg-dark border-right text-light" id="sidebar-wrapper">
+        <div class="sidebar-heading pr-2">
+            CMS
+            @if (User.Identity.IsAuthenticated)
+            {
+                <button class="btn btn-light float-right" id="menu-toggle"><i class="fa fa-ellipsis-h"></i></button>
+            }
+            </div>
+        <div class="list-group list-group-flush">
+            @if (User.UserHasCmsRoles())
+            {
+                foreach (var link in AdminCmsNavbarCache.Links)
+                {
+                    if (User.UserHasRole(link.Role))
+                    {
+                        <a data-toggle="tooltip" data-placement="right" title="@link.Text" href="@link.Url" class="list-group-item list-group-item-action bg-dark text-light @(link.Controller == ViewBag.Controller ? "active" : string.Empty)">@link.Text <span class="float-right"><i class="@(string.IsNullOrWhiteSpace(link.Icon) ? "fa fa-folder-open" : link.Icon)"></i></span></a>
+                    }
+                }
+            }
+            @if (User.UserHasSettingsRoles())
+            {
+                <a data-toggle="tooltip" data-placement="right" title="Settings" href="/Settings/Home" class="list-group-item list-group-item-action bg-light text-dark">Settings <span class="float-right"><i class="fa fa-brain"></i></span></a>
+            }
+        </div>
+    </aside>
+    <div id="page-content-wrapper">
+        <div class="wrapper">
+
+            <header>
+                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+                    <div class="container">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@Config.Value.SiteName Admin</a>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                    aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
+                            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                                <ul class="navbar-nav flex-grow-1 justify-content-end">
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Account">My Account</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Logout">Logout</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Admin</a>
+                        }
+                    </div>
+                </nav>
+            </header>
+            <flash dismissable="false" />
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+            <div class="push"></div>
+        </div>
+
+        <footer class="footer border-top footer text-light bg-dark p-3">
+            <div class="container text-center">
+                <span>&copy; @DateTime.Now.Year - HypnoTech</span>
+            </div>
+        </footer>
+    </div>
+
+</div>
+
+@section Scripts{
+    @RenderSection("Scripts", false)
+}

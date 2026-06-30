@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Kris Clayton, Anamaria Miehs</Authors>
+    <Company>HypnoTech</Company>
+    <Copyright>2020 HypnoTech</Copyright>
+    <Description>Base CMS functionality for HypnoTech websites</Description>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\tinymce\**" />
+    <Content Remove="wwwroot\tinymce\**" />
+    <EmbeddedResource Remove="wwwroot\tinymce\**" />
+    <None Remove="wwwroot\tinymce\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetZip" Version="1.13.8" />
+    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
+    <ProjectReference Include="..\HypnoTech.Cms.Contracts\HypnoTech.Cms.Contracts.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common\HypnoTech.Common.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common.Models\HypnoTech.Common.Models.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common.Emails\HypnoTech.Common.Emails.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common.Security\HypnoTech.Common.Security.csproj" />
+    <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0" />
+    <PackageReference Include="Vereyon.Web.FlashMessage" Version="2.0.0" />
+  </ItemGroup>
+
+</Project>

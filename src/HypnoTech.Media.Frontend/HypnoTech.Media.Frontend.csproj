@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Company>HypnoTech</Company>
+    <Authors>Kris Clayton, Anamaria Miehs</Authors>
+    <Description>Media support for HypnoTech sites</Description>
+    <Copyright>2020 HypnoTech</Copyright>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HypnoTech.Common\HypnoTech.Common.csproj" />
+    <ProjectReference Include="..\HypnoTech.Media.Models\HypnoTech.Media.Models.csproj" />
+    <ProjectReference Include="..\HypnoTech.Media.Dal\HypnoTech.Media.Dal.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,68 @@
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
+using System.Reflection;
+using HypnoTech.Common.Dal.Repositories;
+using HypnoTech.Common.Models;
+using HypnoTech.MongoDb;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Driver;
+
+namespace HypnoTech.Common.Dal.MongoDb.Repositories
+{
+    public class BackupRepository : IBackupRespository
+    {
+        private readonly IMongoDatabase _database;
+
+        public BackupRepository(IOptions<MongoOptions> options)
+        {
+            var client = new MongoClient(options.Value.ConnectionString);
+            _database = client.GetDatabase(options.Value.Database);
+        }
+
+        public dynamic GetAllData(List<string> includedTypes)
+        {
+            var expando = new ExpandoObject();
+
+            MethodInfo method = typeof(BackupRepository).GetMethod("GetAll");
+
+            foreach (var type in ModelRegistry.Registrations)
+            {
+                if (method != null && includedTypes.Contains(type.DataName))
+                {
+                    MethodInfo generic = method.MakeGenericMethod(type.Type);
+                    AddProperty(expando, type.DataName, generic.Invoke(null, new object[] {_database, type.DataName }));
+                }
+            }
+
+            return expando;
+        }
+
+        public static List<T> GetAll<T>(IMongoDatabase database, string table)
+        {
+            IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(table);
+
+            var items = collection.Find(new BsonDocument());
+
+            return items.ToList().Select(p => BsonSerializer.Deserialize<T>(p)).ToList();
+        }
+
+        private static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
+        {
+            var expandoDict = expando as IDictionary<string, object>;
+            if (expandoDict.ContainsKey(propertyName))
+            {
+                expandoDict[propertyName] = propertyValue;
+            }
+            else
+            {
+                expandoDict.Add(propertyName, propertyValue);
+            }
+        }
+    }
+
+
+
+}

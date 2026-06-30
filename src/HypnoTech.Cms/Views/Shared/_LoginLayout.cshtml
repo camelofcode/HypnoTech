@@ -1,0 +1,43 @@
+@using HypnoTech.Cms
+@using Microsoft.Extensions.Options
+@inject IOptions<CmsOptions> Config
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] | @Config.Value.SiteName Admin</title>
+
+    <link rel="stylesheet" href="~/_content/HypnoTech.Cms/css/style.min.css" />
+</head>
+<body>
+
+    <div class="wrapper">
+
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+                <div class="container">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@Config.Value.SiteName Admin</a>
+                </div>
+            </nav>
+        </header>
+        <flash dismissable="true" />
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+        <div class="push"></div>
+    </div>
+
+    <footer class="border-top footer text-light bg-dark p-3">
+        <div class="container text-center">
+            <span>&copy; @DateTime.Now.Year - HypnoTech</span>
+        </div>
+    </footer>
+
+
+
+    <script src="~/_content/HypnoTech.Cms/js/script.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

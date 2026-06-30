@@ -1,0 +1,74 @@
+@model HypnoTech.Ecommerce.Models.DownloadCodeCollection
+@{
+    ViewBag.Title = "Edit Codes";
+    Layout = "_SettingsLayout";
+}
+    <div class="container">
+        <h1>
+            <a href="/Settings/Codes" class="btn btn-dark rounded-circle mt-n2"><i class="fa fa-arrow-left"></i><span class="sr-only">Back</span></a>
+            Edit Download Codes
+        </h1>
+
+        <form>
+            <div class="form-group">
+                <label for="name-input">Name</label>
+                <input class="form-control" type="text" value="@Model.Name" id="name-input" readonly>
+            </div>
+            <div class="form-group">
+                <label for="name-input">Redemption Url</label>
+                <input class="form-control" type="text" value="@Model.RedemptionUrl" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="name-input">Codes</label>
+                <i class="fa fa-info-circle"></i>
+                <span class="badge @(Model.UnusedCodes == 0 ? "badge-danger": "badge-dark")">
+                    @if (Model.UnusedCodes == 0)
+                    {
+                        <span>All codes were used.</span>
+                    }
+                    else
+                    {
+                        <span>@Model.AssignedCodes out of @Model.TotalCodes used.</span>
+                    }
+                </span>
+                <div>
+                    @foreach (var code in @Model.Codes)
+                    {
+                        if (code.Assigned)
+                        {
+                            <span class="badge badge-success mb-2"><span class="lead text-monospace">@code.Code</span></span>
+                            <span>@code.AssignedTo</span>
+                            <br />
+                        }
+                        else
+                        {
+                            <span class="badge badge-dark mb-2"><span class="lead text-monospace">@code.Code</span></span> <br />
+                        }
+                    }
+                </div>
+            </div>
+        </form>
+        @if (Model.UnusedCodes > 0)
+        {
+            <hr />
+            <form action="/Settings/Codes/AssignCode" method="POST">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Assign Download Code</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="code-email-input">Assign to Email</label>
+                            <input class="form-control" type="text" id="code-email-input" name="EmailAddress">
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-dark">Assign Download Code</button>
+                    </div>
+                </div>
+            </form>
+        }
+    </div>

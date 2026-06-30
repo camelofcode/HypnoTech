@@ -1,0 +1,153 @@
+@using HypnoTech.Cms.Areas.Settings.ViewModels
+@using Microsoft.Extensions.Configuration
+@model HypnoTech.Common.Models.Settings.Config
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IConfiguration config
+@{
+    ViewBag.Title = "Config";
+    Layout = "_SettingsLayout";
+}
+<div class="container" id="config-page">
+    <h1 class="mb-5">Config</h1>
+    @Html.AntiForgeryToken()
+    <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+
+        <li class="nav-item">
+            <a class="nav-link active" id="email-tab" data-toggle="tab" href="#email" role="tab" aria-controls="email" aria-selected="false">Email</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="website-tab" data-toggle="tab" href="#website" role="tab" aria-controls="website" aria-selected="false">Main Site</a>
+        </li>
+        @if (config.GetValue("ecommerce:enabled", false))
+        {
+            <li class="nav-item">
+                <a class="nav-link" id="paypal-tab" data-toggle="tab" href="#paypal" role="tab" aria-controls="paypal" aria-selected="true">Paypal</a>
+            </li>
+        }
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="email" role="tabpanel" aria-labelledby="email-tab">
+            <h2>Email</h2>
+            <table class="table table-striped">
+                <tr>
+                    <td><strong>Enable Emails</strong></td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" data-bind="checked: email_enableEmails">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>SMTP Server</strong></td>
+                    <td>
+                        <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("email_smtpServer", "fa fa-globe"))" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Mailbox User</strong></td>
+                    <td>
+                        <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("email_mailboxUser", "fa fa-user"))" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Mailbox Password</strong></td>
+                    <td>
+                        <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("email_mailboxPassword", "fa fa-key"))" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Sender</strong></td>
+                    <td>
+                        <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("email_sender", "fa fa-envelope"))" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Default Recipient</strong></td>
+                    <td>
+                        <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("email_defaultRecipient", "fa fa-envelope"))" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="tab-pane fade" id="website" role="tabpanel" aria-labelledby="website-tab">
+            <h2>Main Site</h2>
+            <table class="table table-striped">
+                <tr>
+                    <td><strong>URL</strong></td>
+                    <td>
+                        <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("mainSite_url", "fa fa-globe"))" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>API Key</strong></td>
+                    <td>
+                        <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("mainSite_apiKey", "fa fa-key"))" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        @if (config.GetValue("ecommerce:enabled", false))
+        {
+            <div class="tab-pane fade" id="paypal" role="tabpanel" aria-labelledby="paypal-tab">
+                <h2>Paypal</h2>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>API Client Id</strong></td>
+                        <td>
+                            <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("paypal_apiClientId", "fa fa-user"))" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>API Client Secret</strong></td>
+                        <td>
+                            <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("paypal_apiClientSecret", "fa fa-key"))" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>API URL</strong></td>
+                        <td>
+                            <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("paypal_apiUrl", "fa fa-globe"))" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sales URL</strong></td>
+                        <td>
+                            <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("paypal_salesUrl", "fa fa-globe"))" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Payment Complete Url</strong></td>
+                        <td>
+                            <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("paypal_paymentCompleteUrl", "fa fa-globe"))" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Payment Cancelled Url</strong></td>
+                        <td>
+                            <partial name="_ConfigTextBox" model="@(new ConfigTextBoxModel("paypal_paymentCancelledUrl", "fa fa-globe"))" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mode</strong></td>
+                        <td>
+                            <span class="h3 badge badge-secondary">sandbox</span>
+                            <label class="switch">
+                                <input type="checkbox" data-bind="checked: paypal_isProduction">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="h3 badge badge-primary">live</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        var model = new ConfigViewModel(@Html.Raw(Json.Serialize(Model)), @Json.Serialize(config.GetValue("ecommerce:enabled", false)));
+        ko.applyBindings(model, document.getElementById("config-page"));
+    </script>
+}

@@ -1,0 +1,77 @@
+@model HypnoTech.Cms.Areas.Settings.ViewModels.FeaturesViewModel
+
+@{
+    ViewBag.Title = "Features";
+    Layout = "_SettingsLayout";
+}
+<div class="container" id="features-page">
+    @Html.AntiForgeryToken()
+    <h1 class="mb-5">
+        Features
+        <div class="float-right">
+            <button type="button" class="btn btn-dark" title="Save Changes" data-bind="click: saveChanges">Save Changes</button>
+            <button type="button" class="btn btn-light" title="Cancel Changes" data-bind="click: discard">Discard</button>
+        </div>
+    </h1>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Name</th>
+            <th>Display Name</th>
+            <th class="text-center">Enabled</th>
+            <th class="text-right">Order</th>
+        </tr>
+        <!-- ko foreach: orderedLinks-->
+        <tr>
+            <td data-bind="text: key"></td>
+            <td>
+                <div class="input-group input-group-sm">
+                    <!-- ko ifnot: editing -->
+                    <input type="text" class="form-control" readonly data-bind="value: text">
+                    <!-- /ko -->
+                    <!-- ko if: editing -->
+                    <input type="text" class="form-control" data-bind="value: text">
+                    <!-- /ko -->
+                    <div class="input-group-append">
+                        <!-- ko ifnot: editing -->
+                        <button type="button" class="input-group btn btn-dark" data-bind="click: edit">
+                            <i class="fa fa-pen"></i>
+                            <span class="sr-only">Edit</span>
+                        </button>
+                        <!-- /ko -->
+                        <!-- ko if: editing -->
+                        <button type="button" class="input-group btn btn-dark" data-bind="click: cancelEdit">
+                            <i class="fa fa-undo"></i>
+                            <span class="sr-only">Cancel</span>
+                        </button>
+                        <button type="button" class="input-group btn btn-primary" data-bind="click: saveEdit">
+                            <i class="fa fa-save"></i>
+                            <span class="sr-only">Save</span>
+                        </button>
+                        <!-- /ko -->
+                    </div>
+                </div>
+            </td>
+
+            <td class="text-center">
+                <label class="switch">
+                    <input type="checkbox" data-bind="checked: enabled">
+                    <span class="slider"></span>
+                </label>
+            </td>
+
+            <td class="text-right">
+                <button type="button" class="btn btn-sm btn-dark" title="Order Previous" data-bind="enable: $parent.canMoveUp($data), click: $parent.moveUp"><i class="fa fa-arrow-up"></i></button>
+                <button type="button" class="btn btn-sm btn-dark" title="Order Next" data-bind="enable: $parent.canMoveDown($data), click: $parent.moveDown"><i class="fa fa-arrow-down"></i></button>
+            </td>
+        </tr>
+        <!-- /ko -->
+    </table>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        var model = new FeaturesViewModel(@Html.Raw(Json.Serialize(Model.Links)));
+        ko.applyBindings(model, document.getElementById("features-page"));
+    </script>
+}

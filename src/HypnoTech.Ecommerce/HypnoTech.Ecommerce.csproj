@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Company>HypnoTech</Company>
+    <Authors>Kris Clayton, Anamaria Miehs</Authors>
+    <Description>Ecommerce for HypnoTech CMS</Description>
+    <Copyright>2020 HypnoTech</Copyright>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Views\**" />
+    <Content Remove="Views\**" />
+    <EmbeddedResource Remove="Views\**" />
+    <None Remove="Views\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Settings\Views\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HypnoTech.Cms\HypnoTech.Cms.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
+    <ProjectReference Include="..\HypnoTech.Common.Emails\HypnoTech.Common.Emails.csproj" />
+    <ProjectReference Include="..\HypnoTech.Ecommerce.Dal\HypnoTech.Ecommerce.Dal.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Vereyon.Web.FlashMessage" Version="2.0.0" />
+  </ItemGroup>
+
+</Project>

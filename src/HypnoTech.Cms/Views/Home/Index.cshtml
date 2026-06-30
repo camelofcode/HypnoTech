@@ -1,0 +1,35 @@
+@*@using BandSiteCore.Web.Framework.Extensions
+@using BandSiteCore.Web.Framework.Mvc.Cms*@
+@using HypnoTech.Cms.Mvc
+@{
+    Layout = "_CmsLayout";
+    ViewData["Title"] = "Home Page";
+}
+<div class="container">
+    <div class="text-center">
+        <h1 class="mb-5">Welcome @User.Identity.Name</h1>
+        <div class="row justify-content-center">
+        @if (User.UserHasCmsRoles())
+        {
+            foreach (var link in AdminCmsNavbarCache.Links)
+             {
+                 if (User.UserHasRole(link.Role))
+                 {
+                     <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                         <div class="card h-100">
+                             <a href="@link.Url">
+                                 <h1 class="display-4 bg-dark text-light py-3">
+                                     <i class="@(string.IsNullOrWhiteSpace(link.Icon) ? "fa fa-folder-open" : link.Icon)"></i>
+                                 </h1>
+                             </a>
+                             <a href="@link.Url" class="card-body">
+                                 @link.Text
+                             </a>
+                         </div>
+                     </div>
+                 }
+             }
+        }
+        </div>
+    </div>
+</div>

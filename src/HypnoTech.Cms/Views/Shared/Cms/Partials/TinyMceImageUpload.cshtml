@@ -1,0 +1,37 @@
+<div class="modal fade" id="tinymce-image-upload" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form role="form" id="tinymce-image-upload-form" name="tinymceImageUploadForm" autocomplete="off" novalidate="novalidate">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Image</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <input class="form-control" type="file" id="tinymce-image-upload-file" />
+                            <label class="custom-file-label" for="tinymce-image-upload-file">Choose file</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                    <button class="btn btn-dark">Add</button>
+                </div>
+            </form>
+            <div id="tinymce-image-upload-uploading">
+                <div class="modal-header">
+                    <h4 class="modal-title">Upload Image</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped active" style="width: 100%">Image Uploading... Please Wait.</div>
+                    </div>
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+</div>

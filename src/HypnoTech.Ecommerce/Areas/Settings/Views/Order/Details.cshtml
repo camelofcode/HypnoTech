@@ -1,0 +1,121 @@
+@using System.Globalization
+@model HypnoTech.Ecommerce.Models.Order
+
+@{
+    ViewBag.Title = "Order Details";
+    Layout = "_SettingsLayout";
+}
+<div class="container">
+    <h1>
+        <a href="/Settings/Order" class="btn btn-dark rounded-circle mt-n2"><i class="fa fa-arrow-left"></i><span class="sr-only">Back</span></a>
+        Order Details - @Model.Address.Name
+    </h1>
+    @{
+        var culture = new CultureInfo("en-GB");
+    }
+    <table class="table">
+        <tr>
+            <td class="bg-light" width="150"><strong>Items</strong></td>
+            <td>
+                <ul class="list-group">
+                    @foreach (var item in Model.Items)
+                    {
+                        <li class="list-group-item list-group-item-dark"><strong>@(item.Quantity) x</strong> @item.Item</li>
+                    }
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-light"><strong>Subtotal</strong></td>
+            <td>
+                <div class="text-right">@Model.SubTotal.ToString("C", culture)</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-light"><strong>Postage</strong></td>
+            <td>
+                <div class="text-right">@Model.Postage.ToString("C", culture) @(Model.Tracked ? "(Special Delivery)" : string.Empty)</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-light"><strong>Total</strong></td>
+            <td>
+                <div class="text-right"><strong>@Model.Total.ToString("C", culture)</strong></div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-light"><strong>Mailing Address</strong></td>
+            <td>
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.Address.Name))
+                    {
+                        @Model.Address.Name <br />
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Address.Address1))
+                    {
+                        @Model.Address.Address1 <br />
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Address.Address2))
+                    {
+                        @Model.Address.Address2 <br />
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Address.Town))
+                    {
+                        @Model.Address.Town <br />
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Address.Region))
+                    {
+                        @Model.Address.Region <br />
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Address.PostalCode))
+                    {
+                        @Model.Address.PostalCode <br />
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Address.Country))
+                    {
+                        @Model.Address.Country <br />
+                    }
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-light"><strong>Paypal Info</strong></td>
+            <td>
+                <div class="row">
+                    <div class="col">
+                        <strong>Payment Id</strong>
+                    </div>
+                    <div class="col text-right">
+                        <strong class="text-monospace">@Model.PaymentId</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <strong>Payer Id</strong>
+                    </div>
+                    <div class="col text-right">
+                        <strong class="text-monospace">@Model.PayerId</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <strong>Sale Id</strong>
+                    </div>
+                    <div class="col text-right">
+                        <strong class="text-monospace">@Model.SaleId</strong>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="text-right">
+                <form action="/Settings/Order/MarkAsShipped/@Model.PaymentId" method="POST">
+                    <button type="button" class="btn btn-secondary">Cancel</button>
+                    <a href="@Model.SaleUrl" class="btn btn-outline-dark">View Paypal Order</a>
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-dark">Mark as Posted</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>

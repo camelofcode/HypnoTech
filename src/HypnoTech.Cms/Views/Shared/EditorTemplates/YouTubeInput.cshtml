@@ -1,0 +1,25 @@
+@model HypnoTech.Cms.Forms.Controls.YouTubeInputFormControl
+    <div id="@Model.Anchor">
+        <label for="@Model.Id">@Model.Label</label>
+        <input type="hidden" name="@Model.Name" data-bind="value: youTubeId" />
+
+        <div class="row">
+            <div class="col-lg-6 col-sm-12">
+                <div class="card">
+                    <!-- ko if: hasId -->
+                    <img class="card-img-top" src="" data-bind="attr: { src: thumbnail }" />
+                    <!-- /ko -->
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-video"></i></span>
+                            </div>
+                            <input class="form-control" id="@Model.Id" type="text" data-bind="textInput: youTubeUrl" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>

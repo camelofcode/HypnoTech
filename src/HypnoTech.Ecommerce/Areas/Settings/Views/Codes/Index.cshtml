@@ -1,0 +1,36 @@
+@model HypnoTech.Ecommerce.Areas.Settings.Models.DownloadCodesViewModel
+
+@{
+    ViewBag.Title = "Codes";
+    Layout = "_SettingsLayout";
+}
+<div class="container">
+    <h1 class="mb-5">Download Codes</h1>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Name</th>
+            <th>Redemption Url</th>
+            <th>Total</th>
+            <th>Assigned</th>
+            <th>Remaining</th>
+            <th class="text-right">
+                <a href="/Settings/Codes/Add" class="btn btn-sm btn-dark">Add Download Codes</a>
+            </th>
+        </tr>
+        @foreach (var collection in Model.CodeCollections)
+        {
+            <tr class="@(collection.UnusedCodes == 0 ? "table-danger": string.Empty)" >
+                <td>@collection.Name</td>
+                <td>@collection.RedemptionUrl</td>
+                <td>@collection.TotalCodes</td>
+                <td>@collection.AssignedCodes</td>
+                <td>@collection.UnusedCodes</td>
+                <td class="text-right">
+                    <a href="/Settings/Codes/Edit/@collection.Id" class="btn btn-sm btn-dark" title="Edit"><i class="fa fa-pen"></i><span class="sr-only">View</span></a>
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
