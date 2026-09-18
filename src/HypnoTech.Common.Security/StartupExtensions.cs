@@ -13,35 +13,35 @@ namespace HypnoTech.Common.Security
         {
             app.Use((context, next) =>
             {
-                context.Response.Headers.Add("X-Frame-Options", "deny");
+                context.Response.Headers["X-Frame-Options"] = "deny";
 
-                context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+                context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
 
                 //https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
-                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                context.Response.Headers["X-Content-Type-Options"] = "nosniff";
 
                 if (context.Request.Headers.ContainsKey("Origin"))
                 {
                     var origin = context.Request.Headers["Origin"].FirstOrDefault();
-                    context.Response.Headers.Add("Access-Control-Allow-Origin",
+                    context.Response.Headers["Access-Control-Allow-Origin"] =
                     HostUrls(configuration).Contains(origin, StringComparer.CurrentCultureIgnoreCase)
                     ? origin
-                    : $"https://{context.Request.Host}");
+                    : $"https://{context.Request.Host}";
                 }
                 else if (context.Request.Headers.ContainsKey("Referer"))
                 {
                     var referer = $"https://{new Uri(context.Request.Headers["Referer"].First()).Host}";
-                    context.Response.Headers.Add("Access-Control-Allow-Origin",
+                    context.Response.Headers["Access-Control-Allow-Origin"] =
                     HostUrls(configuration).Contains(referer, StringComparer.CurrentCultureIgnoreCase)
                     ? referer
-                    : $"https://{context.Request.Host}");
+                    : $"https://{context.Request.Host}";
                 }
                 else
                 {
-                    context.Response.Headers.Add("Access-Control-Allow-Origin", $"https://{context.Request.Host}");
+                    context.Response.Headers["Access-Control-Allow-Origin"] = $"https://{context.Request.Host}";
                 }
 
-                context.Response.Headers.Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+                context.Response.Headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS";
 
                 var csp = configuration["ContentSecurityPolicy"];
                 if (string.IsNullOrEmpty(csp))
@@ -49,9 +49,9 @@ namespace HypnoTech.Common.Security
                     csp = BuildContentSecurityPolicy(configuration);
                 }
 
-                context.Response.Headers.Add("Content-Security-Policy", csp);
+                context.Response.Headers["Content-Security-Policy"] = csp;
 
-                context.Response.Headers.Add("X-UA-Compatible", "IE=EDGE");
+                context.Response.Headers["X-UA-Compatible"] = "IE=EDGE";
 
                 return next();
             });

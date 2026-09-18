@@ -1,3 +1,5 @@
+using System;
+using HypnoTech.Common.Extensions;
 using HypnoTech.Common.Models;
 using HypnoTech.Common.Models.Settings;
 using HypnoTech.MongoDb;
@@ -6,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-using NetCore.AutoRegisterDi;
 
 namespace HypnoTech.Common.Dal.MongoDb
 {
@@ -18,9 +19,9 @@ namespace HypnoTech.Common.Dal.MongoDb
             {
                 services.Configure<MongoOptions>(configuration.GetSection("Mongo"));
 
-                services.RegisterAssemblyPublicNonGenericClasses()
-                    .Where(c => c.Name.EndsWith("Repository"))
-                    .AsPublicImplementedInterfaces();
+                services.AddPublicImplementedInterfaces(
+                    typeof(StartupBuilderExtensions).Assembly,
+                    type => type.Name.EndsWith("Repository", StringComparison.Ordinal));
 
                 Map();
             }

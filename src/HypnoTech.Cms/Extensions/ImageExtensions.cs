@@ -1,7 +1,5 @@
 using System.IO;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
+using SkiaSharp;
 
 namespace HypnoTech.Cms.Extensions
 {
@@ -9,16 +7,21 @@ namespace HypnoTech.Cms.Extensions
     {
         public static byte[] Scale(this byte[] fileBytes, int maxWidth, int maxHeight)
         {
-            MemoryStream fullSizeStream = new MemoryStream(fileBytes);
-            using (Image fullsizeImage = Image.Load<Rgba32>(fullSizeStream, out var format))
+            using (var codec = SKCodec.Create(new MemoryStream(fileBytes)))
             {
-                if ((fullsizeImage.Width <= maxWidth && fullsizeImage.Height <= maxHeight))
+                if (codec == null)
                 {
                     return fileBytes;
                 }
 
-                int width = fullsizeImage.Width;
-                int height = fullsizeImage.Height;
+                var info = codec.Info;
+                if (info.Width <= maxWidth && info.Height <= maxHeight)
+                {
+                    return fileBytes;
+                }
+
+                int width = info.Width;
+                int height = info.Height;
 
                 int newWidth = 0;
                 int newHeight = 0;
@@ -72,11 +75,27 @@ namespace HypnoTech.Cms.Extensions
                     newWidth = 1;
                 }
 
-                using (MemoryStream memoryStream = new MemoryStream())
+                using (var originalBitmap = SKBitmap.Decode(codec))
                 {
-                    fullsizeImage.Mutate(p => p.Resize(newWidth, newHeight));
-                    fullsizeImage.Save(memoryStream, format);
-                    return memoryStream.ToArray();
+                    if (originalBitmap == null)
+                    {
+                        return fileBytes;
+                    }
+
+                    var imageInfo = new SKImageInfo(newWidth, newHeight, originalBitmap.ColorType, originalBitmap.AlphaType);
+                    using (var resizedBitmap = originalBitmap.Resize(imageInfo, new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.Linear)))
+                    {
+                        if (resizedBitmap == null)
+                        {
+                            return fileBytes;
+                        }
+
+                        using (var image = SKImage.FromBitmap(resizedBitmap))
+                        using (var data = image.Encode(codec.EncodedFormat, 100))
+                        {
+                            return data.ToArray();
+                        }
+                    }
                 }
             }
         }

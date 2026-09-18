@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Authors>Kris Clayton</Authors>
     <Company>HypnoTech</Company>
     <Description>MongoDb implementation of the Media data layer</Description>
@@ -12,8 +12,7 @@
     <ProjectReference Include="..\HypnoTech.Media.Models\HypnoTech.Media.Models.csproj" />
     <ProjectReference Include="..\HypnoTech.Media.Dal\HypnoTech.Media.Dal.csproj" />
     <ProjectReference Include="..\HypnoTech.MongoDb\HypnoTech.MongoDb.csproj" />
-    <PackageReference Include="MongoDB.Driver" Version="2.11.3" />
-    <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.4.3" />
   </ItemGroup>
 
 </Project>
