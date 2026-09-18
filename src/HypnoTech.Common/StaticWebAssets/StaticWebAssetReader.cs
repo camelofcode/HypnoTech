@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
+using System.Text.Json;
 
 namespace HypnoTech.Common.StaticWebAssets
 {
@@ -41,45 +41,88 @@ namespace HypnoTech.Common.StaticWebAssets
         public static IEnumerable<StaticFileMapping> GetLocalMappings()
         {
             var result = new List<StaticFileMapping>();
+            var assembly = Assembly.GetEntryAssembly();
+            var outputDirectory = new FileInfo(assembly.Location).Directory.FullName;
+            var manifestPath = Path.Combine(outputDirectory,
+                $"{assembly.GetName().Name}.staticwebassets.runtime.json");
 
-            try
+            using (var stream = File.OpenRead(manifestPath))
+            using (var document = JsonDocument.Parse(stream))
             {
-                var ass = Assembly.GetEntryAssembly();
+                var root = document.RootElement;
+                var contentRoots = root.GetProperty("ContentRoots")
+                    .EnumerateArray()
+                    .Select(item => item.GetString())
+                    .ToArray();
+                var packages = root.GetProperty("Root")
+                    .GetProperty("Children")
+                    .GetProperty("_content")
+                    .GetProperty("Children");
 
-                var xml = File.ReadAllText(Path.Combine(new FileInfo(ass.Location).Directory.FullName,
-                    $"{ass.GetName().Name}.StaticWebAssets.xml"));
-
-                XDocument doc = XDocument.Parse(xml);
-                if (doc.Root != null)
+                foreach (var package in packages.EnumerateObject())
                 {
-                    var elements = doc.Root.Descendants("ContentRoot");
-
-                    foreach (var element in elements)
+                    if (!TryGetContentRootIndex(package.Value, out var contentRootIndex))
                     {
-                        var item = new StaticFileMapping
-                        {
-                            Path = (string) element.Attribute("Path"),
-                            BasePath = (string) element.Attribute("BasePath")
-                        };
-
-                        if (item.BasePath == "_content/HypnoTech.Frontend")
-                        {
-                            result.Insert(0, item);
-                        }
-                        else
-                        {
-                            result.Add(item);
-                        }
+                        continue;
                     }
-                    return result;
+
+                    var item = new StaticFileMapping
+                    {
+                        Path = contentRoots[contentRootIndex],
+                        BasePath = $"_content/{package.Name}"
+                    };
+
+                    if (item.BasePath == "_content/HypnoTech.Frontend")
+                    {
+                        result.Insert(0, item);
+                    }
+                    else
+                    {
+                        result.Add(item);
+                    }
                 }
-            }
-            catch
-            {
-                return result;
             }
 
             return result;
+        }
+
+        private static bool TryGetContentRootIndex(JsonElement node, out int contentRootIndex)
+        {
+            if (node.TryGetProperty("Patterns", out var patterns) &&
+                patterns.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var pattern in patterns.EnumerateArray())
+                {
+                    if (pattern.TryGetProperty("ContentRootIndex", out var index))
+                    {
+                        contentRootIndex = index.GetInt32();
+                        return true;
+                    }
+                }
+            }
+
+            if (node.TryGetProperty("Asset", out var asset) &&
+                asset.ValueKind == JsonValueKind.Object &&
+                asset.TryGetProperty("ContentRootIndex", out var assetIndex))
+            {
+                contentRootIndex = assetIndex.GetInt32();
+                return true;
+            }
+
+            if (node.TryGetProperty("Children", out var children) &&
+                children.ValueKind == JsonValueKind.Object)
+            {
+                foreach (var child in children.EnumerateObject())
+                {
+                    if (TryGetContentRootIndex(child.Value, out contentRootIndex))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            contentRootIndex = -1;
+            return false;
         }
     }
 }

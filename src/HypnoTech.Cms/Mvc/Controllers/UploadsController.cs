@@ -24,13 +24,15 @@ namespace HypnoTech.Cms.Mvc.Controllers
         [Route("/Images/{section}/{*file}")]
         public IActionResult Images(string section, string file)
         {
-            return _service.GetImage(section, file);
+            var result = _service.GetImage(section, file);
+            return result == null ? NotFound() : result;
         }
 
         [Route("/Files/{section}/{*file}")]
         public IActionResult Files(string section, string file)
         {
-            return _service.GetFile(section, file);
+            var result = _service.GetFile(section, file);
+            return result == null ? NotFound() : result;
         }
 
         public IActionResult UploadRichTextImage(List<IFormFile> files)

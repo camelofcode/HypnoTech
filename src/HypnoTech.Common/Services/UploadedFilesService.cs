@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using HypnoTech.Common.Extensions;
 
 namespace HypnoTech.Common.Services
@@ -10,43 +11,44 @@ namespace HypnoTech.Common.Services
     public class UploadedFilesService : IUploadedFilesService
     {
         private readonly string _basePath;
+        private readonly ILogger<UploadedFilesService> _logger;
 
-        public UploadedFilesService(IConfiguration configuration)
+        public UploadedFilesService(IConfiguration configuration, ILogger<UploadedFilesService> logger)
         {
             _basePath = configuration.UploadPath();
+            _logger = logger;
         }
 
         public FileResult GetImage(string section, string filename)
         {
-            try
-            {
-                var file = File.ReadAllBytes(Path.Combine(_basePath, "Images", section, filename));
-                return new FileContentResult(file, GetContentType(filename))
-                {
-                    FileDownloadName = filename
-                };
-            }
-            catch
-            {
-                //TODO: Ana should we have an image not found?
-                return null;
-            }
+            return GetFileResult("Images", section, filename, false);
         }
 
         public FileResult GetFile(string section, string filename)
         {
+            return GetFileResult("Files", section, filename, true);
+        }
+
+        private FileResult GetFileResult(string category, string section, string filename, bool enableRangeProcessing)
+        {
+            var path = Path.GetFullPath(Path.Combine(_basePath, category, section, filename));
+
             try
             {
-                var file = File.ReadAllBytes(Path.Combine(_basePath, "Files", section, filename));
+                var file = File.ReadAllBytes(path);
                 var contentType = GetContentType(filename);
                 return new FileContentResult(file, contentType)
                 {
                     FileDownloadName = filename,
-                    EnableRangeProcessing = contentType.StartsWith("audio") || contentType.StartsWith("video")
+                    EnableRangeProcessing = enableRangeProcessing &&
+                                            (contentType.StartsWith("audio") || contentType.StartsWith("video"))
                 };
             }
-            catch
+            catch (Exception exception)
             {
+                _logger.LogWarning(exception,
+                    "Could not serve uploaded {Category} file from {Path}. UploadPath resolved to {UploadPath}.",
+                    category, path, _basePath);
                 return null;
             }
         }

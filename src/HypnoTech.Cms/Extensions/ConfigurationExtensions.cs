@@ -6,7 +6,7 @@ namespace HypnoTech.Cms.Extensions
     {
         public static string UploadPath(this IConfiguration configuration)
         {
-            return configuration.GetSection("UploadPath").Value;
+            return global::HypnoTech.Common.Extensions.ConfigurationExtensions.UploadPath(configuration);
         }
     }
 }

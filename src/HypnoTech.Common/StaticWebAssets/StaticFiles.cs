@@ -15,6 +15,11 @@ namespace HypnoTech.Common.StaticWebAssets
 
         public static void RegisterStaticFiles(IHostEnvironment env)
         {
+            StyleFiles.Clear();
+            MinifiedStyleFiles.Clear();
+            ScriptFiles.Clear();
+            MinifiedScriptFiles.Clear();
+
             var mappings = env.IsDevelopment() ? StaticWebAssetReader.GetLocalMappings() : StaticWebAssetReader.GetMappings();
 
             foreach (var mapping in mappings)

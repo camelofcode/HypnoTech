@@ -47,7 +47,7 @@ namespace HypnoTech.Frontend.Ajax
             _controller.ViewBag.IsPartial = true;
         }
 
-        public override Task ExecuteResultAsync(ActionContext context)
+        public override async Task ExecuteResultAsync(ActionContext context)
         {
             IViewEngine viewEngine = context.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
             IActionResultExecutor<AjaxPartialViewResult> executor = context.HttpContext.RequestServices.GetRequiredService<IActionResultExecutor<AjaxPartialViewResult>>();
@@ -72,7 +72,7 @@ namespace HypnoTech.Frontend.Ajax
                     new HtmlHelperOptions()
                 );
 
-                viewResult.View.RenderAsync(viewContext).Wait();
+                await viewResult.View.RenderAsync(viewContext);
 
                 Title = viewContext.ViewData["Title"]?.ToString();
                 Script = viewContext.ViewData["Script"]?.ToString();
@@ -85,7 +85,7 @@ namespace HypnoTech.Frontend.Ajax
                 context.HttpContext.Response.Headers[HeaderNames.Pragma] = "no-cache";
                 context.HttpContext.Response.Headers[HeaderNames.Expires] = "Thu, 1 Jan 1970 00:00:00 GMT";
 
-                return executor.ExecuteAsync(context, this);
+                await executor.ExecuteAsync(context, this);
             }
         }
 
