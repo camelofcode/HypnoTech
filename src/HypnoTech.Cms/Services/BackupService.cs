@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
-using Ionic.Zip;
 using HypnoTech.Cms.Extensions;
 using HypnoTech.Cms.Services.Interfaces;
 using HypnoTech.Common.Dal.Repositories;
@@ -29,18 +29,24 @@ namespace HypnoTech.Cms.Services
         {
             using (var stream = new MemoryStream())
             {
-                var zipFile = new ZipFile();
-
-                foreach (var mapping in FileUploadFolderCache.Mappings.Where(p => includedTypes.Contains(p.Folder)))
+                using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, true))
                 {
-                    var folderPath = Path.Combine(_basePath, mapping.Folder);
-                    if (Directory.Exists(folderPath))
+                    foreach (var mapping in FileUploadFolderCache.Mappings.Where(p => includedTypes.Contains(p.Folder)))
                     {
-                        zipFile.AddDirectory(folderPath, new DirectoryInfo(folderPath).Name);
+                        var folderPath = Path.Combine(_basePath, mapping.Folder);
+                        if (!Directory.Exists(folderPath))
+                        {
+                            continue;
+                        }
+
+                        foreach (var filePath in Directory.EnumerateFiles(folderPath, "*", SearchOption.AllDirectories))
+                        {
+                            var relativePath = Path.GetRelativePath(folderPath, filePath);
+                            var entryName = Path.Combine(mapping.Folder, relativePath).Replace('\\', '/');
+                            archive.CreateEntryFromFile(filePath, entryName, CompressionLevel.Optimal);
+                        }
                     }
                 }
-
-                zipFile.Save(stream);
 
                 return stream.ToArray();
             }

@@ -31,16 +31,9 @@ namespace HypnoTech.Common.Models.Settings
             var length = 40;
             const string valid = "jFVMApBr1agYUvGqxcCoZ8X5Wk9HPeud6TRIQbwSsiD4JmO70NLlEntyz3Kh2f";
             StringBuilder res = new StringBuilder();
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            while (length-- > 0)
             {
-                byte[] uintBuffer = new byte[sizeof(uint)];
-
-                while (length-- > 0)
-                {
-                    rng.GetBytes(uintBuffer);
-                    uint num = BitConverter.ToUInt32(uintBuffer, 0);
-                    res.Append(valid[(int) (num % (uint) valid.Length)]);
-                }
+                res.Append(valid[RandomNumberGenerator.GetInt32(valid.Length)]);
             }
 
             Code = res.ToString();

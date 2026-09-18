@@ -4,6 +4,7 @@ using HypnoTech.Cms.Mvc;
 using HypnoTech.Cms.Services;
 using HypnoTech.Cms.Services.Interfaces;
 using HypnoTech.Common.Emails;
+using HypnoTech.Common.Extensions;
 using HypnoTech.Common.Security;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +18,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NetCore.AutoRegisterDi;
 using Vereyon.Web;
 using HypnoTech.Common.Services;
 
@@ -79,9 +79,9 @@ namespace HypnoTech.Cms.Startup
             services.AddTransient(typeof(ICmsService<>), typeof(CmsService<>));
             services.AddTransient<IUploadedFilesService, UploadedFilesService>();
 
-            services.RegisterAssemblyPublicNonGenericClasses()
-                .Where(c => c.Name.EndsWith("Service"))
-                .AsPublicImplementedInterfaces();
+            services.AddPublicImplementedInterfaces(
+                typeof(StartupBuilderExtensions).Assembly,
+                type => type.Name.EndsWith("Service", StringComparison.Ordinal));
 
             services.AddTransient<LinkHelper>();
 
