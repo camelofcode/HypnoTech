@@ -1,0 +1,9 @@
+{
+  "name": "@hypnotech/media-frontend-assets",
+  "private": true,
+  "scripts": {
+    "build": "node ../../tools/build-frontend.mjs --project media",
+    "check": "node ../../tools/build-frontend.mjs --project media --check",
+    "watch": "node ../../tools/build-frontend.mjs --project media --watch"
+  }
+}

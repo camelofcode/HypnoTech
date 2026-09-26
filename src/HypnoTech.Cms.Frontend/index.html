@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Style Themes Here</title>
+    <link rel="stylesheet" href="dist/style.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                    </li>
+                </ul>
+            </div>
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </nav>
+    </div>
+    <div class="container">
+        <div class="row style-guide">
+            <div class="col-md-12 mt-4">
+                <h1>Alerts</h1>
+                <div class="alert alert-primary" role="alert">
+                    A simple primary alert—check it out!
+                </div>
+                <div class="alert alert-secondary" role="alert">
+                    A simple secondary alert—check it out!
+                </div>
+                <div class="alert alert-success" role="alert">
+                    This is a success alert with <a href="#" class="alert-link">an example link</a>
+                </div>
+                <div class="alert alert-danger" role="alert">
+                    This is a danger alert with <a href="#" class="alert-link">an example link</a>
+                </div>
+                <div class="alert alert-warning" role="alert">
+                    This is a warning alert with <a href="#" class="alert-link">an example link</a>
+                </div>
+                <div class="alert alert-info" role="alert">
+                    This is a info alert with a dismiss button too! And with a fade effect.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="alert alert-light alert-dismissible fade show" role="alert">
+                    This is a light alert with <a href="#" class="alert-link">an example link</a>
+                </div>
+                <div class="alert alert-dark" role="alert">
+                    This is a dark alert with <a href="#" class="alert-link">an example link</a>
+                    <hr>
+                    Here you have a spacer too!
+                </div>
+            </div>
+            <div class="col-md-12 mt-4 images">
+                <h1>Image classes and default card</h1>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+
+                        <div class="card shadow-lg">
+                            <img class="card-img-top" src="/images/logo-saint-gobain-square.png" alt="image">
+                            <div class="card-body">
+                                <h4 class="card-title">Jane Doe</h4>
+                                <p class="card-text">Some example text some example text. Jane Doe is an architect and she loves nature, sunlight, and building healthy living spaces.</p>
+                                <a href="javascript:void(0)" class="btn btn-dark">See Profile</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+
+                        <div class="card shadow-lg">
+                            <img class="card-img-top" src="/images/logo-saint-gobain-square.png" alt="image">
+                            <div class="card-body">
+                                <h4 class="card-title">Jane Doe</h4>
+                                <p class="card-text">Some example text some example text. Jane Doe is an architect and she loves nature, sunlight, and building healthy living spaces.</p>
+                                <a href="javascript:void(0)" class="btn btn-dark">See Profile</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+
+                        <div class="card shadow-lg">
+                            <img class="card-img-top" src="/images/logo-saint-gobain-square.png" alt="image">
+                            <div class="card-body">
+                                <h4 class="card-title">Jane Doe</h4>
+                                <p class="card-text">Some example text some example text. Jane Doe is an architect and she loves nature, sunlight, and building healthy living spaces.</p>
+                                <a href="javascript:void(0)" class="btn btn-dark">See Profile</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-6 col-sm-12 mt-4">
+                <h1>Badges and Headings</h1>
+                <h1>Example heading <span class="badge badge-primary">New</span></h1>
+                <h2>Example heading <span class="badge badge-secondary">New</span></h2>
+                <h3>Example heading <span class="badge badge-success">New</span></h3>
+                <h4>Example heading <span class="badge badge-danger">New</span></h4>
+                <h5>Example heading <span class="badge badge-warning">New</span></h5>
+                <h6>Example heading <span class="badge badge-info">New</span></h6>
+                <span class="badge badge-light">Light</span>
+                <span class="badge badge-dark">Dark</span>
+            </div>
+            <div class="col-lg-7 col-md-6 col-sm-12 mt-4 buttons-section">
+                <h1>Buttons, Dropdowns and Tooltips</h1>
+                <div class="mb-2">
+                    <button type="button" class="btn btn-dark btn-lg btn-block mb-2">Block level large button</button>
+                    <button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="bottom" title="Tooltip on bottom">Small button with tooltip</button>
+                    <button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-html="true" title="<em>Tooltip</em> <u>with</u> <b>HTML</b>">Small button with HTML tooltip</button>
+                </div>
+                <div class="mb-2">
+                    <button type="button" class="btn btn-primary">Primary</button>
+                    <button type="button" class="btn btn-secondary">Secondary</button>
+                    <button type="button" class="btn btn-success">Success</button>
+                    <button type="button" class="btn btn-danger">Danger</button>
+                    <button type="button" class="btn btn-warning">Warning</button>
+                    <button type="button" class="btn btn-info">Info</button>
+                    <button type="button" class="btn btn-light">Light</button>
+                    <button type="button" class="btn btn-dark">Dark</button>
+                    <button type="button" class="btn btn-link">Link</button>
+                </div>
+                <div class="mb-2">
+                    <button type="button" class="btn btn-outline-primary">Primary</button>
+                    <button type="button" class="btn btn-outline-secondary">Secondary</button>
+                    <button type="button" class="btn btn-outline-success">Success</button>
+                    <button type="button" class="btn btn-outline-danger">Danger</button>
+                    <button type="button" class="btn btn-outline-warning">Warning</button>
+                    <button type="button" class="btn btn-outline-info">Info</button>
+                    <button type="button" class="btn btn-outline-light">Light</button>
+                    <button type="button" class="btn btn-outline-dark">Dark</button>
+                </div>
+                <div class="mb-2">
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="#">Requires</a>
+                        <a class="dropdown-item" href="#">Popper.js</a>
+                    </div>
+
+                    <div class="btn-group dropdown">
+                        <button type="button" class="btn btn-dark">
+                            Split dropdown
+                        </button>
+                        <button type="button" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropright</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">Requires</a>
+                            <a class="dropdown-item" href="#">Popper.js</a>
+                        </div>
+                    </div>
+
+                    <!-- Split dropright button -->
+                    <div class="btn-group dropright">
+                        <button type="button" class="btn btn-dark">
+                            Split dropright
+                        </button>
+                        <button type="button" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropright</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">Requires</a>
+                            <a class="dropdown-item" href="#">Popper.js</a>
+                        </div>
+                    </div>
+
+                    <!-- Split dropleft button -->
+                    <div class="btn-group">
+                        <div class="btn-group dropleft" role="group">
+                            <button type="button" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="sr-only">Toggle Dropleft</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">Requires</a>
+                                <a class="dropdown-item" href="#">Popper.js</a>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-dark">
+                            Split dropleft
+                        </button>
+                    </div>
+
+                    <!-- Button trigger MODAL -->
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+                        Get Modal HTML
+                    </button>
+
+                    <!-- MODAL MARK-UP - ADD IT TO THE END -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">This is a modal</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <pre>
+<code class="language-html">
+&lt;button type="button" class="btn btn-dark" data-toggle="modal" data-target="#exampleModal"&gt;
+  Trigger button
+&lt;/button&gt;
+...
+&lt;div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"&gt;
+    &lt;div class="modal-dialog" role="document"&gt;
+        &lt;div class="modal-content"&gt;
+            &lt;div class="modal-header"&gt;
+                &lt;h5 class="modal-title" id="exampleModalLabel"&gt;This is a modal&lt;/h5&gt;
+                &lt;button type="button" class="close" data-dismiss="modal" aria-label="Close"&gt;
+                    &lt;span aria-hidden="true"&gt;&times;&lt;/span&gt;
+                &lt;/button&gt;
+            &lt;/div&gt;
+            &lt;div class="modal-body"&gt;
+                ...
+            &lt;/div&gt;
+            &lt;div class="modal-footer"&gt;
+                &lt;button type="button" class="btn btn-secondary" data-dismiss="modal"&gt;Close&lt;/button&gt;
+                &lt;button type="button" class="btn btn-dark"&gt;Save changes&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code>
+</pre>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-dark">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- MODAL MARK-UP - ADD IT TO THE END -->
+                </div>
+            </div>
+            <div class="col-md-12">
+                <h1>Form components</h1>
+
+                <div class="example">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <input class="form-control form-control-lg" type="text" placeholder=".form-control-lg">
+                            <input class="form-control" type="text" placeholder="Default input">
+                            <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm">
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <select class="form-control form-control-lg">
+                                <option>Large select</option>
+                            </select>
+                            <select class="form-control">
+                                <option>Default select</option>
+                            </select>
+                            <select class="form-control form-control-sm">
+                                <option>Small select</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <input class="form-control" type="text" placeholder="Readonly input here…" readonly>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">£</span>
+                                </div>
+                                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <form class="form-inline">
+                                <div class="form-group mb-2">
+                                    <label for="staticEmail2" class="sr-only">Email</label>
+                                    <input type="text" readonly class="form-control-plaintext" id="staticEmail2" value="form@inline.com">
+                                </div>
+                                <div class="form-group mx-sm-3 mb-2">
+                                    <label for="inputPassword2" class="sr-only">Password</label>
+                                    <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
+                                </div>
+                                <button type="submit" class="btn btn-dark mb-2">Confirm identity</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                    <label class="form-check-label" for="defaultCheck1">
+                        Default checkbox
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
+                    <label class="form-check-label" for="defaultCheck2">
+                        Disabled checkbox
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+                    <label class="form-check-label" for="exampleRadios1">
+                        Default radio
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+                    <label class="form-check-label" for="exampleRadios2">
+                        Second default radio
+                    </label>
+                </div>
+                <div class="form-check disabled">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3" disabled>
+                    <label class="form-check-label" for="exampleRadios3">
+                        Disabled radio
+                    </label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                    <label class="form-check-label" for="inlineCheckbox1">Inline checkbox 1</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                    <label class="form-check-label" for="inlineCheckbox2">Inline checkbox 2</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3" disabled>
+                    <label class="form-check-label" for="inlineCheckbox3">Inline checkbox 3 (disabled)</label>
+                </div>
+                <!-- Form columns example -->
+
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail4">Email</label>
+                            <input type="email" class="form-control" id="inputEmail4" placeholder="Email">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputPassword4">Password</label>
+                            <input type="password" class="form-control" id="inputPassword4" placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputAddress">Address</label>
+                        <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputAddress2">Address 2</label>
+                        <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="inputCity">City</label>
+                            <input type="text" class="form-control" id="inputCity">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputState">State</label>
+                            <select id="inputState" class="form-control">
+                                <option selected>Choose...</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="inputZip">Zip</label>
+                            <input type="text" class="form-control" id="inputZip">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="gridCheck">
+                            <label class="form-check-label" for="gridCheck">
+                                Check me out
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-dark">Sign in</button>
+                </form>
+
+                <!-- Validated forms -->
+                <form>
+                    <div class="form-row">
+                        <div class="col-md-4 mb-3">
+                            <label for="validationServer01">First name</label>
+                            <input type="text" class="form-control is-valid" id="validationServer01" placeholder="First name" value="Mark" required>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="validationServer02">Last name</label>
+                            <input type="text" class="form-control is-valid" id="validationServer02" placeholder="Last name" value="Otto" required>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="validationServerUsername">Username</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroupPrepend3"><i class="fa fa-user"></i></span>
+                                </div>
+                                <input type="text" class="form-control is-invalid" id="validationServerUsername" placeholder="Username" aria-describedby="inputGroupPrepend3" required>
+                                <div class="invalid-feedback">
+                                    Please choose a username.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="validationServer03">City</label>
+                            <input type="text" class="form-control is-invalid" id="validationServer03" placeholder="City" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid city.
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="validationServer04">State</label>
+                            <input type="text" class="form-control is-invalid" id="validationServer04" placeholder="State" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid state.
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="validationServer05">Zip</label>
+                            <input type="text" class="form-control is-invalid" id="validationServer05" placeholder="Zip" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid zip.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input is-invalid" type="checkbox" value="" id="invalidCheck3" required>
+                            <label class="form-check-label" for="invalidCheck3">
+                                Agree to terms and conditions
+                            </label>
+                            <div class="invalid-feedback">
+                                You must agree before submitting.
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-dark" type="submit">Submit form</button>
+                </form>
+
+
+                <!-- Custom File input -->
+
+                <p>Custom file input:</p>
+                <form class="was-validated">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="validatedCustomFile" required>
+                        <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
+                        <div class="invalid-feedback">Example invalid custom file feedback</div>
+                        <div class="valid-feedback">File selected</div>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="col-md-12 mt-4">
+                <h1>List Groups</h1>
+
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
+
+
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-primary">This is a primary list group item</a>
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-secondary">This is a secondary list group item</a>
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-success">This is a success list group item</a>
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-danger">This is a danger list group item</a>
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-warning">This is a warning list group item</a>
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-info">This is a info list group item</a>
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-light">This is a light list group item</a>
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-dark">This is a dark list group item</a>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Cras justo odio
+                                <span class="badge badge-primary badge-pill">14</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Dapibus ac facilisis in
+                                <span class="badge badge-primary badge-pill">2</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Morbi leo risus
+                                <span class="badge badge-primary badge-pill">1</span>
+                            </li>
+                        </ul>
+
+                        <div class="mb-4">&nbsp;</div>
+
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Cras justo odio</li>
+                            <li class="list-group-item">Dapibus ac facilisis in</li>
+                            <li class="list-group-item">Morbi leo risus</li>
+                            <li class="list-group-item">Porta ac consectetur ac</li>
+                            <li class="list-group-item">Vestibulum at eros</li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">List group item heading</h5>
+                                    <small>3 days ago</small>
+                                </div>
+                                <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                                <small>Donec id elit non mi porta.</small>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">List group item heading</h5>
+                                    <small class="text-muted">3 days ago</small>
+                                </div>
+                                <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                                <small class="text-muted">Donec id elit non mi porta.</small>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">List group item heading</h5>
+                                    <small class="text-muted">3 days ago</small>
+                                </div>
+                                <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                                <small class="text-muted">Donec id elit non mi porta.</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 mt-4">
+                <h1>Tables</h1>
+
+                <div class="row">
+                    <div class="col-lg-6 col-sm-6 col-xs-12 mb-2">
+
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Compliant</th>
+                                    <th>Approved</th>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td>Striped</td>
+                                <td><i class="icon-check-circle text-success"></i></td>
+                                <td><i class="icon-check-circle text-success"></i></td>
+                            </tr>
+
+                            <tr>
+                                <td>Table</td>
+                                <td><i class="icon-times-circle text-danger"></i></td>
+                                <td><i class="icon-times-circle text-danger"></i></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="col-lg-6 col-sm-6 col-xs-12 mb-2">
+                        <table class="table table-dark">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Dark</th>
+                                    <th scope="col">Table</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Jacob</td>
+                                    <td>Thornton</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-lg-6 col-sm-6 col-xs-12 mb-2">
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Dark</th>
+                                    <th scope="col">THead</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Jacob</td>
+                                    <td>Thornton</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-lg-6 col-sm-6 col-xs-12 mb-2">
+                        <table class="table table-striped table-dark">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Striped</th>
+                                    <th scope="col">Table</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Jacob</td>
+                                    <td>Thornton</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="dist/script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,219 @@
+@import "variables.scss";
+
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+
+
+// OVERRIDE SIDEBAR to peek through
+
+#sidebar-wrapper {
+    margin-left: -12rem;
+}
+
+#page-content-wrapper {
+    margin-left: -44px;
+    padding-left: 44px;
+}
+
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: 0;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -12rem;
+    }
+}
+// OVERRIDE SIDEBAR end
+
+//Sticky footer by Ryan Fait
+
+html, body {
+    height: 100%;
+}
+
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto (-$footer-height); /* the bottom margin is the negative value of the footer's height */
+}
+
+.footer, .push {
+    height: $footer-height; /* .push must be the same height as .footer */
+}
+
+#menu-toggle {
+    z-index:1000;
+    position:relative
+}
+//Bootstrap fix.
+.input-group.is-invalid {
+    ~ .invalid-feedback {
+        display: block;
+    }
+}
+
+.m-w-250 {
+    max-width: 250px;
+}
+
+.table-fixed {
+    table-layout:fixed;
+}
+
+.pointer {
+    cursor:pointer;
+}
+
+.text-line-through {
+    text-decoration: line-through;
+}
+
+.break-word {
+    word-break: break-word;
+}
+
+/* The switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 28px;
+
+    span {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 20px;
+
+        &:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+    }
+
+    input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        &:checked + span {
+            background-color: $color-primary;
+
+            &:before {
+                -webkit-transform: translateX(20px);
+                -ms-transform: translateX(20px);
+                transform: translateX(20px);
+            }
+        }
+
+        &:focus + span {
+            box-shadow: 0 0 1px $color-primary;
+        }
+    }
+}
+
+.list-group-item.active {
+    &, &:hover, &:focus {
+        background: $color-primary !important;
+    }
+}
+
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    padding-top: 25px;
+    height: 0;
+
+    iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+}
+
+.slow-loader {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(255, 255, 255, .5);
+    z-index: 10000;
+
+    h1 {
+        width: 280px;
+        height: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -140px;
+        margin-left: -50px;
+        text-align: center;
+        position: relative;
+        font-size: 2em;
+
+        i {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -22px;
+        }
+    }
+}
+
+.noselect {
+    user-select: none; 
+}

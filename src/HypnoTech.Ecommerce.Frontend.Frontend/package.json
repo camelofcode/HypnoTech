@@ -1,0 +1,9 @@
+{
+  "name": "@hypnotech/ecommerce-frontend-assets",
+  "private": true,
+  "scripts": {
+    "build": "node ../../tools/build-frontend.mjs --project ecommerce",
+    "check": "node ../../tools/build-frontend.mjs --project ecommerce --check",
+    "watch": "node ../../tools/build-frontend.mjs --project ecommerce --watch"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "@hypnotech/cms-frontend-assets",
+  "private": true,
+  "scripts": {
+    "build": "node ../../tools/build-frontend.mjs --project cms",
+    "check": "node ../../tools/build-frontend.mjs --project cms --check",
+    "watch": "node ../../tools/build-frontend.mjs --project cms --watch"
+  }
+}
