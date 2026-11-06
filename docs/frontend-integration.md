@@ -19,7 +19,6 @@ services.AddMvc();
 services.AddMediaFrontend<DemoAudioTrackEnrichmentService>(Configuration);
 services.AddEcommerce(Configuration);
 
-services.UseMongoDbForCms(Configuration);
 services.UseMongoDbForCommon(Configuration);
 services.UseMongoDbForEcommerce(Configuration);
 services.UseMongoDbForMedia(Configuration);
@@ -69,6 +68,17 @@ development and minified files, and `<site-styles>` / `<site-scripts>` select th
 versions for the current environment. The production sites follow the same source and
 generated-output pattern.
 
+Keep CMS editing concerns out of the public website's dependency graph. Shared model
+projects can contain model types and BSON mappings, but fluent `FormClassMapping`
+registrations belong to the Admin host. The public website should use its own focused
+read repositories over `HypnoTech.MongoDb`, as Lantern House and the production sites
+do, rather than referencing `HypnoTech.Cms` or `HypnoTech.Cms.MongoDb`.
+
+This is also an asset boundary: `<hypnotech-scripts>` automatically emits bundles from
+referenced HypnoTech static-web-asset projects. A public site that references the CMS
+web project can therefore expose its admin runtime and execute TinyMCE-dependent code.
+Do not filter around that dependency; remove it from the public host.
+
 ## Partial-page navigation
 
 Partial navigation is progressive enhancement. A normal link remains a valid URL and
@@ -81,12 +91,12 @@ Derive navigable controllers from `SpaController` and return `AjaxPartialView`:
 ```csharp
 public sealed class ArticlesController : SpaController
 {
-    private readonly ICmsRepository<Article> _articles;
+    private readonly IArticleRepository _articles;
 
-    public ArticlesController(ICmsRepository<Article> articles) => _articles = articles;
+    public ArticlesController(IArticleRepository articles) => _articles = articles;
 
     public IActionResult Index() =>
-        AjaxPartialView(_articles.GetAll<Article>().ToList());
+        AjaxPartialView(_articles.GetAll().ToList());
 }
 ```
 
@@ -196,20 +206,43 @@ The player subscribes to `player:playTrack`, selects the matching CMS track and 
 it. Page code does not need a reference to the player view model. Because the audio
 element lives outside `#content`, its playback and position survive partial navigation.
 
-## Basket and cart page
+## Persistent basket and cart fallback
 
-Render the counter outside `#content` and configure the cart once in the layout:
+Render both the counter and the primary basket UI outside `#content`, then configure
+the cart once in the layout. The link retains a real `/Cart` fallback, but host
+JavaScript prevents its normal navigation when enhanced behavior is available and
+opens the drawer instead:
 
 ```razor
-<a asp-controller="Cart" asp-action="Index" id="cart-counter" data-navigo>
+<a asp-controller="Cart" asp-action="Index" id="cart-counter"
+   aria-expanded="false" aria-controls="basket-drawer">
     Basket <span data-bind="text: count">0</span>
 </a>
 
+<aside id="basket-drawer" aria-hidden="true">
+    <div id="cart">
+        <p data-bind="visible: items().length === 0">Your basket is empty.</p>
+        <div data-bind="foreach: items">
+            <strong data-bind="text: displayName"></strong>
+            <span data-bind="text: formattedRowPrice"></span>
+            <button type="button" data-bind="click: $parent.removeItem">Remove</button>
+        </div>
+        <strong data-bind="text: formattedSubtotal"></strong>
+        <a asp-controller="Checkout" asp-action="Index">Checkout</a>
+        <button type="button" data-bind="click: clearCart">Clear basket</button>
+    </div>
+</aside>
+
 <hypnotech-cart-config
-    cart-element-id="@(ViewData["CartElementId"] as string)"
+    cart-element-id="cart"
     cart-counter-element-id="cart-counter"
     cookie-name="my-site-cart" />
 ```
+
+Keep the checkout link free of `data-navigo`: checkout is an intentional fresh-document
+boundary. Synchronize `aria-expanded` and `aria-hidden` when the host opens or closes
+the drawer. Lantern House also opens the basket after `cart:addItem` on wider screens,
+closes it on `cart:emptied`, and makes its player and basket drawers mutually exclusive.
 
 Product controls publish an item summary; the engine writes its configured cart cookie
 and publishes `cart:updated`:
@@ -221,15 +254,14 @@ events.trigger("cart:addItem", {
 });
 ```
 
-A cart page inserted after initial load needs its Knockout bindings applied. Set a page
-script name in the Razor view:
+If the host retains a full `/Cart` fallback page, give its root a different ID and set
+a page script name in the Razor view:
 
 ```razor
 @{
-    ViewData["CartElementId"] = "cart";
     ViewData["Script"] = "siteCart";
 }
-<section id="cart" data-bind="foreach: items">...</section>
+<section id="cart-page" data-bind="foreach: items">...</section>
 ```
 
 Define that named script in a JavaScript file loaded by the persistent layout, not an
@@ -238,7 +270,7 @@ inline script inside replaceable HTML:
 ```javascript
 window.siteCart = {
     execute: function () {
-        const element = document.getElementById("cart");
+        const element = document.getElementById("cart-page");
         if (!element || ko.dataFor(element)) return;
 
         window.cartModel = window.cartModel || new CartViewModel();
@@ -248,8 +280,9 @@ window.siteCart = {
 };
 ```
 
-The same function runs on an initial full cart page and after partial navigation. The
-binding check prevents applying Knockout twice.
+The fallback uses the existing persistent `window.cartModel`, so the drawer and page
+show the same state. The same function runs on an initial full cart page and after
+partial navigation; the binding check prevents applying Knockout twice.
 
 ## Code that survives content replacement
 
@@ -297,6 +330,7 @@ control.
 6. Launch a track from a page-level button and confirm the persistent player selects it.
 7. Navigate to a product and Media page more than once; confirm delegated controls do
    not duplicate handlers.
-8. Navigate into the cart and confirm its bindings and totals populate.
+8. Open the basket drawer and confirm items, removal, clearing and totals update; load
+   `/Cart` directly and confirm the fallback page binds to the same model.
 9. Confirm checkout, downloads and external URLs still perform normal navigation.
 10. Repeat the primary journey at a narrow viewport and with keyboard controls.

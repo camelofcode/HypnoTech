@@ -1,7 +1,7 @@
 (() => {
     window.demoCart = {
         execute: function () {
-            const cart = document.getElementById("cart");
+            const cart = document.getElementById("cart-page");
             if (!cart || ko.dataFor(cart)) return;
 
             window.cartModel = window.cartModel || new CartViewModel();
@@ -15,6 +15,8 @@
     const playerDrawer = document.getElementById("audio-player");
     const playerToggle = document.querySelector(".player-drawer-toggle");
     const playerToggleLabel = playerToggle?.querySelector(".visually-hidden");
+    const basketDrawer = document.getElementById("basket-drawer");
+    const basketToggle = document.getElementById("cart-counter");
     const lightbox = document.querySelector("[data-video-lightbox]");
     const lightboxFrame = lightbox?.querySelector("iframe");
     const lightboxTitle = lightbox?.querySelector("[data-video-lightbox-title]");
@@ -25,10 +27,19 @@
     };
 
     const setPlayerOpen = open => {
+        if (open) setBasketOpen(false);
         playerDrawer?.classList.toggle("is-open", open);
         playerDrawer?.setAttribute("aria-hidden", String(!open));
         playerToggle?.setAttribute("aria-expanded", String(open));
         if (playerToggleLabel) playerToggleLabel.textContent = `${open ? "Close" : "Open"} audio player`;
+    };
+
+    const setBasketOpen = open => {
+        if (open) setPlayerOpen(false);
+        basketDrawer?.classList.toggle("is-open", open);
+        basketDrawer?.setAttribute("aria-hidden", String(!open));
+        basketToggle?.setAttribute("aria-expanded", String(open));
+        playerToggle?.classList.toggle("is-hidden", open);
     };
 
     const closeLightbox = () => {
@@ -43,6 +54,13 @@
     playerToggle?.addEventListener("click", () => {
         setPlayerOpen(!playerDrawer?.classList.contains("is-open"));
     });
+
+    basketToggle?.addEventListener("click", event => {
+        event.preventDefault();
+        setBasketOpen(!basketDrawer?.classList.contains("is-open"));
+    });
+
+    basketDrawer?.querySelector("[data-cart-close]")?.addEventListener("click", () => setBasketOpen(false));
 
     document.addEventListener("click", event => {
         const addToCart = event.target.closest(".js-add-to-cart");
@@ -82,5 +100,9 @@
     });
 
     events.on("page-loaded", () => setMenuOpen(false));
+    events.on("cart:addItem", () => {
+        if (window.matchMedia("(min-width: 821px)").matches) setBasketOpen(true);
+    });
+    events.on("cart:emptied", () => setBasketOpen(false));
     events.trigger("cart:updated");
 })();

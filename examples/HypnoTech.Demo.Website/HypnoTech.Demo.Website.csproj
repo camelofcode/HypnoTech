@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../HypnoTech.Demo.Models/HypnoTech.Demo.Models.csproj" />
-    <ProjectReference Include="../../src/Cms/HypnoTech.Cms.MongoDb/HypnoTech.Cms.MongoDb.csproj" />
+    <ProjectReference Include="../../src/Persistence/HypnoTech.MongoDb/HypnoTech.MongoDb.csproj" />
     <ProjectReference Include="../../src/Common/HypnoTech.Common.Dal.MongoDb/HypnoTech.Common.Dal.MongoDb.csproj" />
     <ProjectReference Include="../../src/Ecommerce/HypnoTech.Ecommerce.Dal.MongoDb/HypnoTech.Ecommerce.Dal.MongoDb.csproj" />
     <ProjectReference Include="../../src/Ecommerce/HypnoTech.Ecommerce.Frontend/HypnoTech.Ecommerce.Frontend.csproj" />

@@ -58,6 +58,13 @@ This seam is intended to support other persistence providers later. A host also 
 the relevant CMS, Ecommerce, Media, and frontend registration/configuration methods.
 The Phase 4 example applications will become the canonical executable composition.
 
+Admin and public website hosts have different dependency boundaries. The Admin host
+owns `FormClassMapping` registrations and the CMS repository provider. A public website
+shares neutral model/BSON metadata but uses focused read repositories over the base
+persistence project; it must not reference `HypnoTech.Cms` or
+`HypnoTech.Cms.MongoDb`. Besides keeping edit behavior server-side, this prevents CMS
+controllers and admin static assets from flowing into the public application.
+
 ## Frontend assets
 
 Authored JavaScript and SCSS live in the frontend-asset directories, alongside pinned

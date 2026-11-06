@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/Cms/HypnoTech.Cms/HypnoTech.Cms.csproj" />
     <ProjectReference Include="../../src/Common/HypnoTech.Common/HypnoTech.Common.csproj" />
     <ProjectReference Include="../../src/Persistence/HypnoTech.MongoDb/HypnoTech.MongoDb.csproj" />
   </ItemGroup>

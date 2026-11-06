@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using HypnoTech.Demo.Admin;
+using HypnoTech.Demo.Models;
 using HypnoTech.Demo.Website.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -26,6 +27,20 @@ public sealed class DemoExampleTests : IClassFixture<DemoMongoFixture>
     public DemoExampleTests(DemoMongoFixture mongo)
     {
         _mongo = mongo;
+    }
+
+    [Fact]
+    public void Public_example_projects_do_not_reference_cms_web_assemblies()
+    {
+        var websiteReferences = typeof(DemoWebsiteProgram).Assembly.GetReferencedAssemblies();
+        var modelReferences = typeof(Article).Assembly.GetReferencedAssemblies();
+
+        Assert.DoesNotContain(
+            websiteReferences,
+            reference => reference.Name.StartsWith("HypnoTech.Cms", StringComparison.Ordinal));
+        Assert.DoesNotContain(
+            modelReferences,
+            reference => reference.Name.StartsWith("HypnoTech.Cms", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -115,6 +130,9 @@ public sealed class DemoExampleTests : IClassFixture<DemoMongoFixture>
             Assert.Equal("text/html", fullResponse.Content.Headers.ContentType?.MediaType);
             Assert.Contains("<!doctype html>", fullHtml, StringComparison.OrdinalIgnoreCase);
             Assert.Contains("id=\"content\"", fullHtml, StringComparison.Ordinal);
+            Assert.Contains("data-testid=\"persistent-basket\"", fullHtml, StringComparison.Ordinal);
+            Assert.Contains("/_content/HypnoTech.Frontend/js/", fullHtml, StringComparison.Ordinal);
+            Assert.DoesNotContain("/_content/HypnoTech.Cms/js/", fullHtml, StringComparison.Ordinal);
 
             using var partialRequest = new HttpRequestMessage(HttpMethod.Get, "/Articles");
             partialRequest.Headers.TryAddWithoutValidation("X-Partial-Request", "1");

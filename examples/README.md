@@ -20,8 +20,12 @@ repository. Nothing was copied or adapted from a production client site.
   reorder, plus editable site and email configuration.
 - A responsive original website with stable `data-testid` hooks for the later
   Playwright phase.
-- Progressive partial-page navigation with full-document fallback, a persistent audio
-  player, page-level track launch events, and a deliberately separate checkout flow.
+- Progressive partial-page navigation with full-document fallback, persistent audio
+  player and basket drawers, page-level track launch events, and a deliberately
+  separate checkout flow.
+- A deliberate Admin/Website boundary: shared models and BSON metadata are neutral,
+  fluent edit mappings remain in Admin, and the public site uses focused read
+  repositories without referencing CMS web or admin assemblies.
 
 ## Developer guides
 

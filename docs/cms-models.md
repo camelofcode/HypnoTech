@@ -88,7 +88,7 @@ the validators exposed by that mapping type.
 The current mapping families include text, textarea, rich text, date, checkbox,
 money, hidden, generated and read-only members; static, repository-backed and nested
 selects; image and file uploads; photo galleries; and repeatable nested lists. See
-[`DemoCmsMappings.cs`](../examples/HypnoTech.Demo.Models/DemoCmsMappings.cs) for
+[`DemoCmsMappings.cs`](../examples/HypnoTech.Demo.Admin/DemoCmsMappings.cs) for
 working examples rather than treating this list as pseudocode.
 
 ## 3. Map MongoDB persistence
@@ -142,6 +142,12 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
 Applications that use Common, Media or Ecommerce data register those modules and
 their provider extensions as well. The complete composition is in
 [`examples/HypnoTech.Demo.Admin/Startup.cs`](../examples/HypnoTech.Demo.Admin/Startup.cs).
+
+Keep this fluent edit mapping in the Admin project. A shared model project can contain
+the model classes and BSON mapping used by both applications, but the public website
+should not reference `HypnoTech.Cms` or `HypnoTech.Cms.MongoDb`. Give the website small
+read repositories over `HypnoTech.MongoDb` for the data it renders; this prevents admin
+controllers, form metadata, and static assets from entering the public host.
 
 Mappings are stored in process-wide registries. Register each mapping once, or use the
 idempotent guard shown by `DemoCmsMappings.Register`, especially in test hosts.

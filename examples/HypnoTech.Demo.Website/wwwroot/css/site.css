@@ -468,6 +468,11 @@ h3 {
   font-size: 1.35rem;
 }
 
+.player-drawer-toggle.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .persistent-player {
   position: fixed;
   z-index: 30;
@@ -492,6 +497,91 @@ h3 {
 
 .persistent-player .audio-now-playing {
   padding-right: 3.6rem;
+}
+
+.persistent-cart {
+  position: fixed;
+  z-index: 32;
+  top: 4.7rem;
+  right: 0;
+  width: min(29rem, 100% - 1rem);
+  max-height: calc(100vh - 5.7rem);
+  overflow: auto;
+  padding: 1.3rem;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius) 0 0 var(--radius);
+  background: var(--cream);
+  box-shadow: 0 24px 80px rgba(29, 32, 34, 0.28);
+  transform: translateX(calc(100% + 2rem));
+  transition: transform 0.24s ease;
+}
+
+.persistent-cart.is-open {
+  transform: translateX(0);
+}
+
+.drawer-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.drawer-heading h2 {
+  margin: 0;
+  font-size: 2.4rem;
+}
+
+.drawer-heading button {
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.drawer-cart-items {
+  max-height: 45vh;
+  overflow: auto;
+}
+
+.drawer-cart-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.drawer-cart-row span {
+  display: block;
+  color: rgba(29, 32, 34, 0.65);
+  font-size: 0.86rem;
+}
+
+.drawer-cart-row > div:last-child {
+  text-align: right;
+}
+
+.drawer-cart-row .text-button {
+  display: block;
+  margin-left: auto;
+}
+
+.drawer-cart-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  font-size: 1.1rem;
+}
+
+.persistent-cart .button {
+  width: 100%;
+  text-align: center;
 }
 
 .audio-now-playing {
@@ -919,6 +1009,17 @@ h3 {
     transform: translateY(calc(100% + 2rem));
   }
   .persistent-player.is-open {
+    transform: translateY(0);
+  }
+  .persistent-cart {
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    max-height: 82vh;
+    border-radius: var(--radius) var(--radius) 0 0;
+    transform: translateY(calc(100% + 2rem));
+  }
+  .persistent-cart.is-open {
     transform: translateY(0);
   }
 }

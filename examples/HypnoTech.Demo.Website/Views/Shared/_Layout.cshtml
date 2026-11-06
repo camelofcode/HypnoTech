@@ -23,7 +23,7 @@
             {
                 <a href="@link.Url" data-navigation-key="@link.Key" data-navigo>@link.Text</a>
             }
-            <a class="cart-link" asp-controller="Cart" asp-action="Index" id="cart-counter" data-navigo>Basket <span data-bind="text: count">0</span></a>
+            <a class="cart-link" asp-controller="Cart" asp-action="Index" id="cart-counter" aria-expanded="false" aria-controls="basket-drawer">Basket <span data-bind="text: count">0</span></a>
         </nav>
     </header>
 
@@ -45,6 +45,28 @@
         </div>
         <div class="audio-playlist" data-bind="foreach: tracks">
             <button type="button" data-bind="click: $parent.selectTrack, css: { 'is-current': $parent.isCurrent($data) }"><span data-bind="text: title"></span></button>
+        </div>
+    </aside>
+
+    <aside id="basket-drawer" class="persistent-cart" aria-label="Basket" data-testid="persistent-basket" aria-hidden="true">
+        <div class="drawer-heading">
+            <div><span class="eyebrow">Demo ecommerce</span><h2>Basket</h2></div>
+            <button type="button" data-cart-close aria-label="Close basket">Close</button>
+        </div>
+        <div id="cart">
+            <p data-bind="visible: items().length === 0">Your basket is empty.</p>
+            <div class="drawer-cart-items" data-bind="foreach: items" data-testid="drawer-cart-items">
+                <div class="drawer-cart-row">
+                    <div><strong data-bind="text: displayName"></strong><span>Quantity <span data-bind="text: quantity"></span></span></div>
+                    <div><strong data-bind="text: formattedRowPrice"></strong><button class="text-button" type="button" data-bind="click: $parent.removeItem">Remove</button></div>
+                </div>
+            </div>
+            <div class="drawer-cart-summary">
+                <span>Subtotal</span><strong data-bind="text: formattedSubtotal">£0.00</strong>
+            </div>
+            <a class="button button-primary" asp-controller="Checkout" asp-action="Index" data-bind="css: { disabled: items().length === 0 }">Review demo checkout</a>
+            <button class="text-button" type="button" data-bind="click: clearCart, visible: items().length > 0">Clear basket</button>
+            <p class="fine-print">No payment provider is connected. Checkout demonstrates calculation only.</p>
         </div>
     </aside>
 
@@ -75,7 +97,7 @@
     <hypnotech-scripts site-name="Lantern House"></hypnotech-scripts>
     <hypnotech-player-config player-element-id="audio-player" />
     <hypnotech-cart-config
-        cart-element-id="@(ViewData["CartElementId"] as string)"
+        cart-element-id="cart"
         cart-counter-element-id="cart-counter"
         cookie-name="hypnotech-demo-cart" />
     <site-scripts></site-scripts>

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using HypnoTech.Cms;
 using HypnoTech.Common.Extensions;
+using HypnoTech.Demo.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace HypnoTech.Demo.Models;
+namespace HypnoTech.Demo.Admin;
 
 public static class DemoCmsMappings
 {

@@ -1,6 +1,5 @@
 @{
     ViewData["Title"] = "Basket";
-    ViewData["CartElementId"] = "cart";
     ViewData["Script"] = "demoCart";
 }
 <header class="page-header">
@@ -8,7 +7,7 @@
     <h1>Your basket</h1>
     <p>The engine stores item identifiers in its cart cookie and recalculates names and prices from MongoDB.</p>
 </header>
-<section id="cart" class="section cart-layout" data-testid="cart-page">
+<section id="cart-page" class="section cart-layout" data-testid="cart-page">
     <div>
         <h2>Items</h2>
         <p data-bind="visible: items().length === 0">Your basket is empty.</p>
