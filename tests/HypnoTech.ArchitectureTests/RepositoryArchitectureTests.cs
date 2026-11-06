@@ -63,7 +63,9 @@ public sealed class RepositoryArchitectureTests
             "src/Cms",
             "src/Common",
             "src/Persistence",
-            "src/Ecommerce"
+            "src/Ecommerce",
+            "src/Media",
+            "examples/HypnoTech.Demo.Website"
         };
         var blockingPattern = new Regex(
             @"\.Wait\s*\(|\.GetAwaiter\s*\(\s*\)\s*\.GetResult\s*\(\s*\)|\.Result\b(?!\s*[=<])",

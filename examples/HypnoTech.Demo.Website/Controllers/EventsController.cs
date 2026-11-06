@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using HypnoTech.Demo.Models;
 using HypnoTech.Demo.Website.Dal;
 using HypnoTech.Frontend.Attributes;
@@ -17,13 +18,16 @@ public sealed class EventsController : SpaController
     }
 
     [NavigationLink("events")]
-    public IActionResult Index() =>
-        AjaxPartialView(_events.GetAll().OrderBy(item => item.StartsAt).ToList());
+    public async Task<IActionResult> Index()
+    {
+        var events = await _events.GetAllAsync(HttpContext.RequestAborted);
+        return AjaxPartialView(events.OrderBy(item => item.StartsAt).ToList());
+    }
 
     [HttpGet("events/{slug}")]
-    public IActionResult Details(string slug)
+    public async Task<IActionResult> Details(string slug)
     {
-        var item = _events.GetBySlug(slug);
+        var item = await _events.GetBySlugAsync(slug, HttpContext.RequestAborted);
         return item == null ? NotFound() : AjaxPartialView(item);
     }
 }

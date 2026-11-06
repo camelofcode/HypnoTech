@@ -36,6 +36,11 @@ integration, architecture, or future browser tests. It defines the shared conven
 for synthetic fixtures, static registry isolation, MongoDB compatibility targets, and
 characterisation-first assertions.
 
+Run the `author-async-request-paths` skill when adding or revising controllers,
+services, repository contracts, or persistence implementations. It defines the
+project's inheritance, module-boundary, native-async, cancellation, and retained-sync
+compatibility conventions.
+
 ## Source and generated assets
 
 Authored browser source is under the frontend-asset directories such as

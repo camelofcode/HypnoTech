@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using HypnoTech.Demo.Models;
 using HypnoTech.Demo.Website.Dal;
 using HypnoTech.Frontend.Attributes;
@@ -17,6 +18,9 @@ public sealed class ArtistsController : SpaController
     }
 
     [NavigationLink("artists")]
-    public IActionResult Index() =>
-        AjaxPartialView(_artists.GetAll().OrderBy(item => item.Order).ToList());
+    public async Task<IActionResult> Index()
+    {
+        var artists = await _artists.GetAllAsync(HttpContext.RequestAborted);
+        return AjaxPartialView(artists.OrderBy(item => item.Order).ToList());
+    }
 }

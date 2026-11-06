@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Media.Models;
 
 namespace HypnoTech.Media.Frontend.Services
@@ -6,6 +8,11 @@ namespace HypnoTech.Media.Frontend.Services
     public interface IAudioTrackEnrichmentService
     {
         ICollection<AudioTrack> EnrichAudioTracks(ICollection<AudioTrack> tracks);
+
+        Task<ICollection<AudioTrack>> EnrichAudioTracksAsync(
+            ICollection<AudioTrack> tracks,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(EnrichAudioTracks(tracks));
     }
 
     public class DefaultAudioTrackEnrichmentService : IAudioTrackEnrichmentService
