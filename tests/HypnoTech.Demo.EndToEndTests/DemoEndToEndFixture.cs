@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
@@ -24,6 +26,10 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
         .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(MongoPort))
         .Build();
     private readonly ConcurrentQueue<string> _applicationLogs = new();
+    private readonly string _certificatePassword = Guid.NewGuid().ToString("N");
+    private readonly string _certificatePath = Path.Combine(
+        Path.GetTempPath(),
+        $"hypnotech-e2e-{Guid.NewGuid():N}.pfx");
     private readonly string _databaseName = $"hypnotech_e2e_{Guid.NewGuid():N}";
     private readonly string _uploadPath = Path.Combine(
         Path.GetTempPath(),
@@ -34,6 +40,15 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
 
     public DemoEndToEndFixture()
     {
+        BrowserName = (Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSER") ?? "chromium")
+            .ToLowerInvariant();
+        if (BrowserName is not ("chromium" or "firefox" or "webkit"))
+        {
+            throw new ArgumentException(
+                $"Unsupported PLAYWRIGHT_BROWSER value '{BrowserName}'. " +
+                "Expected chromium, firefox, or webkit.");
+        }
+
         RepositoryRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../.."));
         AdminPort = GetAvailablePort();
         WebsitePort = GetAvailablePort();
@@ -45,15 +60,18 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
 
     public int WebsitePort { get; }
 
-    public string AdminUrl => $"http://localhost:{AdminPort}";
+    public string AdminUrl => $"https://localhost:{AdminPort}";
 
     public string WebsiteUrl => $"http://localhost:{WebsitePort}";
+
+    public string BrowserName { get; }
 
     public IBrowser Browser { get; private set; }
 
     public async ValueTask InitializeAsync()
     {
         Directory.CreateDirectory(_uploadPath);
+        CreateHttpsCertificate();
         await _mongo.StartAsync();
 
         _adminProcess = StartApplication(
@@ -69,7 +87,13 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
         await WaitForReadyAsync("website", WebsiteUrl, _websiteProcess);
 
         _playwright = await Playwright.CreateAsync();
-        Browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        var browserType = BrowserName switch
+        {
+            "firefox" => _playwright.Firefox,
+            "webkit" => _playwright.Webkit,
+            _ => _playwright.Chromium
+        };
+        Browser = await browserType.LaunchAsync(new BrowserTypeLaunchOptions
         {
             Headless = true
         });
@@ -90,6 +114,11 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
         if (Directory.Exists(_uploadPath))
         {
             Directory.Delete(_uploadPath, recursive: true);
+        }
+
+        if (File.Exists(_certificatePath))
+        {
+            File.Delete(_certificatePath);
         }
     }
 
@@ -134,7 +163,14 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
         startInfo.ArgumentList.Add("--no-launch-profile");
 
         startInfo.Environment["ASPNETCORE_ENVIRONMENT"] = "Development";
-        startInfo.Environment["ASPNETCORE_URLS"] = $"http://127.0.0.1:{port}";
+        startInfo.Environment["ASPNETCORE_URLS"] = name == "admin"
+            ? $"https://127.0.0.1:{port}"
+            : $"http://127.0.0.1:{port}";
+        if (name == "admin")
+        {
+            startInfo.Environment["ASPNETCORE_Kestrel__Certificates__Default__Path"] = _certificatePath;
+            startInfo.Environment["ASPNETCORE_Kestrel__Certificates__Default__Password"] = _certificatePassword;
+        }
         startInfo.Environment["Mongo__Server"] = _mongo.Hostname;
         startInfo.Environment["Mongo__Port"] = _mongo.GetMappedPublicPort(MongoPort).ToString();
         startInfo.Environment["Mongo__Database"] = _databaseName;
@@ -154,7 +190,11 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
 
     private async Task WaitForReadyAsync(string name, string url, Process process)
     {
-        using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
+        using var handler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        };
+        using var client = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(2) };
         for (var attempt = 0; attempt < 120; attempt++)
         {
             if (process.HasExited)
@@ -195,11 +235,41 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
         }
     }
 
+    private void CreateHttpsCertificate()
+    {
+        using var key = RSA.Create(2048);
+        var request = new CertificateRequest(
+            "CN=localhost",
+            key,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1);
+        request.CertificateExtensions.Add(
+            new X509BasicConstraintsExtension(false, false, 0, false));
+        request.CertificateExtensions.Add(
+            new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, false));
+        request.CertificateExtensions.Add(
+            new X509EnhancedKeyUsageExtension(
+                new OidCollection { new("1.3.6.1.5.5.7.3.1") },
+                false));
+
+        var subjectAlternativeName = new SubjectAlternativeNameBuilder();
+        subjectAlternativeName.AddDnsName("localhost");
+        subjectAlternativeName.AddIpAddress(IPAddress.Loopback);
+        request.CertificateExtensions.Add(subjectAlternativeName.Build());
+
+        using var certificate = request.CreateSelfSigned(
+            DateTimeOffset.UtcNow.AddMinutes(-5),
+            DateTimeOffset.UtcNow.AddDays(1));
+        File.WriteAllBytes(
+            _certificatePath,
+            certificate.Export(X509ContentType.Pfx, _certificatePassword));
+    }
+
     private string GetArtifactDirectory(string testName)
     {
         var safeName = string.Concat(testName.Select(character =>
             char.IsLetterOrDigit(character) || character is '-' or '_' ? character : '_'));
-        return Path.Combine(RepositoryRoot, "TestResults", "Playwright", safeName);
+        return Path.Combine(RepositoryRoot, "TestResults", "Playwright", BrowserName, safeName);
     }
 
     private static int GetAvailablePort()

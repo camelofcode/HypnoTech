@@ -60,11 +60,11 @@ dotnet test tests/HypnoTech.Demo.IntegrationTests -c Release
 ## Focused browser suite
 
 The Playwright suite starts one pinned MongoDB 8.0 container and the real Lantern
-House Admin and Website on dynamic ports. Five isolated Chromium journeys cover
+House Admin and Website on dynamic ports. Five isolated journeys cover
 authentication and authorization, dynamic CMS authoring and ordering, a real image
 upload reaching the public site, Media, server-calculated basket/checkout totals, and
-mobile navigation. The checkout journey cannot submit an order or contact a payment
-provider.
+mobile navigation in Chromium, Firefox, and WebKit. The checkout journey cannot submit
+an order or contact a payment provider.
 
 With rootless Podman, one command builds the hosts and tests, installs the Chromium
 revision pinned by Playwright when needed, and runs the suite:
@@ -73,8 +73,18 @@ revision pinned by Playwright when needed, and runs the suite:
 ./tests/run-end-to-end.sh
 ```
 
+Chromium is the quick default. Use `--browser firefox`, `--browser webkit`, or
+`--all-browsers` to select another engine or run all three. The explicit browser form
+is suitable for a later GitHub Actions matrix. The admin test host uses ephemeral
+HTTPS so the engine's secure authentication-cookie policy is tested without being
+weakened for local automation.
+
+Use a Playwright-supported Ubuntu/Debian host for the complete native three-engine
+run. Fedora can run the Chromium and Firefox checks, but its WebKit dependencies have
+different library ABIs; the supported Ubuntu CI run is the WebKit source of truth.
+
 Failures retain a screenshot, trace, browser errors, and application logs under
-`TestResults/Playwright/<test-name>/`. Detailed trace instructions are in
+`TestResults/Playwright/<browser>/<test-name>/`. Detailed trace instructions are in
 [`HypnoTech.Demo.EndToEndTests/README.md`](HypnoTech.Demo.EndToEndTests/README.md).
 
 ## Full suite and coverage

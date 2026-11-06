@@ -546,7 +546,10 @@ example applications are the browser-test system under test.
 - [x] Start MongoDB with Testcontainers.
 - [x] Start example applications on dynamically allocated ports.
 - [x] Use isolated browser contexts.
-- [x] Run Chromium on Linux initially.
+- [x] Run Chromium, Firefox, and WebKit on Linux; use a supported Ubuntu environment
+      as the WebKit source of truth.
+- [x] Serve the admin test host through ephemeral HTTPS so its secure authentication
+      cookie is covered consistently by every engine.
 - [x] Capture traces, screenshots, console errors, and application logs on failure.
 - [x] Keep the suite deliberately focused rather than exhaustive.
 
@@ -666,7 +669,12 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [ ] `build`: SDK from `global.json`, restore, and Release build.
 - [ ] `unit-tests`: xUnit tests and coverage artifact.
 - [ ] `mongo-integration`: production and supported-current MongoDB images.
-- [ ] `end-to-end`: Playwright Chromium with failure artifacts.
+- [ ] `end-to-end`: required Ubuntu matrix for Playwright Chromium, Firefox, and
+      WebKit, with engine-specific failure artifacts.
+- [ ] `platform-smoke`: build and container-free tests on Ubuntu, Windows, and macOS.
+- [ ] Add scheduled Windows browser and macOS WebKit journeys if Phase 7 confirms a
+      reliable MongoDB/container strategy on GitHub-hosted runners; keep them
+      informative until repeatably green.
 
 ### Workflow controls
 
@@ -675,8 +683,10 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [ ] Cancel superseded pull-request runs.
 - [ ] Pin action versions.
 - [ ] Keep deployment and production credentials out of test workflows.
-- [ ] Use Linux runners only at first.
-- [ ] Add Windows only as a non-blocking scheduled smoke test if it remains useful.
+- [ ] Keep Linux as the required release platform while exercising Windows and macOS
+      through non-blocking portability jobs.
+- [ ] Do not claim a browser/OS combination until it has a repeatable CI environment;
+      prefer the full cross-platform matrix where runner/container support permits it.
 
 ### Public presentation
 
@@ -860,7 +870,7 @@ These apply throughout all phases:
 | Physical moves break private site references | Consumer builds fail | Pin production to support branch; temporary smoke builds; optional shims | Open |
 | Static registries make tests order-dependent | Flaky test suite | Serial collections and explicit reset of mutable public registries; make BSON and model registration idempotent | Resolved for current registrations; tests remain serial where global mappings are intentionally mutated |
 | Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Resolved; Lantern House is wholly original and the example tree contains no private-site references |
-| Playwright suite becomes slow or brittle | CI friction | Keep a small journey-based Chromium suite; retain traces on failure | Open |
+| Playwright suite becomes slow or brittle | CI friction | Keep five journey-based tests, parallelise CI by browser, and retain engine-specific traces on failure | Open |
 | Async conversion changes routes or behaviour | Public regression | Characterisation tests first; preserve action names/routes; convert in bounded slices | Open |
 | Async APIs are wrappers over blocking work | Misleading API and thread-pool pressure | Require native provider async APIs; prohibit `Task.Run` and blocking waits in request paths | Open |
 | EF providers support different EF major versions | Package conflicts or delayed providers | Recheck matrix; align EF major; add providers incrementally | Open |
@@ -942,6 +952,7 @@ stating that work was done.
 | 2026-11-06 | Phase 5 | Added a focused Playwright for .NET/xUnit suite with a shared Testcontainers MongoDB 8.0 fixture, real Admin and Website processes on dynamic ports, isolated browser contexts, and a one-command rootless-Podman runner. | Five Chromium journeys cover authentication/authorization, dynamic CMS validation and CRUD/search/order/duplicate/remove behaviour, rich text, an uploaded image reaching the public site, Media/player/gallery content, server-calculated basket/postage totals, the checkout safety boundary, and mobile navigation. Repeated focused runs pass 5/5 without browser errors. | This change |
 | 2026-11-06 | Phase 5 | Used the new browser-error gate to find and correct unconditional TinyMCE startup on the CMS login layout. | Authenticated CMS pages still initialise TinyMCE; layouts without the TinyMCE core now safely skip its initialiser and plugins. All five generated frontend outputs are current, and the login/logout journey records no console or page errors. | This change |
 | 2026-11-06 | Phase 5 | Completed aggregate verification and marked the browser phase complete. | The 30-project Release build has no compiler errors or warnings (NuGet's unavailable vulnerability feed emitted only `NU1900`); all five frontend outputs are current; `git diff --check` passes; and the complete concurrent rootless-Podman solution passes 61/61, including MongoDB 4.0.3, 8.0.32, 9.0.4, and the five Chromium journeys. | This change |
+| 2026-11-06 | Phase 5 | Generalised the Playwright runner and artifacts across Chromium, Firefox, and WebKit, and made the eventual CI matrix explicit. | Firefox passes 5/5 natively; WebKit passes 5/5 in Playwright's supported Ubuntu image. The WebKit run exposed that its stricter localhost handling rejected the CMS `Secure` cookie over HTTP, so the harness now serves Admin over test-only ephemeral HTTPS without changing production cookie policy. Phase 7 now requires all three engines on Ubuntu and plans non-blocking Windows/macOS portability coverage where hosted-runner container support permits it. | This change |
 
 ## Immediate next actions
 

@@ -41,6 +41,7 @@ public abstract class DemoPageTest
         var errors = new List<string>();
         await using var context = await Fixture.Browser.NewContextAsync(new BrowserNewContextOptions
         {
+            IgnoreHTTPSErrors = true,
             ViewportSize = viewport ?? new ViewportSize { Width = 1440, Height = 1000 }
         });
         var page = await context.NewPageAsync();
@@ -55,7 +56,7 @@ public abstract class DemoPageTest
 
         await context.Tracing.StartAsync(new TracingStartOptions
         {
-            Title = testName,
+            Title = $"{Fixture.BrowserName}: {testName}",
             Screenshots = true,
             Snapshots = true,
             Sources = true

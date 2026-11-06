@@ -69,6 +69,16 @@ example hosts, then runs the focused Chromium suite:
 ./tests/run-end-to-end.sh
 ```
 
+Run the same journeys across Chromium, Firefox, and WebKit with:
+
+```bash
+./tests/run-end-to-end.sh --all-browsers
+```
+
+The complete three-engine command is intended for a Playwright-supported
+Ubuntu/Debian host and the future GitHub Actions matrix. On Fedora, use the Chromium
+or Firefox selector for local checks; WebKit is covered by the supported Ubuntu run.
+
 The browser suite uses a unique disposable database and upload directory. It does not
 use the persistent manual-demo database and deliberately stops before any payment or
 order submission.
