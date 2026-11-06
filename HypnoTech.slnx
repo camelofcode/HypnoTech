@@ -32,4 +32,14 @@
   <Folder Name="/src/Persistence/">
     <Project Path="src/HypnoTech.MongoDb/HypnoTech.MongoDb.csproj" />
   </Folder>
+  <Folder Name="/tests/Architecture/">
+    <Project Path="tests/HypnoTech.ArchitectureTests/HypnoTech.ArchitectureTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Cms/">
+    <Project Path="tests/HypnoTech.Cms.MongoDb.IntegrationTests/HypnoTech.Cms.MongoDb.IntegrationTests.csproj" />
+    <Project Path="tests/HypnoTech.Cms.UnitTests/HypnoTech.Cms.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Common/">
+    <Project Path="tests/HypnoTech.Common.UnitTests/HypnoTech.Common.UnitTests.csproj" />
+  </Folder>
 </Solution>
