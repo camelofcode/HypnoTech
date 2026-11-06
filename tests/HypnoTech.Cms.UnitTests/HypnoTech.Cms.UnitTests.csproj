@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/HypnoTech.Cms/HypnoTech.Cms.csproj" />
+    <ProjectReference Include="../../src/Cms/HypnoTech.Cms/HypnoTech.Cms.csproj" />
   </ItemGroup>
 
 </Project>

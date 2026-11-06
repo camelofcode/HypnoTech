@@ -10,9 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HypnoTech.Cms\HypnoTech.Cms.csproj" />
-    <ProjectReference Include="..\HypnoTech.Common\HypnoTech.Common.csproj" />
-    <ProjectReference Include="..\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
+    <ProjectReference Include="..\..\Cms\HypnoTech.Cms\HypnoTech.Cms.csproj" />
+    <ProjectReference Include="..\..\Common\HypnoTech.Common\HypnoTech.Common.csproj" />
+    <ProjectReference Include="..\..\Common\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
     <ProjectReference Include="..\HypnoTech.Media.Models\HypnoTech.Media.Models.csproj" />
   </ItemGroup>
 

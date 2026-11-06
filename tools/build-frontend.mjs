@@ -14,8 +14,8 @@ const watchMode = args.has('--watch');
 
 const projects = {
   frontend: {
-    source: 'src/HypnoTech.Frontend.Frontend',
-    output: 'src/HypnoTech.Frontend/wwwroot/js',
+    source: 'src/Frontend/HypnoTech.Frontend.Frontend',
+    output: 'src/Frontend/HypnoTech.Frontend/wwwroot/js',
     bundle: 'hypnotech.frontend',
     scripts: [
       'lib/jquery/dist/jquery.js',
@@ -27,8 +27,8 @@ const projects = {
     ]
   },
   media: {
-    source: 'src/HypnoTech.Media.Frontend.Frontend',
-    output: 'src/HypnoTech.Media.Frontend/wwwroot/js',
+    source: 'src/Media/HypnoTech.Media.Frontend.Frontend',
+    output: 'src/Media/HypnoTech.Media.Frontend/wwwroot/js',
     bundle: 'hypnotech.media',
     scripts: [
       'lib/knockout/knockout.js',
@@ -37,8 +37,8 @@ const projects = {
     ]
   },
   ecommerce: {
-    source: 'src/HypnoTech.Ecommerce.Frontend.Frontend',
-    output: 'src/HypnoTech.Ecommerce.Frontend/wwwroot/js',
+    source: 'src/Ecommerce/HypnoTech.Ecommerce.Frontend.Frontend',
+    output: 'src/Ecommerce/HypnoTech.Ecommerce.Frontend/wwwroot/js',
     bundle: 'hypnotech.ecommerce',
     scripts: [
       'lib/cookie-js/Cookie.js',
@@ -49,12 +49,12 @@ const projects = {
     ]
   },
   cms: {
-    source: 'src/HypnoTech.Cms.Frontend',
-    output: 'src/HypnoTech.Cms/wwwroot/js',
+    source: 'src/Cms/HypnoTech.Cms.Frontend',
+    output: 'src/Cms/HypnoTech.Cms/wwwroot/js',
     bundle: 'script',
     stylesheet: {
       input: 'scss/style.scss',
-      output: 'src/HypnoTech.Cms/wwwroot/css/style'
+      output: 'src/Cms/HypnoTech.Cms/wwwroot/css/style'
     },
     scripts: [
       'lib/jquery/dist/jquery.js',

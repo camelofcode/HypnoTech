@@ -29,10 +29,10 @@ public sealed class RepositoryArchitectureTests
         var root = FindRepositoryRoot();
         var abstractionProjects = new[]
         {
-            "src/HypnoTech.Cms.Contracts/HypnoTech.Cms.Contracts.csproj",
-            "src/HypnoTech.Common.Dal/HypnoTech.Common.Dal.csproj",
-            "src/HypnoTech.Ecommerce.Dal/HypnoTech.Ecommerce.Dal.csproj",
-            "src/HypnoTech.Media.Dal/HypnoTech.Media.Dal.csproj"
+            "src/Cms/HypnoTech.Cms.Contracts/HypnoTech.Cms.Contracts.csproj",
+            "src/Common/HypnoTech.Common.Dal/HypnoTech.Common.Dal.csproj",
+            "src/Ecommerce/HypnoTech.Ecommerce.Dal/HypnoTech.Ecommerce.Dal.csproj",
+            "src/Media/HypnoTech.Media.Dal/HypnoTech.Media.Dal.csproj"
         };
         var violations = new List<string>();
 

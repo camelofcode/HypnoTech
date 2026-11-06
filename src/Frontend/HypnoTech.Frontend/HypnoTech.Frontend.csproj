@@ -12,10 +12,10 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\HypnoTech.Common\HypnoTech.Common.csproj" />
-    <ProjectReference Include="..\HypnoTech.Common.Security\HypnoTech.Common.Security.csproj" />
-    <ProjectReference Include="..\HypnoTech.Common.Models\HypnoTech.Common.Models.csproj" />
-    <ProjectReference Include="..\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
+    <ProjectReference Include="..\..\Common\HypnoTech.Common\HypnoTech.Common.csproj" />
+    <ProjectReference Include="..\..\Common\HypnoTech.Common.Security\HypnoTech.Common.Security.csproj" />
+    <ProjectReference Include="..\..\Common\HypnoTech.Common.Models\HypnoTech.Common.Models.csproj" />
+    <ProjectReference Include="..\..\Common\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
