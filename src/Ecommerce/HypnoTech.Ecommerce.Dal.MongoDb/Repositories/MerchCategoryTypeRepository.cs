@@ -4,6 +4,8 @@ using HypnoTech.Ecommerce.Dal.Repositories;
 using HypnoTech.Ecommerce.Models;
 using HypnoTech.MongoDb;
 using Microsoft.Extensions.Options;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Ecommerce.Dal.MongoDb.Repositories
 {
@@ -16,6 +18,11 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb.Repositories
         public List<MerchCategoryType> GetTypes()
         {
             return GetAll<MerchCategoryType>().ToList();
+        }
+
+        public async Task<List<MerchCategoryType>> GetTypesAsync(CancellationToken cancellationToken = default)
+        {
+            return (await GetAllAsync<MerchCategoryType>(cancellationToken: cancellationToken)).ToList();
         }
     }
 }

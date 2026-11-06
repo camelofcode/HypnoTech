@@ -5,6 +5,8 @@ using HypnoTech.Common.Models.Settings;
 using HypnoTech.MongoDb;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Common.Dal.MongoDb.Repositories
 {
@@ -19,9 +21,19 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
             return GetAll<Country>("displayText").ToList();
         }
 
+        public async Task<List<Country>> GetCountriesAsync(CancellationToken cancellationToken = default)
+        {
+            return (await GetAllAsync<Country>("displayText", cancellationToken: cancellationToken)).ToList();
+        }
+
         public Country GetCountryByCode(string code)
         {
             return GetOne<Country>(new BsonDocument("code", code));
+        }
+
+        public Task<Country> GetCountryByCodeAsync(string code, CancellationToken cancellationToken = default)
+        {
+            return GetOneAsync<Country>(new BsonDocument("code", code), cancellationToken);
         }
     }
 }

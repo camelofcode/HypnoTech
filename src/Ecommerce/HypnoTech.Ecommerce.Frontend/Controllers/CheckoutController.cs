@@ -3,6 +3,7 @@ using HypnoTech.Ecommerce.Frontend.Services.Interfaces;
 using HypnoTech.Ecommerce.Models;
 using HypnoTech.Ecommerce.Models.Basket;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Ecommerce.Frontend.Controllers
 {
@@ -16,22 +17,27 @@ namespace HypnoTech.Ecommerce.Frontend.Controllers
             _checkoutService = checkoutService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(_checkoutService.GetCheckout());
+            return View(await _checkoutService.GetCheckoutAsync(HttpContext.RequestAborted));
         }
 
         [HttpPost]
-        public IActionResult GetDetails(CheckoutSummary summary)
+        public async Task<IActionResult> GetDetails(CheckoutSummary summary)
         {
-            return Ok(_checkoutService.GetCheckoutDetails(summary));
+            return Ok(await _checkoutService.GetCheckoutDetailsAsync(
+                summary,
+                HttpContext.RequestAborted));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Pay(CheckoutSummary summary, PostageAddress address)
+        public async Task<IActionResult> Pay(CheckoutSummary summary, PostageAddress address)
         {
-            var response = _checkoutService.Pay(summary, address);
+            var response = await _checkoutService.PayAsync(
+                summary,
+                address,
+                HttpContext.RequestAborted);
             if (response.Status == "SUCCESS")
             {
                 TempData["PaymentId"] = response.Order.PaymentId;
@@ -40,7 +46,7 @@ namespace HypnoTech.Ecommerce.Frontend.Controllers
             return Ok(response);
         }
 
-        public IActionResult Complete(string payerId, string paymentId)
+        public async Task<IActionResult> Complete(string payerId, string paymentId)
         {
             paymentId = GetPaymentId(paymentId);
 
@@ -49,18 +55,21 @@ namespace HypnoTech.Ecommerce.Frontend.Controllers
                 throw new Exception("Payment could not be completed as Payment Id could not be found from any source - tried query string, cookie and tempdata to no avail.");
             }
 
-            var result = _checkoutService.Complete(paymentId, payerId);
+            var result = await _checkoutService.CompleteAsync(
+                paymentId,
+                payerId,
+                HttpContext.RequestAborted);
 
             return View(result);
         }
 
-        public IActionResult Cancelled(string paymentId)
+        public async Task<IActionResult> Cancelled(string paymentId)
         {
             paymentId = GetPaymentId(paymentId);
 
             if (!string.IsNullOrEmpty(paymentId))
             {
-                _checkoutService.Cancel(paymentId);
+                await _checkoutService.CancelAsync(paymentId, HttpContext.RequestAborted);
             }
 
             return View();
