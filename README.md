@@ -81,6 +81,8 @@ Report vulnerabilities using [SECURITY.md](SECURITY.md). Contribution expectatio
 in [CONTRIBUTING.md](CONTRIBUTING.md), and dependency attributions are in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-The source-licence decision is still being finalised. No permission to copy, modify,
-or redistribute the engine source is granted until a root licence is committed. The
-planned public release will not occur with this decision unresolved.
+HypnoTech is **source-available for noncommercial use** under the
+[PolyForm Noncommercial License 1.0.0](LICENSE.md). It is not OSI-approved open-source
+software because commercial use is restricted. Christopher Clayton retains the right
+to use and license his own work commercially. Other commercial use requires a separate
+written agreement; see [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md).

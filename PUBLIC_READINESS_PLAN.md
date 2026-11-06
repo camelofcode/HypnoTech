@@ -8,7 +8,7 @@
 >
 > **Current phase:** Phase 0 complete; Phase 1 in progress
 >
-> **Next action:** Resolve the source-licence/copyright decision and replace or remove the pre-existing corrupted Montserrat font snapshots through a verified, visually tested change.
+> **Next action:** Confirm GitHub's language classification when this branch reaches `main`, then repeat the exact-history scan immediately before changing repository visibility.
 
 ## How to maintain this document
 
@@ -229,11 +229,11 @@ tested migration decision.
 
 ### 1.2 Licensing and third-party material
 
-- [ ] Confirm the source-code licence decision.
-- [ ] If accepted, add the unmodified PolyForm Noncommercial 1.0.0 licence.
-- [ ] Add `COMMERCIAL-LICENSE.md` explaining that commercial use requires a separate
+- [x] Confirm the source-code licence decision.
+- [x] Add the unmodified PolyForm Noncommercial 1.0.0 licence.
+- [x] Add `COMMERCIAL-LICENSE.md` explaining that commercial use requires a separate
       written agreement.
-- [ ] Describe the project as **source-available for noncommercial use**, not OSI open
+- [x] Describe the project as **source-available for noncommercial use**, not OSI open
       source, if a noncommercial licence is selected.
 - [x] Audit Bootstrap, jQuery, validation libraries, TinyMCE, Font Awesome, fonts, npm
       build tools, and NuGet dependencies.
@@ -302,7 +302,8 @@ good later candidate once the release process has been exercised manually.
 ### Exit gate
 
 - [ ] The exact publication history has passed the final pre-publication secret scan.
-- [ ] Source and third-party licensing are explicit.
+- [x] Source and third-party licensing are explicit, including dependencies whose
+      restored metadata does not declare a licence.
 - [ ] GitHub language classification represents authored code honestly after the remote
       cache refreshes; local attribute and byte checks pass.
 - [x] A new contributor can understand and build the engine from repository docs.
@@ -809,15 +810,15 @@ These apply throughout all phases:
 | --- | --- | --- | --- |
 | Q-001 | What exact engine commit is deployed in production? | Phase 0 | Answered: `95c9f6a` |
 | Q-002 | What exact MongoDB server version is deployed? | Phase 0 | Answered: 4.0.3 |
-| Q-003 | Is PolyForm Noncommercial plus separate commercial licensing acceptable? | Phase 1 | Open |
-| Q-004 | What copyright name and contact should appear in licence files? | Phase 1 | Open |
+| Q-003 | Is PolyForm Noncommercial plus separate commercial licensing acceptable? | Phase 1 | Answered: accepted |
+| Q-004 | What copyright name and contact should appear in licence files? | Phase 1 | Answered: `Copyright © 2026 Christopher Clayton`; commercial contact through `github.com/camelofcode` |
 | Q-005 | Must unchanged private sites ever consume reorganised public `main`, or may they remain pinned to the support branch? | Phase 3 | Proposed: remain pinned |
 | Q-006 | What neutral theme should the public demo use? | Phase 4 | Open |
-| Q-007 | Should external contributions be accepted before a contributor-licensing process exists? | Phase 7 | Open |
+| Q-007 | Should external contributions be accepted before a contributor-licensing process exists? | Phase 7 | Answered: no external contributions will be accepted |
 | Q-008 | Which relational provider should be implemented first once the provider matrix is rechecked? | Phase 9 | Proposed: PostgreSQL if compatible |
 | Q-009 | How long should synchronous compatibility methods remain after public controllers move to async APIs? | Phase 6 | Proposed: retain through v0.1 and review for the next breaking release |
-| Q-010 | Which verified Montserrat release should replace the 18 corrupted baseline font files, or should Montserrat be removed? | Phase 1 | Open; requires a visual compatibility check |
-| Q-011 | Is the legacy PayPal/Braintree NuGet provenance gap acceptable until the deferred payment work, given that binaries are restored rather than vendored? | Phase 1 | Open; package metadata declares no licence |
+| Q-010 | Which verified Montserrat release should replace the 18 corrupted baseline font files, or should Montserrat be removed? | Phase 1 | Answered: remove them; all 18 were corrupted and unreferenced |
+| Q-011 | Is the legacy PayPal/Braintree NuGet provenance gap acceptable until the deferred payment work, given that binaries are restored rather than vendored? | Phase 1 | Answered: accept as a documented risk until existing-PayPal work; no package binaries are committed |
 
 ## Risks and mitigations
 
@@ -825,9 +826,9 @@ These apply throughout all phases:
 | --- | --- | --- | --- |
 | MongoDB 4.0.3 compatibility regresses after a driver change | Production failure | Preserve driver 3.4.3 on support branch and test the 4.0.3 image before changes | Known baseline; test pending |
 | Secrets exist in compact Git history | Credential exposure on publication | Full-history scan, rotation, clean history, final pre-publication scan | Initial history and working-tree scans clean; final scan pending |
-| Third-party assets lack clear notices | Copyright/licensing problem | Inventory files and dependencies; preserve licences; add notices | Inventory and notices complete; source licence and two provenance decisions pending |
-| Tracked Montserrat fonts are corrupted | Broken fonts or an unreviewed visual change | Select a verified source/version, record hashes/licence, and visually test replacement or removal | Open; all 18 baseline `.ttf` files fail parsing |
-| Legacy PayPal packages declare no licence metadata | Unclear provenance and public maintenance risk | Do not misstate the licence; document that packages are restored, then resolve provenance or replacement deliberately | Open; provider replacement remains out of scope |
+| Third-party assets lack clear notices | Copyright/licensing problem | Inventory files and dependencies; preserve licences; add notices | Resolved for publication; unknown legacy package metadata is stated explicitly |
+| Tracked Montserrat fonts are corrupted | Broken fonts or an unreviewed visual change | Remove only after confirming no authored/generated CSS reference and retain recovery through the baseline refs/bundle | Resolved; owner approved removal of all 18 unreferenced files |
+| Legacy PayPal packages declare no licence metadata | Unclear provenance and public maintenance risk | Do not misstate the licence; document that packages are restored, then resolve provenance during later existing-PayPal work | Accepted known risk; binaries are not committed and provider replacement remains out of scope |
 | Physical moves break private site references | Consumer builds fail | Pin production to support branch; temporary smoke builds; optional shims | Open |
 | Static registries make tests order-dependent | Flaky test suite | Serial collections or explicit reset/idempotent registration support | Open |
 | Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Open |
@@ -853,7 +854,12 @@ These apply throughout all phases:
 | 2026-11-06 | D-010 | Complete async contracts while MongoDB is still the only DAL. | Accepted | Prevents building a synchronous EF Core DAL and then repeating the async conversion. |
 | 2026-11-06 | D-011 | Build the example admin and website before the Playwright suite. | Accepted | Browser tests need a stable public example as their system under test. |
 | 2026-11-06 | D-012 | Introduce `main` during Phase 0 and retain frozen `master` temporarily. | Accepted | Establishes the intended PR target early without breaking an unknown checkout that still pulls `master`. |
-| 2026-11-06 | D-013 | Do not accept unsolicited external code contributions until source licensing and contributor terms are explicit. | Accepted | Avoids ambiguous ownership and preserves the option of a later dual-licensing model. |
+| 2026-11-06 | D-013 | Do not accept unsolicited external code contributions until source licensing and contributor terms are explicit. | Superseded by D-017 | The temporary restriction became a permanent no-contributions policy. |
+| 2026-11-06 | D-014 | Identify Christopher Clayton as the sole engine author/copyright holder and remove the nonexistent HypnoTech company identity from project metadata. | Accepted | Anamaria Miehs made limited CSS contributions, does not claim engine authorship/copyright, and will retain appropriate credit in the separate production client sites. |
+| 2026-11-06 | D-015 | Remove the 18 corrupted, unreferenced Montserrat font files rather than guessing at a replacement release. | Accepted | No engine CSS references them, so removal avoids publishing broken third-party binaries without an intended rendering change. |
+| 2026-11-06 | D-016 | Licence public engine source under PolyForm Noncommercial 1.0.0 and offer separate written commercial licences. | Accepted | Allows noncommercial use, modification, and distribution while Christopher Clayton retains commercial use and licensing rights as copyright holder. |
+| 2026-11-06 | D-017 | Do not accept external code or documentation contributions. | Accepted | Keeps the engine under a single copyright holder and avoids contributor rights complicating separate commercial licensing. |
+| 2026-11-06 | D-018 | Treat the missing licence metadata in the restored legacy PayPal/Braintree NuGet packages as an explicit, non-blocking publication risk until later existing-PayPal work. | Accepted | The engine repository does not redistribute those binaries, the uncertainty is disclosed, and replacing payment providers remains out of scope. |
 
 ## Work log
 
@@ -880,13 +886,11 @@ stating that work was done.
 | 2026-11-06 | Phase 1 | Added compact `AGENTS.md` and the initial verification and CMS compatibility-review skills. | Both `SKILL.md` files pass the skill-creator `quick_validate.py` validator; triggers and output requirements are explicit. | This change |
 | 2026-11-06 | Phase 1 | Identified pre-existing corruption in every tracked Montserrat font rather than silently replacing unknown binaries. | All 18 `.ttf` files fail `fc-query`; font-table bytes contain UTF-8 replacement sequences and match the preserved baseline. | This change |
 | 2026-11-06 | Phase 1 | Ran the repository verification workflow across the Phase 1 foundation change. | `git diff --check` passed; the 21-project Release build passed with zero warnings/errors; all four frontend outputs were current; both skills validated. | This change |
+| 2026-11-06 | Phase 1 | Centralised engine authorship and copyright metadata as `Christopher Clayton` / `Copyright © 2026 Christopher Clayton`, removing the proposed-but-never-formed HypnoTech company and engine co-author metadata. | Root `Directory.Build.props` is authoritative; all 21 projects evaluate to the same author/company/copyright values; Release build passed with zero warnings/errors. | This change |
+| 2026-11-06 | Phase 1 | Removed all corrupted Montserrat font snapshots after confirming they were unreferenced. | No `Montserrat` or frontend-font path reference exists in authored/generated engine CSS; frontend freshness checks pass; all 18 files remain recoverable from the preserved baseline and private bundle. | This change |
+| 2026-11-06 | Phase 1 | Added the accepted source and commercial-licensing model and made the no-contributions policy explicit. | Root `LICENSE.md` is byte-for-byte identical to the official PolyForm Noncommercial 1.0.0 download; `NOTICE`, `COMMERCIAL-LICENSE.md`, README, package metadata, and contribution guidance identify Christopher Clayton and the separate commercial route; a test NuGet package contains the licence, notice, and README. | This change |
 
 ## Immediate next actions
 
-1. Confirm or revise the proposed PolyForm Noncommercial/commercial-licensing model and
-   supply the copyright name/contact to use.
-2. Choose a verified Montserrat replacement/removal approach and perform a visual check.
-3. Decide whether the legacy PayPal/Braintree package provenance gap may remain until
-   the deferred payment work.
-4. Push the Phase 1 foundation and confirm GitHub's refreshed language classification.
-5. Re-scan the exact final commit immediately before changing repository visibility.
+1. Confirm GitHub's refreshed language classification after this branch reaches `main`.
+2. Re-scan the exact final commit immediately before changing repository visibility.

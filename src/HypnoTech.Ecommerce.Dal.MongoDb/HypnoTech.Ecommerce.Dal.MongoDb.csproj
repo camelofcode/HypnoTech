@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Authors>Kris Clayton</Authors>
-    <Company>HypnoTech</Company>
     <Description>Mongo Db Implementation of Ecommerce data layer</Description>
   </PropertyGroup>
 

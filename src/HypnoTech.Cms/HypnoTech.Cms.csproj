@@ -2,9 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Authors>Kris Clayton, Anamaria Miehs</Authors>
-    <Company>HypnoTech</Company>
-    <Copyright>2020 HypnoTech</Copyright>
     <Description>Base CMS functionality for HypnoTech websites</Description>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>

@@ -1,4 +1,3 @@
-Montserrat: Copyright 2011 The Montserrat Project Authors
 Font Awesome: Copyright (c) Font Awesome
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.

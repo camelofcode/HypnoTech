@@ -1,14 +1,14 @@
 # Contributing
 
-HypnoTech is currently undergoing a compatibility-sensitive public-readiness programme.
-Bug reports, design feedback, and documentation corrections are welcome once the
-repository is public, but unsolicited code contributions are not yet accepted.
+HypnoTech is undergoing a compatibility-sensitive public-readiness programme. Bug
+reports and design feedback are welcome once the repository is public, but external
+code or documentation contributions are not accepted.
 
-This temporary restriction avoids ambiguous ownership while the source licence and a
-future dual-licensing/contributor agreement are being decided. Opening a pull request
-does not transfer copyright or grant the maintainer permission to relicense the work.
-Please agree the contribution and its licensing with the maintainer before writing
-code. This policy will be revisited before broader external contributions are enabled.
+The engine is maintained as a single-copyright-holder project so Christopher Clayton
+can continue using it in commercial/client work while offering the public source under
+PolyForm Noncommercial terms. Please do not open pull requests or submit patches: they
+will be closed without merging. Opening a pull request does not transfer copyright or
+grant permission to relicense the submitted work.
 
 ## Reporting issues
 

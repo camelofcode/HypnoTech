@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Authors>Kris Clayton</Authors>
-    <Company>HypnoTech</Company>
     <Description>Abstractions of the common data layer</Description>
   </PropertyGroup>
 

@@ -28,27 +28,24 @@ Unobtrusive also retain their upstream licence files in place.
 | Lodash core custom build | 4.17.15 | MIT; OpenJS Foundation and other contributors; notice embedded in the file | `src/HypnoTech.Cms.Frontend/lib/lodash` |
 | TinyMCE Community | 5.2.1 | LGPL-2.1-or-later or commercial licence; Copyright Tiny Technologies, Inc.; full LGPL 2.1 text retained | `src/HypnoTech.Cms.Frontend/lib/tinymce` |
 | Navigo | Vendored snapshot; upstream version was not recorded; SHA-256 `3b1cd4166cd8c2ed6dfc6ffabd135e59c042ce1085ab2f8f01f1c1919ba7a54f` | MIT; Krasimir Tsonev and contributors | `src/HypnoTech.Frontend.Frontend/lib/navigo` |
-| Montserrat | Vendored static font family; exact upstream release was not recorded | SIL OFL 1.1; Julieta Ulanovsky and the Montserrat project contributors | `src/HypnoTech.Cms.Frontend/fonts` |
 
 Upstream licence references:
 
 - Font Awesome Free: <https://fontawesome.com/license/free>
 - Creative Commons Attribution 4.0: <https://creativecommons.org/licenses/by/4.0/>
 - TinyMCE: <https://github.com/tinymce/tinymce/blob/5.2.1/LICENSE.TXT>
-- Montserrat: <https://github.com/JulietaUla/Montserrat>
 - Navigo: <https://github.com/krasimir/navigo>
 
 The missing historical version metadata above is recorded rather than guessed. A future
 dependency-refresh change should replace each unknown snapshot with a verified,
 integrity-pinned version while preserving runtime behaviour.
 
-All 18 tracked Montserrat `.ttf` files fail `fc-query` parsing, and inspection of their
-font-table bytes shows UTF-8 replacement sequences. The same bytes are present in the
-preserved production baseline, so this is pre-existing corruption rather than a change
-introduced during public-readiness work. Do not publish those files as working fonts or
-replace them with an arbitrary Montserrat release. Select a verified upstream version,
-record its hashes and licence, rebuild the CMS CSS if necessary, and perform a visual
-regression check before replacement.
+The Phase 1 audit also found 18 corrupted Montserrat `.ttf` files in
+`src/HypnoTech.Cms.Frontend/fonts`. They failed `fc-query`, contained replacement bytes,
+and were not referenced by authored or generated engine CSS. They were removed with the
+copyright holder's approval rather than being published as working fonts or replaced by
+an unverified release. They remain recoverable from the production baseline tag and
+private bundle if historical analysis is ever needed.
 
 ## npm build dependencies
 
