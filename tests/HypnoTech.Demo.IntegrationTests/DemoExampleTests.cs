@@ -146,7 +146,33 @@ public sealed class DemoExampleTests : IClassFixture<DemoMongoFixture>
                 Assert.Equal("Stories", root.GetProperty("title").GetString());
                 Assert.Contains("data-testid=\"articles-list\"", root.GetProperty("html").GetString());
                 Assert.DoesNotContain("<!doctype", root.GetProperty("html").GetString(), StringComparison.OrdinalIgnoreCase);
+                Assert.True(root.TryGetProperty("script", out _));
+                Assert.True(root.TryGetProperty("description", out _));
+                Assert.Equal(
+                    "/articles",
+                    new Uri(root.GetProperty("canonicalUrl").GetString()).AbsolutePath);
             }
+
+            using var imageResponse = await client.GetAsync(
+                "/Images/Demo/artwork-rose.svg",
+                cancellationToken);
+            Assert.Equal(HttpStatusCode.OK, imageResponse.StatusCode);
+            Assert.Equal("image/svg+xml", imageResponse.Content.Headers.ContentType?.MediaType);
+
+            using var fileRequest = new HttpRequestMessage(
+                HttpMethod.Get,
+                "/Files/Demo/lantern-motion.mp4");
+            fileRequest.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(0, 9);
+            using var fileResponse = await client.SendAsync(fileRequest, cancellationToken);
+            Assert.Equal(HttpStatusCode.PartialContent, fileResponse.StatusCode);
+            Assert.Equal(10, (await fileResponse.Content.ReadAsByteArrayAsync(cancellationToken)).Length);
+
+            using var navbarRequest = new HttpRequestMessage(
+                HttpMethod.Get,
+                "/Api/ClearNavbarCache");
+            navbarRequest.Headers.Add("X-Auth-Token", "demo-only-api-key");
+            using var navbarResponse = await client.SendAsync(navbarRequest, cancellationToken);
+            Assert.Equal(HttpStatusCode.OK, navbarResponse.StatusCode);
 
             using var cartRequest = new HttpRequestMessage(HttpMethod.Get, "/Cart");
             cartRequest.Headers.TryAddWithoutValidation("X-Partial-Request", "1");

@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -7,21 +7,14 @@ namespace HypnoTech.Frontend.Caching
 {
     public static class HashCache
     {
-        private static readonly Dictionary<string, string> Cache = new Dictionary<string, string>();
+        private static readonly ConcurrentDictionary<string, string> Cache =
+            new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
 
         public static string GetHash(string file)
         {
-            if (Cache.ContainsKey(file))
-            {
-                return Cache[file];
-            }
-
-            var md5 = MD5.Create();
-            var hash = BitConverter.ToString(md5.ComputeHash(File.ReadAllBytes(file))).Replace("-", string.Empty).ToLower();
-            
-            Cache.Add(file, hash);
-
-            return hash;
+            var path = Path.GetFullPath(file);
+            return Cache.GetOrAdd(path, static value =>
+                Convert.ToHexString(MD5.HashData(File.ReadAllBytes(value))).ToLowerInvariant());
         }
     }
 }

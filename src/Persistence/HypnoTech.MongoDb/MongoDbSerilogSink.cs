@@ -19,9 +19,12 @@ namespace HypnoTech.MongoDb
 
             config
                 .Enrich.WithSiteName(siteName)
-                .WriteTo.Sink(
-                    new MongoDbLogEventSink(connectionString, "serilog", 50, 1000),
-                    LogEventLevel.Warning);
+                .WriteTo.Async(
+                    writeTo => writeTo.Sink(
+                        new MongoDbLogEventSink(connectionString, "serilog", 50, 1000),
+                        LogEventLevel.Warning),
+                    bufferSize: 1000,
+                    blockWhenFull: false);
         }
     }
 

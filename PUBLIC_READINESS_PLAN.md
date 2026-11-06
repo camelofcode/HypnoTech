@@ -580,35 +580,35 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 
 ### Design rules
 
-- [ ] Use native asynchronous APIs from MongoDB, streams, SMTP, HTTP, and ASP.NET Core.
-- [ ] Add the `Async` suffix to repository and service methods that return `Task` or
+- [x] Use native asynchronous APIs from MongoDB, streams, SMTP, HTTP, and ASP.NET Core.
+- [x] Add the `Async` suffix to repository and service methods that return `Task` or
       `ValueTask`; preserve controller action routes and names.
-- [ ] Accept `CancellationToken` on public async I/O methods and pass
+- [x] Accept `CancellationToken` on public async I/O methods and pass
       `HttpContext.RequestAborted` from web requests.
-- [ ] Do not implement fake async with `Task.Run` around MongoDB, file, or other blocking
+- [x] Do not implement fake async with `Task.Run` around MongoDB, file, or other blocking
       I/O.
-- [ ] Keep CPU-only mapping, validation, image transformation, collection projection,
+- [x] Keep CPU-only mapping, validation, image transformation, collection projection,
       and filesystem metadata operations synchronous unless measurement proves a need.
-- [ ] Do not block on tasks with `.Result`, `.Wait()`, or
+- [x] Do not block on tasks with `.Result`, `.Wait()`, or
       `GetAwaiter().GetResult()` in request paths.
-- [ ] Preserve routes, response types, validation, flash messages, persisted BSON names,
+- [x] Preserve routes, response types, validation, flash messages, persisted BSON names,
       and observable ordering.
 - [x] Keep the existing PayPal v1 routes and behaviour; replacing its sync-over-async
       calls must not expand into the deferred payment-provider work.
 
 ### Compatibility approach
 
-- [ ] Add true async methods before removing synchronous methods.
-- [ ] Make async methods the implementation used by public-engine controllers and
+- [x] Add true async methods before removing synchronous methods.
+- [x] Make async methods the implementation used by public-engine controllers and
       services.
-- [ ] Retain synchronous compatibility members initially where removal would create an
+- [x] Retain synchronous compatibility members initially where removal would create an
       unnecessary source break.
-- [ ] Do not implement retained sync methods as sync-over-async wrappers. Keep a native
+- [x] Do not implement retained sync methods as sync-over-async wrappers. Keep a native
       synchronous implementation temporarily or move compatibility to an explicitly
       isolated adapter.
-- [ ] Mark compatibility methods obsolete only after call sites and downstream impact
-      are understood.
-- [ ] Document the intended removal policy before a later breaking release.
+- [x] Defer obsoleting compatibility methods until a later breaking release because
+      production consumers remain pinned to the support branch.
+- [x] Document the intended removal policy before a later breaking release.
 
 ### Repository and service work
 
@@ -639,14 +639,14 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
       while preserving the existing provider and routes.
 - [x] Use async SMTP sending and async template/file reads where supported.
 - [x] Use `IFormFile.CopyToAsync`, async streams, and async file writes for uploads.
-- [ ] Review custom MVC result execution and remove the synchronous-I/O server option if
+- [x] Review custom MVC result execution and remove the synchronous-I/O server option if
       the complete response path no longer needs it.
-- [ ] Treat synchronous-only framework contracts, such as a Serilog sink `Emit` method,
+- [x] Treat synchronous-only framework contracts, such as a Serilog sink `Emit` method,
       as explicit exceptions rather than disguising them as async.
 
 ### Verification
 
-- [ ] Extend unit tests to cover async success, validation, exception, and cancellation
+- [x] Extend unit tests to cover async success, validation, exception, and cancellation
       paths.
 - [x] Run MongoDB contract and integration tests through the async APIs.
 - [x] Run Playwright journeys against the async controller paths.
@@ -967,10 +967,10 @@ stating that work was done.
 | 2026-11-06 | Phase 6 | Added Media sync/async repository and service characterisation and completed aggregate verification for the slice. | All 30 projects build in Release with zero warnings/errors; CMS unit tests pass 25/25, Common unit tests 10/10, architecture tests 3/3, MongoDB contracts 18/18 across 4.0.3, 8.0.32, and 9.0.4, demo integration tests 14/14, and the Chromium/Podman journeys 5/5 including Media navigation, player, gallery, and video behavior. | This change |
 | 2026-11-06 | Phase 6 | Closed the remaining public-example async gap across Articles, Artists, Events, Home, Media, Shop, focused read repositories, and artist-based audio enrichment. | Every database-backed Lantern House action now propagates `RequestAborted`; independent Home and Media reads run concurrently; an additive Media enrichment async hook preserves sync-only consumer compatibility; render-only Cart remains synchronous. | This change |
 | 2026-11-06 | Phase 6 | Added the `author-async-request-paths` repository skill and extended async verification to the example request surface. | The skill records controller inheritance, generated CMS, public/admin dependency boundaries, provider-neutral DAL, native async, cancellation, concurrency, and retained-sync conventions. Its validator passes; the 30-project Release build has zero warnings/errors; focused architecture tests pass 3/3; focused demo integration tests pass 15/15; and the complete Podman/Chromium solution passes 76/76. | This change |
+| 2026-11-06 | Phase 6 | Completed the final Frontend async slice and removed the server-wide synchronous-I/O escape hatch. | Uploaded image/media actions and navbar startup/refresh now propagate cancellation through native async file and MongoDB APIs; partial JSON uses async response writes; host asset hashes are prepared once during registration; Kestrel and IIS no longer enable synchronous I/O. Routes, range responses, navbar order, asset URLs, and partial JSON remain unchanged. | This change |
+| 2026-11-06 | Phase 6 | Isolated the synchronous Serilog sink contract behind pinned `Serilog.Sinks.Async` 2.1.0 and closed the Phase 6 exit gate. | A bounded 1,000-event warning queue drops rather than blocks when full; dependency/licence and compatibility documentation are current. All five frontend outputs are current; the 30-project Release build passes with zero warnings/errors; architecture tests pass 4/4; MongoDB contracts pass 19/19 across 4.0.3, 8.0.32, and 9.0.4; demo integration passes 17/17; and the complete Podman/Chromium solution passes 80/80. | This change |
 
 ## Immediate next actions
 
-1. Review custom MVC result execution and the remaining `AllowSynchronousIO` settings.
-2. Complete the Phase 6 exit-gate verification and mark the phase complete if green.
-3. Begin Phase 7 CI and public-release documentation.
-4. Re-scan the exact final commit immediately before changing repository visibility.
+1. Begin Phase 7 CI and public-release documentation.
+2. Re-scan the exact final commit immediately before changing repository visibility.

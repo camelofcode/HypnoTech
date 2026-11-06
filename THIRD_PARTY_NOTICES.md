@@ -124,6 +124,7 @@ the solution, not only explicit `PackageReference` entries.
 | Serilog.Extensions.Logging | 10.0.0 | Apache-2.0 |
 | Serilog.Formatting.Compact | 3.0.0 | Apache-2.0 |
 | Serilog.Settings.Configuration | 10.0.0 | Apache-2.0 |
+| Serilog.Sinks.Async | 2.1.0 | Apache-2.0 |
 | Serilog.Sinks.Console | 6.1.1 | Apache-2.0 |
 | Serilog.Sinks.Debug | 3.0.0 | Apache-2.0 |
 | Serilog.Sinks.File | 7.0.0 | Apache-2.0 |

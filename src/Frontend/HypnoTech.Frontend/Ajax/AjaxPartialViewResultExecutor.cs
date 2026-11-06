@@ -1,14 +1,12 @@
 using System;
-using System.Buffers;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -23,14 +21,14 @@ namespace HypnoTech.Frontend.Ajax
             Encoding = Encoding.UTF8
         }.ToString();
 
-        private readonly IHttpResponseStreamWriterFactory _writerFactory;
         private readonly ILogger _logger;
         private readonly IConfiguration _config;
 
 
         public AjaxPartialViewResultExecutor(IHttpResponseStreamWriterFactory writerFactory, ILogger<AjaxPartialViewResultExecutor> logger, IConfiguration config)
         {
-            _writerFactory = writerFactory ?? throw new ArgumentNullException(nameof(writerFactory));
+            // Preserve the public constructor while ensuring response writes use only async APIs.
+            _ = writerFactory ?? throw new ArgumentNullException(nameof(writerFactory));
             _config = config;
             _logger = logger;
         }
@@ -60,26 +58,13 @@ namespace HypnoTech.Frontend.Ajax
             var anonyResult = new { result.Html, result.Title, result.Script, result.Description, canonicalUrl };
 
             _logger.AjaxPartialViewResultExecuting(anonyResult);
-            using (var writer = _writerFactory.CreateWriter(response.Body, Encoding.UTF8))
+            var json = JsonConvert.SerializeObject(anonyResult, new JsonSerializerSettings
             {
-                using (var jsonWriter = new JsonTextWriter(writer))
-                {
-                    jsonWriter.CloseOutput = false;
-                    jsonWriter.AutoCompleteOnClose = false;
-
-                    var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings
-                    {
-                        Formatting = Formatting.None,
-                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                        NullValueHandling = NullValueHandling.Include
-                    });
-                    jsonSerializer.Serialize(jsonWriter, anonyResult);
-                }
-
-                // Perf: call FlushAsync to call WriteAsync on the stream with any content left in the TextWriter's
-                // buffers. This is better than just letting dispose handle it (which would result in a synchronous write).
-                await writer.FlushAsync();
-            }
+                Formatting = Formatting.None,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Include
+            });
+            await response.WriteAsync(json, context.HttpContext.RequestAborted);
         }
     }
 }

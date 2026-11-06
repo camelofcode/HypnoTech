@@ -1,5 +1,3 @@
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HypnoTech.Frontend.Caching;
@@ -22,15 +20,9 @@ namespace HypnoTech.Frontend.TagHelpers
         {
             StringBuilder sb = new StringBuilder();
 
-            var files = Directory.EnumerateFiles(Path.Combine("wwwroot", "css"), "*.css");
-
-            files = _environment.IsDevelopment() ? files.Where(p => !p.ToLowerInvariant().EndsWith(".min.css")) : files.Where(p => p.ToLowerInvariant().EndsWith(".min.css"));
-
-            foreach (var file in files)
+            foreach (var asset in SiteAssetManifest.GetStyles(_environment))
             {
-                var hash = HashCache.GetHash(file);
-                var fileInfo = new FileInfo(file);
-                sb.AppendLine($"<link rel=\"stylesheet\" href=\"/css/{fileInfo.Name}?_={hash}\" />");
+                sb.AppendLine($"<link rel=\"stylesheet\" href=\"/css/{asset.Name}?_={asset.Hash}\" />");
             }
 
             output.TagName = null;

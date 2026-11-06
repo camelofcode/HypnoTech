@@ -80,6 +80,23 @@ See [frontend-integration.md](frontend-integration.md) for the consuming-host co
 including partial navigation, persistent player and cart components, shared events,
 page scripts, and intentional full-document boundaries.
 
+## Frontend request execution
+
+`UseHypnoTech` prepares the host script/style manifest and content hashes once during
+service registration, so layout tag helpers only perform in-memory rendering. An async
+hosted initializer loads the public navbar before the server accepts requests, while the
+authenticated refresh route uses the same async MongoDB path.
+
+Uploaded images and media are read asynchronously with request cancellation and preserve
+the existing cache and range-response contract. Partial-navigation views render through
+MVC's async APIs, serialize their established JSON envelope in memory, and write it with
+`HttpResponse.WriteAsync`; HypnoTech does not enable synchronous Kestrel or IIS response
+I/O.
+
+Serilog's synchronous sink contract is isolated behind a bounded background queue. The
+MongoDB sink can retain its required `Emit` implementation without performing database
+work on request threads.
+
 ## Building CMS models
 
 The dynamic controller convention is configured through the fluent

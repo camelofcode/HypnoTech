@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using HypnoTech.Common.Dal.Repositories;
 using HypnoTech.Frontend.Attributes;
 using HypnoTech.Frontend.Caching;
@@ -15,9 +16,9 @@ namespace HypnoTech.Frontend.Controllers
             _navBarRepository = navBarRepository;
         }
 
-        public IActionResult ClearNavbarCache()
+        public async Task<IActionResult> ClearNavbarCache()
         {
-            NavBarCache.Init(_navBarRepository);
+            await NavBarCache.InitAsync(_navBarRepository, HttpContext.RequestAborted);
             return Ok();
         }
     }

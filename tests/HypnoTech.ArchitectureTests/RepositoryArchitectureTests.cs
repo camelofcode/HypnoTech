@@ -65,6 +65,7 @@ public sealed class RepositoryArchitectureTests
             "src/Persistence",
             "src/Ecommerce",
             "src/Media",
+            "src/Frontend",
             "examples/HypnoTech.Demo.Website"
         };
         var blockingPattern = new Regex(
@@ -80,6 +81,28 @@ public sealed class RepositoryArchitectureTests
                 .Select((line, index) => new { path, line, number = index + 1 }))
             .Where(candidate => blockingPattern.IsMatch(candidate.line))
             .Where(candidate => !IsApprovedPayPalV1CompatibilityAdapter(candidate.path, candidate.line))
+            .Select(candidate =>
+                $"{Path.GetRelativePath(root, candidate.path)}:{candidate.number}: {candidate.line.Trim()}")
+            .ToList();
+
+        Assert.Empty(violations);
+    }
+
+    [Fact]
+    public void Server_options_do_not_enable_synchronous_io()
+    {
+        var root = FindRepositoryRoot();
+        var sourceDirectories = new[] { "src", "examples" };
+        var violations = sourceDirectories
+            .SelectMany(directory => Directory.GetFiles(
+                Path.Combine(root, directory),
+                "*.cs",
+                SearchOption.AllDirectories))
+            .SelectMany(path => File.ReadLines(path)
+                .Select((line, index) => new { path, line, number = index + 1 }))
+            .Where(candidate => candidate.line.Contains(
+                "AllowSynchronousIO = true",
+                StringComparison.Ordinal))
             .Select(candidate =>
                 $"{Path.GetRelativePath(root, candidate.path)}:{candidate.number}: {candidate.line.Trim()}")
             .ToList();
