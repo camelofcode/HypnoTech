@@ -2,11 +2,12 @@ using System.Linq;
 using HypnoTech.Cms.Contracts.Interfaces;
 using HypnoTech.Demo.Models;
 using HypnoTech.Frontend.Attributes;
+using HypnoTech.Frontend.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HypnoTech.Demo.Website.Controllers;
 
-public sealed class ArtistsController : Controller
+public sealed class ArtistsController : SpaController
 {
     private readonly ICmsRepository<Artist> _artists;
 
@@ -17,5 +18,5 @@ public sealed class ArtistsController : Controller
 
     [NavigationLink("artists")]
     public IActionResult Index() =>
-        View(_artists.GetAll<Artist>().OrderBy(item => item.Order).ToList());
+        AjaxPartialView(_artists.GetAll<Artist>().OrderBy(item => item.Order).ToList());
 }

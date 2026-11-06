@@ -24,4 +24,9 @@
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <Target Name="CopyWebsiteStaticWebAssetsManifestForInProcessHost" AfterTargets="Build">
+    <Copy SourceFiles="$(OutDir)HypnoTech.Demo.Website.staticwebassets.runtime.json"
+          DestinationFiles="$(OutDir)$(AssemblyName).staticwebassets.runtime.json" />
+  </Target>
+
 </Project>

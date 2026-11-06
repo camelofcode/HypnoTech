@@ -3,11 +3,12 @@ using HypnoTech.Cms.Contracts.Interfaces;
 using HypnoTech.Demo.Models;
 using HypnoTech.Demo.Website.ViewModels;
 using HypnoTech.Ecommerce.Dal.Repositories;
+using HypnoTech.Frontend.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HypnoTech.Demo.Website.Controllers;
 
-public sealed class HomeController : Controller
+public sealed class HomeController : SpaController
 {
     private readonly ICmsRepository<Article> _articles;
     private readonly ICmsRepository<Event> _events;
@@ -28,7 +29,7 @@ public sealed class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View(new HomeViewModel
+        return AjaxPartialView(new HomeViewModel
         {
             Articles = _articles.GetAll<Article>().OrderByDescending(item => item.PublishedAt).Take(2).ToList(),
             Events = _events.GetAll<Event>().OrderBy(item => item.StartsAt).Take(3).ToList(),

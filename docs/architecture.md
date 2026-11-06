@@ -69,6 +69,20 @@ The generated outputs are committed so a .NET consumer does not need Node.js. Ru
 assets remain self-hosted. The root `package-lock.json` and exact devDependency versions
 make regeneration reproducible; `npm run check:frontend` detects stale output.
 
+See [frontend-integration.md](frontend-integration.md) for the consuming-host contract,
+including partial navigation, persistent player and cart components, shared events,
+page scripts, and intentional full-document boundaries.
+
+## Building CMS models
+
+The dynamic controller convention is configured through the fluent
+`FormClassMapping<T>` API and a provider-specific persistence mapping. The public
+Lantern House models demonstrate the supported field families, relationships,
+ordering, nested lists, uploads, generated values, roles, search and default sorting.
+
+See [cms-models.md](cms-models.md) for an end-to-end host guide with executable example
+code.
+
 ## Compatibility boundaries
 
 The current production baseline is engine commit `95c9f6a`, MongoDB.Driver 3.4.3, and

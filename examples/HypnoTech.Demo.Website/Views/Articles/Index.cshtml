@@ -9,7 +9,7 @@
         <article class="story-card">
             <img src="@article.HeroImagePath" alt="" />
             <p class="meta">@article.PublishedAt.ToString("d MMMM yyyy")</p>
-            <h2><a href="/articles/@article.Slug">@article.Title</a></h2>
+            <h2><a href="/articles/@article.Slug" data-navigo>@article.Title</a></h2>
             <p>@article.Summary</p>
         </article>
     }

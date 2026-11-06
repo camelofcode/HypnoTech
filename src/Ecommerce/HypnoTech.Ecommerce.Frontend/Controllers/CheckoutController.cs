@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HypnoTech.Ecommerce.Frontend.Controllers
 {
+    // Checkout is an intentional full-document boundary and must not inherit SpaController.
     public class CheckoutController : Controller
     {
         private readonly ICheckoutService _checkoutService;

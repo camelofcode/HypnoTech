@@ -20,14 +20,26 @@ repository. Nothing was copied or adapted from a production client site.
   reorder, plus editable site and email configuration.
 - A responsive original website with stable `data-testid` hooks for the later
   Playwright phase.
+- Progressive partial-page navigation with full-document fallback, a persistent audio
+  player, page-level track launch events, and a deliberately separate checkout flow.
+
+## Developer guides
+
+- [Build a CMS-managed model](../docs/cms-models.md) explains the model, fluent admin
+  mapping, MongoDB mapping, generated controller, relationships, ordering and uploads.
+- [Integrate frontend features](../docs/frontend-integration.md) explains the compiled
+  engine bundles, partial navigation contract, persistent player, event bus, basket,
+  page scripts and full-document boundaries.
 
 ## Prerequisites
 
 - .NET SDK 10.0
 - Podman
 
-No Node.js build is required for the example. All example browser assets are committed
-and self-hosted.
+No Node.js build is required to run the example. Its generated development and
+minified browser assets are committed and self-hosted. Contributors changing files in
+`HypnoTech.Demo.Website.Frontend` regenerate them with `npm run build:frontend` and
+verify them with `npm run check:frontend` from the repository root.
 
 ## One-command launch
 

@@ -13,6 +13,18 @@ const checkOnly = args.has('--check');
 const watchMode = args.has('--watch');
 
 const projects = {
+  demo: {
+    source: 'examples/HypnoTech.Demo.Website.Frontend',
+    output: 'examples/HypnoTech.Demo.Website/wwwroot/js',
+    bundle: 'site',
+    stylesheet: {
+      input: 'scss/site.scss',
+      output: 'examples/HypnoTech.Demo.Website/wwwroot/css/site'
+    },
+    scripts: [
+      'js/site.js'
+    ]
+  },
   frontend: {
     source: 'src/Frontend/HypnoTech.Frontend.Frontend',
     output: 'src/Frontend/HypnoTech.Frontend/wwwroot/js',

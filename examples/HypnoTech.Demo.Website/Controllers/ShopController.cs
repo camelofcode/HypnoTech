@@ -1,10 +1,11 @@
 using HypnoTech.Ecommerce.Dal.Repositories;
 using HypnoTech.Frontend.Attributes;
+using HypnoTech.Frontend.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HypnoTech.Demo.Website.Controllers;
 
-public sealed class ShopController : Controller
+public sealed class ShopController : SpaController
 {
     private readonly IMerchRepository _merch;
 
@@ -14,12 +15,12 @@ public sealed class ShopController : Controller
     }
 
     [NavigationLink("shop")]
-    public IActionResult Index() => View(_merch.GetMerch());
+    public IActionResult Index() => AjaxPartialView(_merch.GetMerch());
 
     [HttpGet("shop/{slug}")]
     public IActionResult Details(string slug)
     {
         var item = _merch.GetMerchItem(slug);
-        return item == null ? NotFound() : View(item);
+        return item == null ? NotFound() : AjaxPartialView(item);
     }
 }

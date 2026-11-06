@@ -4,15 +4,16 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Lantern House is the fictional public example for the HypnoTech CMS, media and ecommerce engine." />
-    <title>@ViewData["Title"] · Lantern House</title>
+    <meta name="Description" content="@ViewData["Description"]" />
+    <link rel="canonical" href="@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.PathBase}{Context.Request.Path}{Context.Request.QueryString}")" />
+    <title>@ViewData["Title"] - Lantern House</title>
     <link rel="icon" href="~/images/brand-mark.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <site-styles></site-styles>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
-        <a class="brand" asp-controller="Home" asp-action="Index" data-testid="brand-link">
+        <a class="brand" asp-controller="Home" asp-action="Index" data-testid="brand-link" data-navigo>
             <img src="~/images/brand-mark.svg" alt="" width="42" height="42" />
             <span>Lantern House</span>
         </a>
@@ -20,14 +21,37 @@
         <nav id="site-navigation" aria-label="Primary" data-testid="primary-navigation">
             @foreach (var link in NavBarCache.CachedLinks)
             {
-                <a href="@link.Url" data-navigation-key="@link.Key">@link.Text</a>
+                <a href="@link.Url" data-navigation-key="@link.Key" data-navigo>@link.Text</a>
             }
-            <a class="cart-link" asp-controller="Cart" asp-action="Index" id="cart-counter">Basket <span data-bind="text: count">0</span></a>
+            <a class="cart-link" asp-controller="Cart" asp-action="Index" id="cart-counter" data-navigo>Basket <span data-bind="text: count">0</span></a>
         </nav>
     </header>
 
+    <button class="player-drawer-toggle" type="button" aria-expanded="false" aria-controls="audio-player">
+        <span aria-hidden="true">♫</span><span class="visually-hidden">Open audio player</span>
+    </button>
+    <aside id="audio-player" class="persistent-player" aria-label="Persistent audio player" data-testid="persistent-player" aria-hidden="true">
+        <audio id="audio-element" preload="metadata" data-bind="attr: { src: currentTrack().path }"></audio>
+        <div class="audio-now-playing" data-bind="with: currentTrack">
+            <img src="" alt="" data-bind="attr: { src: imagePath }" />
+            <div><span class="eyebrow">Now playing</span><strong data-bind="text: title"></strong></div>
+        </div>
+        <div class="audio-controls">
+            <button class="player-button" type="button" data-bind="click: play, visible: !playing()" aria-label="Play current track">Play</button>
+            <button class="player-button" type="button" data-bind="click: pause, visible: playing" aria-label="Pause current track">Pause</button>
+            <button id="progress-track" class="progress-track" type="button" data-bind="click: setPosition" aria-label="Seek through current track">
+                <span data-bind="style: { width: positionPercent }"></span>
+            </button>
+        </div>
+        <div class="audio-playlist" data-bind="foreach: tracks">
+            <button type="button" data-bind="click: $parent.selectTrack, css: { 'is-current': $parent.isCurrent($data) }"><span data-bind="text: title"></span></button>
+        </div>
+    </aside>
+
     <main id="main">
-        @RenderBody()
+        <div id="content">
+            @RenderBody()
+        </div>
     </main>
 
     <footer class="site-footer">
@@ -40,12 +64,21 @@
         </div>
     </footer>
 
+    <dialog class="video-lightbox" data-video-lightbox aria-labelledby="video-lightbox-title">
+        <div class="video-lightbox-header">
+            <h2 id="video-lightbox-title" data-video-lightbox-title>Video</h2>
+            <button type="button" data-video-lightbox-close aria-label="Close video">Close</button>
+        </div>
+        <div class="video-frame"><iframe title="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+    </dialog>
+
     <hypnotech-scripts site-name="Lantern House"></hypnotech-scripts>
+    <hypnotech-player-config player-element-id="audio-player" />
     <hypnotech-cart-config
         cart-element-id="@(ViewData["CartElementId"] as string)"
         cart-counter-element-id="cart-counter"
         cookie-name="hypnotech-demo-cart" />
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <site-scripts></site-scripts>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

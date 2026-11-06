@@ -469,6 +469,7 @@ v0.1 policy is:
 examples/
   HypnoTech.Demo.Models/
   HypnoTech.Demo.Admin/
+  HypnoTech.Demo.Website.Frontend/
   HypnoTech.Demo.Website/
   HypnoTech.Demo.slnx
   SeedData/
@@ -500,6 +501,8 @@ content for publication.
 - [x] Audio, video, and photo media.
 - [x] Merchandise categories, items, options, postage, basket, and order administration.
 - [x] Responsive public website rendering.
+- [x] Partial-page navigation with direct-request fallback and persistent player/cart
+      state; checkout remains an intentional full-document boundary.
 - [x] A safe fake/demo payment boundary or checkout stopping point; no new real payment
       provider.
 
@@ -510,6 +513,7 @@ content for publication.
 - [x] Both applications have documented start commands.
 - [x] Development credentials are safe, explicit, and impossible to use in production.
 - [x] The example doubles as an integration-test host.
+- [x] User-facing guides cover fluent CMS model setup and frontend integration.
 
 ### Exit gate
 
@@ -932,6 +936,8 @@ stating that work was done.
 | 2026-11-06 | Phase 4 | Completed aggregate verification and the final error-page smoke check. | The 29-project Release build passes with zero warnings/errors; all four frontend outputs are current; the full Podman-backed solution passes 55/55 tests including MongoDB 4.0.3, 8.0.32, and 9.0.4; `git diff --check` passes; and an unknown public route returns the original example 404 page with HTTP 404 rather than 500. | This change |
 | 2026-11-06 | Phase 4 | Added a one-command Linux launcher for manual review. | `./examples/run-demo.sh` starts the pinned MongoDB Podman container, waits for readiness, seeds safely, launches both hosts, prints URLs and credentials, retains scoped logs, and stops the .NET processes on Ctrl+C while preserving the named demo database for the next run. | This change |
 | 2026-11-06 | Phase 4 | Corrected the example host integration to exercise the platform audio, cart, and checkout tag helpers; enabled CMS-managed YouTube video with an original accessible lightbox; made synthetic uploaded fixtures available through one shared admin/public upload store; and removed the last visible obsolete company copyright from CMS layouts. | The 29-project Release build succeeds; all four frontend outputs are current; 55/55 Release tests pass against rootless Podman including MongoDB 4.0.3, 8.0.32, and 9.0.4; live browser checks confirm the admin image preview, audio playback state, YouTube lightbox, cart count/details, and UK checkout total; uploaded SVG and MP4 endpoints return HTTP 200/206; payment remains HTTP 410; and Ctrl+C leaves both application ports closed. | This change |
+| 2026-11-06 | Phase 4 | Added the platform's progressive partial-page navigation to Lantern House, kept the audio player and basket counter outside the replaceable content region, exposed CMS tracks through the shared `player:playTrack` event, and retained checkout as an intentional full-document boundary. | Integration coverage proves normal Articles and Checkout requests return full HTML while opted-in Articles and Cart requests return the JSON fragment/metadata contract. Live browser checks started a CMS track, navigated Media → Stories → Shop → product → Cart with playback remaining in its Pause state, populated the cart after partial insertion, then crossed the separate Checkout document boundary. | This change |
+| 2026-11-06 | Phase 4 | Added public guides for fluent CMS model/admin setup and frontend integration, and moved Lantern House's authored host JS/SCSS into its own frontend workspace with committed development/minified output. | `npm run check:frontend` reports all five asset projects current; `git diff --check` passes; the 29-project Release build succeeds with no compile errors (NuGet's temporarily unreachable vulnerability feed emits only `NU1900`); and the complete Podman-backed Release suite passes 55/55 against MongoDB 4.0.3, 8.0.32, and 9.0.4. | This change |
 
 ## Immediate next actions
 

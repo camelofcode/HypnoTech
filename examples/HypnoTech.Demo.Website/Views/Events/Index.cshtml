@@ -8,7 +8,7 @@
     {
         <article>
             <img src="@item.ImagePath" alt="" />
-            <div><span class="pill">@item.Type</span><p class="meta">@item.StartsAt.ToString("dddd d MMMM · HH:mm") · @item.Venue</p><h2><a href="/events/@item.Slug">@item.Title</a></h2><p>@item.Summary</p><strong>£@item.TicketPrice</strong></div>
+            <div><span class="pill">@item.Type</span><p class="meta">@item.StartsAt.ToString("dddd d MMMM · HH:mm") · @item.Venue</p><h2><a href="/events/@item.Slug" data-navigo>@item.Title</a></h2><p>@item.Summary</p><strong>£@item.TicketPrice</strong></div>
         </article>
     }
 </section>

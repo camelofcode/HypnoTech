@@ -9,7 +9,7 @@
         <h2>@category.Name</h2>
         @foreach (var subcategory in category.SubCategories)
         {
-            <h3 class="subcategory-heading">@subcategory.Name</h3><div class="shop-grid">@foreach (var item in subcategory.Items) { <article class="product-card"><img src="@item.ImagePath" alt="" /><h3><a href="/shop/@item.Slug">@item.Name</a></h3><p>@item.Description</p><strong>£@item.Price</strong></article> }</div>
+            <h3 class="subcategory-heading">@subcategory.Name</h3><div class="shop-grid">@foreach (var item in subcategory.Items) { <article class="product-card"><img src="@item.ImagePath" alt="" /><h3><a href="/shop/@item.Slug" data-navigo>@item.Name</a></h3><p>@item.Description</p><strong>£@item.Price</strong></article> }</div>
         }
     }
 </section>

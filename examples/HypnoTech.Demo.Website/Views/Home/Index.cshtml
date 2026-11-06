@@ -8,15 +8,15 @@
     <h1>Small rooms.<br />Bright ideas.</h1>
     <p>Lantern House brings experimental sound, performance and visual art into warm, welcoming spaces.</p>
     <div class="button-row">
-        <a class="button button-primary" asp-controller="Events" asp-action="Index">Explore the programme</a>
-        <a class="button button-quiet" asp-controller="Media" asp-action="Index">Watch and listen</a>
+        <a class="button button-primary" asp-controller="Events" asp-action="Index" data-navigo>Explore the programme</a>
+        <a class="button button-quiet" asp-controller="Media" asp-action="Index" data-navigo>Watch and listen</a>
     </div>
 </section>
 
 <section class="section" aria-labelledby="upcoming-heading">
     <div class="section-heading">
         <div><span class="eyebrow">Coming up</span><h2 id="upcoming-heading">Make an evening of it</h2></div>
-        <a asp-controller="Events" asp-action="Index">All events →</a>
+        <a asp-controller="Events" asp-action="Index" data-navigo>All events →</a>
     </div>
     <div class="card-grid" data-testid="event-cards">
         @foreach (var item in Model.Events)
@@ -26,7 +26,7 @@
                 <div class="card-body">
                     <span class="pill">@item.Type</span>
                     <p class="meta">@item.StartsAt.ToString("ddd d MMM · HH:mm")</p>
-                    <h3><a href="/events/@item.Slug">@item.Title</a></h3>
+                    <h3><a href="/events/@item.Slug" data-navigo>@item.Title</a></h3>
                     <p>@item.Summary</p>
                 </div>
             </article>
@@ -37,7 +37,7 @@
 <section class="section section-contrast" aria-labelledby="artists-heading">
     <div class="section-heading">
         <div><span class="eyebrow">Meet the programme</span><h2 id="artists-heading">Artists in residence</h2></div>
-        <a asp-controller="Artists" asp-action="Index">Meet everyone →</a>
+        <a asp-controller="Artists" asp-action="Index" data-navigo>Meet everyone →</a>
     </div>
     <div class="portrait-grid">
         @foreach (var artist in Model.Artists)
@@ -55,14 +55,14 @@
         <span class="eyebrow">From the house</span>
         <h2 id="stories-heading">Stories, notes and conversations</h2>
         <p>Editorial content is managed through the same dynamic CMS as the programme.</p>
-        <a class="button button-quiet" asp-controller="Articles" asp-action="Index">Read all stories</a>
+        <a class="button button-quiet" asp-controller="Articles" asp-action="Index" data-navigo>Read all stories</a>
     </div>
     <div class="story-list">
         @foreach (var article in Model.Articles)
         {
             <article>
                 <p class="meta">@article.PublishedAt.ToString("d MMMM yyyy")</p>
-                <h3><a href="/articles/@article.Slug">@article.Title</a></h3>
+                <h3><a href="/articles/@article.Slug" data-navigo>@article.Title</a></h3>
                 <p>@article.Summary</p>
             </article>
         }
@@ -72,14 +72,14 @@
 <section class="section shop-preview" aria-labelledby="shop-heading">
     <div class="section-heading">
         <div><span class="eyebrow">Support the programme</span><h2 id="shop-heading">Small editions</h2></div>
-        <a asp-controller="Shop" asp-action="Index">Visit the shop →</a>
+        <a asp-controller="Shop" asp-action="Index" data-navigo>Visit the shop →</a>
     </div>
     <div class="shop-grid">
         @foreach (var item in Model.ShopItems)
         {
             <article class="product-card">
                 <img src="@item.ImagePath" alt="" />
-                <h3><a href="/shop/@item.Slug">@item.Name</a></h3>
+                <h3><a href="/shop/@item.Slug" data-navigo>@item.Name</a></h3>
                 <p>£@item.Price</p>
             </article>
         }
