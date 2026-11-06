@@ -22,7 +22,7 @@
             {
                 <a href="@link.Url" data-navigation-key="@link.Key">@link.Text</a>
             }
-            <a class="cart-link" asp-controller="Cart" asp-action="Index">Basket <span data-cart-count>0</span></a>
+            <a class="cart-link" asp-controller="Cart" asp-action="Index" id="cart-counter">Basket <span data-bind="text: count">0</span></a>
         </nav>
     </header>
 
@@ -40,6 +40,11 @@
         </div>
     </footer>
 
+    <hypnotech-scripts site-name="Lantern House"></hypnotech-scripts>
+    <hypnotech-cart-config
+        cart-element-id="@(ViewData["CartElementId"] as string)"
+        cart-counter-element-id="cart-counter"
+        cookie-name="hypnotech-demo-cart" />
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

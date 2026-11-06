@@ -1,7 +1,7 @@
 [
   {
     "Id": "64b700000000000000000001",
-    "ImagePath": "/images/artwork-amber.svg",
+    "ImagePath": "/Images/Demo/artwork-amber.svg",
     "Name": "Lantern House risograph",
     "Description": "A fictional two-colour A3 print on recycled paper.",
     "Category": "Shop",
@@ -16,7 +16,7 @@
   },
   {
     "Id": "64b700000000000000000002",
-    "ImagePath": "/images/artwork-rose.svg",
+    "ImagePath": "/Images/Demo/artwork-rose.svg",
     "Name": "Listening room field notes",
     "Description": "A short fictional audio edition supplied as a demonstration object.",
     "Category": "Shop",

@@ -8,13 +8,13 @@ namespace HypnoTech.Demo.Website.Controllers;
 
 public sealed class MediaController : Controller
 {
-    private readonly IAudioTrackService _audio;
     private readonly IPhotoAlbumService _photos;
+    private readonly IVideoService _videos;
 
-    public MediaController(IAudioTrackService audio, IPhotoAlbumService photos)
+    public MediaController(IPhotoAlbumService photos, IVideoService videos)
     {
-        _audio = audio;
         _photos = photos;
+        _videos = videos;
     }
 
     [NavigationLink("media")]
@@ -22,8 +22,8 @@ public sealed class MediaController : Controller
     {
         return View(new MediaViewModel
         {
-            Audio = _audio.GetTracksForPlayer().ToList(),
-            PhotoAlbums = _photos.GetPhotoAlbums().ToList()
+            PhotoAlbums = _photos.GetPhotoAlbums().ToList(),
+            Videos = _videos.GetVideos().ToList()
         });
     }
 }

@@ -12,9 +12,10 @@ repository. Nothing was copied or adapted from a production client site.
 - Text, textarea, rich-text, date, checkbox, money, hidden, generated, read-only,
   static-select, repository-select, nested-select, list, file, image, and gallery
   mappings.
-- Articles, events, ordered artist profiles, audio, local video, photo galleries,
-  merchandise categories, product options, postage profiles, a basket, and
-  server-calculated totals.
+- Articles, events, ordered artist profiles, the platform audio player, uploaded
+  images/files, local MP4 video, CMS-managed YouTube video with a lightbox, photo
+  galleries, merchandise categories, product options, postage profiles, and the
+  platform basket and calculation-only checkout.
 - Database-backed navigation that the admin Features screen can enable, rename, and
   reorder, plus editable site and email configuration.
 - A responsive original website with stable `data-testid` hooks for the later
@@ -27,6 +28,21 @@ repository. Nothing was copied or adapted from a production client site.
 
 No Node.js build is required for the example. All example browser assets are committed
 and self-hosted.
+
+## One-command launch
+
+From the repository root, the launcher starts MongoDB, seeds the demo, and runs both
+applications:
+
+```bash
+./examples/run-demo.sh
+```
+
+It prints the URLs and development login when both applications are ready. It also
+pins the admin and website to the same absolute `.demo/uploads` path, so files uploaded
+through the CMS are visible from either host. Press Ctrl+C to stop the admin and
+website. The named MongoDB container and volume remain in place for the next run; use
+the reset commands below when you want fresh data.
 
 ## Start MongoDB
 
@@ -57,7 +73,8 @@ dotnet run --project examples/HypnoTech.Demo.Admin -- --seed-only
 ```
 
 Seeding is additive and idempotent per collection: it populates only empty demo
-collections. The seed command refuses to run outside the Development environment.
+collections. It also copies the synthetic media fixtures into the configured shared
+upload store. The seed command refuses to run outside the Development environment.
 
 The development administrator is:
 
@@ -89,6 +106,10 @@ Then open:
 
 The admin also seeds empty collections during Development startup, so a separate seed
 command is optional for ordinary local use.
+
+The initial Phase 4 preview used the database name `hypnotech_demo`. The corrected
+example uses `hypnotech_demo_lantern`, so an existing named volume receives the revised
+seed without deleting the earlier preview database. The full reset below removes both.
 
 ## Payment safety
 

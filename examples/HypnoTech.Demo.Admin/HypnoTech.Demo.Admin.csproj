@@ -15,4 +15,16 @@
     <ProjectReference Include="../../src/Media/HypnoTech.Media.Dal.MongoDb/HypnoTech.Media.Dal.MongoDb.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="../HypnoTech.Demo.Website/wwwroot/images/artwork-*.svg"
+             Link="DemoUploads/images/%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../HypnoTech.Demo.Website/wwwroot/documents/*.txt"
+             Link="DemoUploads/documents/%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../HypnoTech.Demo.Website/wwwroot/media/lantern-*"
+             Link="DemoUploads/media/%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

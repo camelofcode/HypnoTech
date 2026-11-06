@@ -7,17 +7,17 @@
     "Photos": [
       {
         "Id": "64b410000000000000000001",
-        "ImagePath": "/images/artwork-rose.svg",
+        "ImagePath": "/Images/Demo/artwork-rose.svg",
         "Caption": "The fictional courtyard before an evening performance."
       },
       {
         "Id": "64b410000000000000000002",
-        "ImagePath": "/images/artwork-indigo.svg",
+        "ImagePath": "/Images/Demo/artwork-indigo.svg",
         "Caption": "Studio Two prepared for a workshop."
       },
       {
         "Id": "64b410000000000000000003",
-        "ImagePath": "/images/artwork-mint.svg",
+        "ImagePath": "/Images/Demo/artwork-mint.svg",
         "Caption": "A quiet stage and a single warm lamp."
       }
     ]

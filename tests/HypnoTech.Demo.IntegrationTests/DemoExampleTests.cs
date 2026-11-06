@@ -24,6 +24,7 @@ public sealed class DemoExampleTests : IClassFixture<DemoMongoFixture>
     public async Task Admin_host_seeds_only_synthetic_content_and_hashes_the_documented_password()
     {
         var databaseName = $"hypnotech_demo_{Guid.NewGuid():N}";
+        var uploadPath = Path.Combine(Path.GetTempPath(), $"hypnotech-demo-uploads-{Guid.NewGuid():N}");
         var originalDirectory = Directory.GetCurrentDirectory();
         var cancellationToken = TestContext.Current.CancellationToken;
 
@@ -35,6 +36,7 @@ public sealed class DemoExampleTests : IClassFixture<DemoMongoFixture>
                     $"--Mongo:Server={_mongo.Host}",
                     $"--Mongo:Port={_mongo.Port}",
                     $"--Mongo:Database={databaseName}",
+                    $"--UploadPath={uploadPath}",
                     "--Demo:SeedOnStartup=true",
                     "--urls=http://127.0.0.1:0"
                 ])
@@ -66,14 +68,22 @@ public sealed class DemoExampleTests : IClassFixture<DemoMongoFixture>
                 .Find(FilterDefinition<BsonDocument>.Empty).ToListAsync(cancellationToken));
             Assert.NotEmpty(await database.GetCollection<BsonDocument>("photoalbums")
                 .Find(FilterDefinition<BsonDocument>.Empty).ToListAsync(cancellationToken));
+            Assert.Single(await database.GetCollection<BsonDocument>("videos")
+                .Find(FilterDefinition<BsonDocument>.Empty).ToListAsync(cancellationToken));
             Assert.Equal(5, await database.GetCollection<BsonDocument>("navbar")
                 .CountDocumentsAsync(FilterDefinition<BsonDocument>.Empty, cancellationToken: cancellationToken));
+            Assert.True(File.Exists(Path.Combine(uploadPath, "Images", "Demo", "artwork-rose.svg")));
+            Assert.True(File.Exists(Path.Combine(uploadPath, "Files", "Demo", "lantern-motion.mp4")));
 
             await database.Client.DropDatabaseAsync(databaseName, cancellationToken);
         }
         finally
         {
             Directory.SetCurrentDirectory(originalDirectory);
+            if (Directory.Exists(uploadPath))
+            {
+                Directory.Delete(uploadPath, true);
+            }
         }
     }
 

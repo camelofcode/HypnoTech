@@ -1,12 +1,15 @@
 using System;
+using System.IO;
 using HypnoTech.Cms.Contracts.Interfaces;
 using HypnoTech.Common;
 using HypnoTech.Common.Dal.Repositories;
+using HypnoTech.Common.Extensions;
 using HypnoTech.Common.Models.Settings;
 using HypnoTech.Demo.Models;
 using HypnoTech.Ecommerce.Models;
 using HypnoTech.Media.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -26,6 +29,7 @@ public static class DemoSeeder
         }
 
         using var scope = services.CreateScope();
+        CopyDemoUploads(scope.ServiceProvider.GetRequiredService<IConfiguration>(), environment);
         var seed = scope.ServiceProvider.GetRequiredService<ISeedRepository>();
 
         seed.Seed<Artist>("demoArtists", "artists");
@@ -33,6 +37,7 @@ public static class DemoSeeder
         seed.Seed<Event>("demoEvents", "events");
         seed.Seed<AudioTrack>("audiotracks", "audiotracks");
         seed.Seed<PhotoAlbum>("photoalbums", "photoalbums");
+        seed.Seed<YouTubeVideo>("videos", "videos");
         seed.Seed<MerchCategoryType>("merchcategorytypes", "merchcategorytypes");
         seed.Seed<MerchItem>("merches", "merch");
         seed.Seed<PostageProfile>("postageprofiles", "postageprofiles");
@@ -55,6 +60,34 @@ public static class DemoSeeder
                     "orders", "postageprofiles", "downloadcodes"
                 }
             });
+        }
+    }
+
+    private static void CopyDemoUploads(IConfiguration configuration, IWebHostEnvironment environment)
+    {
+        var packagedRoot = Path.Combine(environment.ContentRootPath, "DemoUploads");
+        var websiteRoot = Directory.Exists(packagedRoot)
+            ? packagedRoot
+            : Path.GetFullPath(Path.Combine(
+                environment.ContentRootPath, "..", "HypnoTech.Demo.Website", "wwwroot"));
+        var uploadRoot = configuration.UploadPath();
+
+        Copy("images/artwork-amber.svg", "Images/Demo/artwork-amber.svg");
+        Copy("images/artwork-indigo.svg", "Images/Demo/artwork-indigo.svg");
+        Copy("images/artwork-mint.svg", "Images/Demo/artwork-mint.svg");
+        Copy("images/artwork-rose.svg", "Images/Demo/artwork-rose.svg");
+        Copy("documents/shadow-workshop.txt", "Files/Demo/shadow-workshop.txt");
+        Copy("documents/signals-programme.txt", "Files/Demo/signals-programme.txt");
+        Copy("media/lantern-signal.wav", "Files/Demo/lantern-signal.wav");
+        Copy("media/lantern-motion.mp4", "Files/Demo/lantern-motion.mp4");
+        return;
+
+        void Copy(string sourceRelativePath, string destinationRelativePath)
+        {
+            var sourcePath = Path.Combine(websiteRoot, sourceRelativePath);
+            var destinationPath = Path.Combine(uploadRoot, destinationRelativePath);
+            Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
+            File.Copy(sourcePath, destinationPath, true);
         }
     }
 }
