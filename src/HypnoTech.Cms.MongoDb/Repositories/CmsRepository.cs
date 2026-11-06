@@ -53,7 +53,15 @@ namespace HypnoTech.Cms.MongoDb.Repositories
 
             var newOrder = currentOrder + newPosition;
 
-            var itemToSwap = GetOne(new BsonDocument(GetOrderColumnMongoName<TClass>(), new BsonInt32(newOrder.Value)));
+            var itemToSwapDocument = _collection
+                .Find(new BsonDocument(GetOrderColumnMongoName<TClass>(), new BsonInt32(newOrder.Value)))
+                .FirstOrDefault();
+            if (itemToSwapDocument == null)
+            {
+                return;
+            }
+
+            var itemToSwap = BsonSerializer.Deserialize<TClass>(itemToSwapDocument);
 
             typeof(TClass).GetProperty(mapping.OrderProperty)?.SetValue(current, newOrder);
             typeof(TClass).GetProperty(mapping.OrderProperty)?.SetValue(itemToSwap, currentOrder);
@@ -219,6 +227,10 @@ namespace HypnoTech.Cms.MongoDb.Repositories
                 {
                     return filters.FirstOrDefault();
                 }
+                if (filters.Count == 0)
+                {
+                    return builder.Exists("_id", false);
+                }
                 return builder.Or(filters.ToArray());
             }
 
@@ -256,7 +268,7 @@ namespace HypnoTech.Cms.MongoDb.Repositories
         {
             foreach (var child in mapping.Children)
             {
-                var id = typeof(TClass).GetProperty(child.IdInfo.Name)?.GetValue(item).ToString();
+                var id = typeof(TClass).GetProperty(child.IdInfo.Name)?.GetValue(item)?.ToString();
                 if (!string.IsNullOrEmpty(id))
                 {
                     var childCollection = _database.GetCollection<BsonDocument>(child.DataStore);

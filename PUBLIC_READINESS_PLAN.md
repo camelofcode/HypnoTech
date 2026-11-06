@@ -70,7 +70,9 @@ The programme has two intended releases:
 - Changes to the SelfHypnosis repository or its committed files.
 - Publishing private content, branding, seed data, templates, or imagery from either
   site.
-- Migrating the production MongoDB deployment as part of v0.1.
+- Migrating the production MongoDB deployment as part of v0.1. A deferred, non-
+  executable runbook is recorded in
+  [`docs/operations/mongodb-production-migration.md`](docs/operations/mongodb-production-migration.md).
 - PayPal v2, Stripe, or other work described in `ecommerce-payments-plan.md`.
 - Exhaustive test coverage.
 - Windows as a required CI or production platform.
@@ -127,7 +129,7 @@ date.
 | Planning | Evidence-based roadmap and tracking system | Complete | Pre-work |
 | 0 | Stable baseline preserved | Complete | Pre-work |
 | 1 | Repository safe and understandable for public release | In progress | v0.1 |
-| 2 | CMS and MongoDB behaviour characterised by tests | Not started | v0.1 |
+| 2 | CMS and MongoDB behaviour characterised by tests | Complete | v0.1 |
 | 3 | Projects physically organised without semantic changes | Not started | v0.1 |
 | 4 | Original public example admin and website | Not started | v0.1 |
 | 5 | Focused Playwright portfolio smoke suite | Not started | v0.1 |
@@ -156,7 +158,7 @@ These remain proposals until marked **Accepted** in the decision log.
 | --- | --- |
 | Baseline preservation | Annotated tag plus a long-lived `support/legacy-production` branch |
 | Public development | Work on `public-readiness`, ultimately merge into `main` |
-| Tests | xUnit v3, Testcontainers, then Playwright for .NET |
+| Tests | xUnit v3 on Microsoft Testing Platform, Testcontainers, then Playwright for .NET |
 | CI | Linux-only GitHub Actions initially |
 | Async APIs | Add true async repository/service methods, use them from controllers, and propagate cancellation |
 | JavaScript | Keep self-hosted assets; classify vendor/generated paths with Linguist attributes |
@@ -164,6 +166,13 @@ These remain proposals until marked **Accepted** in the decision log.
 | Public examples | New neutral demo content, never sanitised private-site content |
 | Persistence | Shared provider-neutral EF code plus thin provider-specific packages |
 | Payments | Keep the existing payment plan deferred and out of v0.1/v0.2 scope |
+
+### Deferred operational plans
+
+- [Future production MongoDB migration](docs/operations/mongodb-production-migration.md)
+  — prefer a rehearsed blue/green logical BSON migration to a pinned Podman container;
+  retain successive in-place major upgrades as the fallback. No production work is
+  authorised by this plan.
 
 ## Phase 0 — Preserve and define the stable baseline
 
@@ -324,54 +333,69 @@ tests/
   HypnoTech.ArchitectureTests/
 ```
 
-- [ ] Use xUnit v3 consistently unless implementation research identifies a blocker.
-- [ ] Add standard test SDK, runner, and coverage dependencies centrally.
-- [ ] Add test projects to the solution under functional test folders.
-- [ ] Do not introduce a high global coverage threshold at the start.
+- [x] Use xUnit v3 consistently unless implementation research identifies a blocker.
+- [x] Add the Microsoft Testing Platform runner and coverage dependencies centrally.
+- [x] Add test projects to the solution under functional test folders.
+- [x] Do not introduce a high global coverage threshold at the start.
 
 ### CMS unit and characterisation tests
 
-- [ ] `FormClassMapping` registration and lookup.
-- [ ] Member mappings for every supported input type.
-- [ ] Controller name, display name, role, data source, title, order, and capability
+- [x] `FormClassMapping` registration and lookup.
+- [x] Member mappings for every supported input type.
+- [x] Controller name, display name, role, data source, title, order, and capability
       configuration.
-- [ ] Generic controller discovery by `CmsControllerFeatureProvider`.
-- [ ] Dynamic route creation by `CmsControllerRouteConvention`.
-- [ ] `CmsController<T>` add, edit, duplicate, remove, ordering, redirect, and flash
+- [x] Generic controller discovery by `CmsControllerFeatureProvider`.
+- [x] Dynamic route creation by `CmsControllerRouteConvention`.
+- [x] `CmsController<T>` add, edit, duplicate, remove, ordering, redirect, and flash
       behaviour.
-- [ ] Unsupported-operation gates.
-- [ ] HTTP verbs and antiforgery attributes.
-- [ ] Form construction and validation.
-- [ ] Generated, hidden, and default member handling.
-- [ ] File, image, gallery, and list behaviour using isolated temporary storage.
-- [ ] `CmsService<T>` repository interactions.
-- [ ] Explicit isolation for static mapping, role, navigation, and model registries.
+- [x] Unsupported-operation gates.
+- [x] HTTP verbs and antiforgery attributes.
+- [x] Form construction and validation.
+- [x] Generated, hidden, and default member handling.
+- [x] File, image, gallery, and list behaviour using isolated synthetic data and
+      temporary storage.
+- [x] `CmsService<T>` repository interactions.
+- [x] Explicit isolation for static mapping, role, navigation, and model registries.
 
 ### MongoDB integration tests
 
-- [ ] Use Testcontainers for .NET with an xUnit lifecycle fixture.
-- [ ] Run the repository against the exact production MongoDB image.
-- [ ] Run it against one currently supported MongoDB image.
-- [ ] Generic add, get, edit, and remove.
-- [ ] Pagination and total-page calculations.
-- [ ] Default and explicit sorting.
-- [ ] Search, including zero, one, and multiple searchable fields.
-- [ ] Ordered item movement and boundary behaviour.
-- [ ] Persisted BSON member names.
-- [ ] Child population.
-- [ ] List and gallery identifier generation.
-- [ ] Select-list lookup.
-- [ ] Seed behaviour.
-- [ ] Common, ecommerce, and media repository registration.
-- [ ] Deserialisation of representative legacy documents.
-- [ ] Repeated application-host construction and BSON mapping registration.
+- [x] Use Testcontainers for .NET with an xUnit lifecycle fixture.
+- [x] Run the repository against the exact production `mongo:4.0.3` image.
+- [x] Run it against the supported, pinned `mongo:8.0.32-noble` image.
+- [x] Run it against the current, pinned `mongo:9.0.4` image.
+- [x] Generic add, get, edit, and remove.
+- [x] Pagination and total-page calculations.
+- [x] Default and explicit sorting.
+- [x] Search, including zero, one, and multiple searchable fields.
+- [x] Ordered item movement and boundary behaviour.
+- [x] Persisted BSON member names.
+- [x] Child population, including a missing optional child reference.
+- [x] List and gallery identifier generation.
+- [x] Select-list lookup.
+- [x] Seed behaviour.
+- [x] Common, ecommerce, and media repository registration.
+- [x] Deserialisation of representative legacy documents.
+- [x] Repeated application-host construction and idempotent BSON/model registration.
+
+### Resolved characterisation findings
+
+The initial suite exposed four failure modes. A compatibility-reviewed follow-up fixed
+them without changing routes, interfaces, collection names, BSON names, stored data, or
+the MongoDB.Driver 3.4.3 baseline:
+
+- search with zero searchable fields returns no matches instead of sending an invalid
+  empty `$or`;
+- child population skips a null child ID;
+- an ordered move beyond either boundary is an idempotent no-op;
+- repeated Common, Ecommerce, and Media MongoDB startup reuses explicitly registered
+  BSON class maps and avoids duplicate model-registry entries.
 
 ### Exit gate
 
-- [ ] Dynamic CMS behaviour is characterised before structural refactoring.
-- [ ] The production MongoDB server version is exercised automatically.
-- [ ] Tests are deterministic when repeated and when run as a full suite.
-- [ ] Coverage is published as information even if it is not yet a hard global gate.
+- [x] Dynamic CMS behaviour is characterised before structural refactoring.
+- [x] The production MongoDB server version is exercised automatically.
+- [x] Tests are deterministic when repeated and when run as a full suite.
+- [x] Coverage is published as information even if it is not yet a hard global gate.
 
 ## Phase 3 — Physical project reorganisation
 
@@ -824,13 +848,13 @@ These apply throughout all phases:
 
 | Risk | Impact | Mitigation | Status |
 | --- | --- | --- | --- |
-| MongoDB 4.0.3 compatibility regresses after a driver change | Production failure | Preserve driver 3.4.3 on support branch and test the 4.0.3 image before changes | Known baseline; test pending |
+| MongoDB 4.0.3 compatibility regresses after a driver change | Production failure | Preserve driver 3.4.3 on support branch and run the exact 4.0.3 contract target before changes | Automated locally; CI pending Phase 7 |
 | Secrets exist in compact Git history | Credential exposure on publication | Full-history scan, rotation, clean history, final pre-publication scan | Initial history and working-tree scans clean; final scan pending |
 | Third-party assets lack clear notices | Copyright/licensing problem | Inventory files and dependencies; preserve licences; add notices | Resolved for publication; unknown legacy package metadata is stated explicitly |
 | Tracked Montserrat fonts are corrupted | Broken fonts or an unreviewed visual change | Remove only after confirming no authored/generated CSS reference and retain recovery through the baseline refs/bundle | Resolved; owner approved removal of all 18 unreferenced files |
 | Legacy PayPal packages declare no licence metadata | Unclear provenance and public maintenance risk | Do not misstate the licence; document that packages are restored, then resolve provenance during later existing-PayPal work | Accepted known risk; binaries are not committed and provider replacement remains out of scope |
 | Physical moves break private site references | Consumer builds fail | Pin production to support branch; temporary smoke builds; optional shims | Open |
-| Static registries make tests order-dependent | Flaky test suite | Serial collections or explicit reset/idempotent registration support | Open |
+| Static registries make tests order-dependent | Flaky test suite | Serial collections and explicit reset of mutable public registries; make BSON and model registration idempotent | Resolved for current registrations; tests remain serial where global mappings are intentionally mutated |
 | Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Open |
 | Playwright suite becomes slow or brittle | CI friction | Keep a small journey-based Chromium suite; retain traces on failure | Open |
 | Async conversion changes routes or behaviour | Public regression | Characterisation tests first; preserve action names/routes; convert in bounded slices | Open |
@@ -848,7 +872,7 @@ These apply throughout all phases:
 | 2026-11-06 | D-004 | Use this file as the living roadmap and delivery record. | Accepted | Keeps planned, completed, and outstanding work visible in the repository. |
 | 2026-11-06 | D-005 | Preserve production with a tag and support branch before public work. | Accepted | Allows public `main` to evolve without forcing production dependency upgrades. |
 | 2026-11-06 | D-006 | Keep self-hosted JavaScript and use Linguist vendor/generated classification. | Accepted | Fixes misleading statistics without weakening runtime reliability. |
-| 2026-11-06 | D-007 | Use xUnit v3, Testcontainers, and a focused Playwright suite. | Proposed | Matches current experience and provides layered verification. |
+| 2026-11-06 | D-007 | Use xUnit v3, Testcontainers, and a focused Playwright suite. | Accepted | Matches current experience and provides layered verification. |
 | 2026-11-06 | D-008 | Use a provider-neutral EF implementation with thin driver packages. | Proposed | Avoids duplicated repositories and unnecessary database drivers. |
 | 2026-11-06 | D-009 | Add an async-I/O modernisation phase before the v0.1 public release. | Accepted | Public CMS and other request paths should use genuine async provider APIs while preserving compatibility and avoiding fake async. |
 | 2026-11-06 | D-010 | Complete async contracts while MongoDB is still the only DAL. | Accepted | Prevents building a synchronous EF Core DAL and then repeating the async conversion. |
@@ -860,6 +884,9 @@ These apply throughout all phases:
 | 2026-11-06 | D-016 | Licence public engine source under PolyForm Noncommercial 1.0.0 and offer separate written commercial licences. | Accepted | Allows noncommercial use, modification, and distribution while Christopher Clayton retains commercial use and licensing rights as copyright holder. |
 | 2026-11-06 | D-017 | Do not accept external code or documentation contributions. | Accepted | Keeps the engine under a single copyright holder and avoids contributor rights complicating separate commercial licensing. |
 | 2026-11-06 | D-018 | Treat the missing licence metadata in the restored legacy PayPal/Braintree NuGet packages as an explicit, non-blocking publication risk until later existing-PayPal work. | Accepted | The engine repository does not redistribute those binaries, the uncertainty is disclosed, and replacing payment providers remains out of scope. |
+| 2026-11-06 | D-019 | Use xUnit v3's Microsoft Testing Platform v2 runner and Microsoft's MTP coverage extension rather than the legacy VSTest/coverlet collector path. | Accepted | .NET 10 supports the unified runner, xUnit 4 defaults to MTP v2, and the current coverlet collector does not support MTP v2. |
+| 2026-11-06 | D-020 | Fix the four Phase 2 MongoDB characterisation failures while retaining MongoDB.Driver 3.4.3 and testing MongoDB 4.0.3, 8.0.32, and 9.0.4. | Accepted | Empty searches, null child IDs, boundary moves, and repeated startup should be safe; no persisted format or production version floor changes. |
+| 2026-11-06 | D-021 | Prefer a separately authorised blue/green logical BSON migration to a pinned Podman-hosted MongoDB release over successive in-place production upgrades. | Accepted for future planning | Keeps the existing native deployment unchanged until cutover, preserves a simple rollback point, and retains the same low-cost capacity class; the container route proceeds only if rehearsal shows no meaningful regression. |
 
 ## Work log
 
@@ -889,6 +916,11 @@ stating that work was done.
 | 2026-11-06 | Phase 1 | Centralised engine authorship and copyright metadata as `Christopher Clayton` / `Copyright © 2026 Christopher Clayton`, removing the proposed-but-never-formed HypnoTech company and engine co-author metadata. | Root `Directory.Build.props` is authoritative; all 21 projects evaluate to the same author/company/copyright values; Release build passed with zero warnings/errors. | This change |
 | 2026-11-06 | Phase 1 | Removed all corrupted Montserrat font snapshots after confirming they were unreferenced. | No `Montserrat` or frontend-font path reference exists in authored/generated engine CSS; frontend freshness checks pass; all 18 files remain recoverable from the preserved baseline and private bundle. | This change |
 | 2026-11-06 | Phase 1 | Added the accepted source and commercial-licensing model and made the no-contributions policy explicit. | Root `LICENSE.md` is byte-for-byte identical to the official PolyForm Noncommercial 1.0.0 download; `NOTICE`, `COMMERCIAL-LICENSE.md`, README, package metadata, and contribution guidance identify Christopher Clayton and the separate commercial route; a test NuGet package contains the licence, notice, and README. | This change |
+| 2026-11-06 | Phase 2 | Added four xUnit v3/Microsoft Testing Platform projects, centrally pinned test dependencies, informational coverage, and a repository-local characterisation-test authoring skill. | Skill validator passes; 25-project Release build passes with zero warnings/errors; the CMS report covers 629/2577 lines (24.41%) with no threshold. | This change |
+| 2026-11-06 | Phase 2 | Added dynamic CMS mapping, controller, route, form, service, upload, Common helper, and architecture characterisation tests using synthetic fixtures and isolated static state. | Focused CMS, Common, and architecture suites run independently and as part of the solution. | This change |
+| 2026-11-06 | Phase 2 | Added Testcontainers repository contracts for production MongoDB 4.0.3, supported MongoDB 8.0.32, and current MongoDB 9.0.4, running through the rootless Podman API socket without `podman-docker`. | All three images start and the suite covers CRUD, paging, sorting, search, ordering, BSON, children, list/gallery IDs, select lists, seed, DI, legacy documents, and repeated registration; initial failure modes were captured before correction. | This change |
+| 2026-11-06 | Phase 2 | Corrected the four failures exposed by the initial MongoDB contracts without upgrading the driver or changing persisted data. | Empty-field search returns no rows; null child IDs remain unset; ordering boundaries are no-ops; repeated Common/Ecommerce/Media startup is idempotent. All behaviours pass against MongoDB 4.0.3, 8.0.32, and 9.0.4. | This change |
+| 2026-11-06 | Future operations planning | Added a non-executable production MongoDB migration runbook covering logical BSON transfer, a pinned Podman container, rehearsal, verification, cutover, and rollback. | Vendor upgrade, dump/restore, platform, Podman, and production guidance reviewed; no server connection or production change was made. | This change |
 
 ## Immediate next actions
 

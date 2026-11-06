@@ -6,7 +6,6 @@ using HypnoTech.MongoDb;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 
 namespace HypnoTech.Common.Dal.MongoDb
@@ -29,7 +28,7 @@ namespace HypnoTech.Common.Dal.MongoDb
 
         private static void Map()
         {
-            BsonClassMap.RegisterClassMap<AdminUser>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<AdminUser>(cm =>
             {
                 cm.MapMember(c => c.Id).SetElementName("_id").SetSerializer(new StringSerializer(BsonType.ObjectId));
                 cm.MapMember(c => c.Username).SetElementName("username");
@@ -38,7 +37,7 @@ namespace HypnoTech.Common.Dal.MongoDb
                 cm.MapMember(c => c.Roles).SetElementName("roles");
             });
 
-            BsonClassMap.RegisterClassMap<NavBarLink>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<NavBarLink>(cm =>
             {
                 cm.MapMember(c => c.Id).SetElementName("_id").SetSerializer(new StringSerializer(BsonType.ObjectId));
                 cm.MapMember(c => c.Key).SetElementName("key");
@@ -47,7 +46,7 @@ namespace HypnoTech.Common.Dal.MongoDb
                 cm.MapMember(c => c.Enabled).SetElementName("enabled").SetSerializer(new BooleanSerializer(BsonType.Boolean));
             });
 
-            BsonClassMap.RegisterClassMap<Country>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<Country>(cm =>
             {
                 cm.MapMember(c => c.DisplayText).SetElementName("displayText");
                 cm.MapMember(c => c.Code).SetElementName("code");
@@ -55,7 +54,7 @@ namespace HypnoTech.Common.Dal.MongoDb
             });
 
 
-            BsonClassMap.RegisterClassMap<SerilogEntry>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<SerilogEntry>(cm =>
             {
                 cm.MapMember(c => c.Id).SetElementName("_id").SetSerializer(new StringSerializer(BsonType.ObjectId));
                 cm.MapMember(c => c.DateTime).SetElementName("Timestamp").SetSerializer(new DateTimeSerializer(BsonType.DateTime));
@@ -65,21 +64,21 @@ namespace HypnoTech.Common.Dal.MongoDb
                 cm.MapMember(c => c.Properties).SetElementName("Properties");
             });
 
-            BsonClassMap.RegisterClassMap<SerilogProperties>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<SerilogProperties>(cm =>
             {
                 cm.MapMember(c => c.SiteName).SetElementName("SiteName");
                 cm.MapMember(c => c.Path).SetElementName("RequestPath");
             });
 
 
-            BsonClassMap.RegisterClassMap<Config>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<Config>(cm =>
             {
                 cm.MapMember(c => c.Paypal).SetElementName("paypal");
                 cm.MapMember(c => c.Email).SetElementName("email");
                 cm.MapMember(c => c.MainSite).SetElementName("mainSite");
             });
 
-            BsonClassMap.RegisterClassMap<PaypalConfig>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<PaypalConfig>(cm =>
             {
                 cm.MapMember(c => c.ApiClientId).SetElementName("apiClientId");
                 cm.MapMember(c => c.ApiClientSecret).SetElementName("apiClientSecret");
@@ -91,7 +90,7 @@ namespace HypnoTech.Common.Dal.MongoDb
 
             });
 
-            BsonClassMap.RegisterClassMap<EmailConfig>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<EmailConfig>(cm =>
             {
                 cm.MapMember(c => c.EnableEmails).SetElementName("enabled").SetSerializer(new BooleanSerializer(BsonType.Boolean));
                 cm.MapMember(c => c.SmtpServer).SetElementName("smtpServer");
@@ -101,13 +100,13 @@ namespace HypnoTech.Common.Dal.MongoDb
                 cm.MapMember(c => c.DefaultRecipient).SetElementName("defaultRecipient");
             });
 
-            BsonClassMap.RegisterClassMap<MainSiteConfig>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<MainSiteConfig>(cm =>
             {
                 cm.MapMember(c => c.Url).SetElementName("url");
                 cm.MapMember(c => c.ApiKey).SetElementName("apiKey");
             });
 
-            BsonClassMap.RegisterClassMap<PasswordReset>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<PasswordReset>(cm =>
             {
                 cm.MapMember(c => c.Code).SetElementName("code");
                 cm.MapMember(c => c.Username).SetElementName("username");
@@ -115,7 +114,7 @@ namespace HypnoTech.Common.Dal.MongoDb
                 cm.MapMember(c => c.Created).SetElementName("created").SetSerializer(new DateTimeSerializer(BsonType.DateTime));
             });
 
-            BsonClassMap.RegisterClassMap<EmailTemplate>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<EmailTemplate>(cm =>
             {
                 cm.MapMember(c => c.Id).SetElementName("_id").SetSerializer(new StringSerializer(BsonType.ObjectId));
                 cm.MapMember(c => c.EmailType).SetElementName("type").SetSerializer(new EnumSerializer<EmailTypes>(BsonType.String));

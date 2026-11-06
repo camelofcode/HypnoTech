@@ -6,7 +6,6 @@ using HypnoTech.MongoDb;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 
 namespace HypnoTech.Ecommerce.Dal.MongoDb
@@ -29,7 +28,7 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb
 
         private static void Map()
         {
-            BsonClassMap.RegisterClassMap<PostageProfile>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<PostageProfile>(cm =>
             {
                 cm.MapMember(c => c.Id).SetElementName("_id").SetSerializer(new StringSerializer(BsonType.ObjectId));
                 cm.MapMember(c => c.Name).SetElementName("name");
@@ -40,13 +39,13 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb
                 cm.MapMember(c => c.RestOfWorld3).SetElementName("row3");
             });
 
-            BsonClassMap.RegisterClassMap<PostageRegion>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<PostageRegion>(cm =>
             {
                 cm.MapMember(c => c.Alone).SetElementName("alone").SetSerializer(new DecimalSerializer(BsonType.Decimal128));
                 cm.MapMember(c => c.WithOthers).SetElementName("withOthers").SetSerializer(new DecimalSerializer(BsonType.Decimal128));
             });
 
-            BsonClassMap.RegisterClassMap<DownloadCodeCollection>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<DownloadCodeCollection>(cm =>
             {
                 cm.MapMember(c => c.Id).SetElementName("_id").SetSerializer(new StringSerializer(BsonType.ObjectId));
                 cm.MapMember(c => c.Name).SetElementName("name");
@@ -54,13 +53,13 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb
                 cm.MapMember(c => c.Codes).SetElementName("codes");
             });
 
-            BsonClassMap.RegisterClassMap<DownloadCode>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<DownloadCode>(cm =>
             {
                 cm.MapMember(c => c.Code).SetElementName("code");
                 cm.MapMember(c => c.AssignedTo).SetElementName("assignedto");
             });
 
-            BsonClassMap.RegisterClassMap<Order>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<Order>(cm =>
             {
                 cm.MapMember(c => c.DateTime).SetElementName("createdDate").SetSerializer(new DateTimeSerializer(BsonType.DateTime));
                 cm.MapMember(c => c.PaymentId).SetElementName("paymentId");
@@ -78,14 +77,14 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb
                 cm.MapMember(c => c.DownloadCodeIds).SetElementName("downloadCodeIds");
             });
 
-            BsonClassMap.RegisterClassMap<OrderItem>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<OrderItem>(cm =>
             {
                 cm.MapMember(c => c.Item).SetElementName("item");
                 cm.MapMember(c => c.Quantity).SetElementName("quantity").SetSerializer(new Int32Serializer(BsonType.Int32));
                 cm.MapMember(c => c.RowPrice).SetElementName("rowPrice").SetSerializer(new DecimalSerializer(BsonType.Decimal128));
             });
 
-            BsonClassMap.RegisterClassMap<PostageAddress>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<PostageAddress>(cm =>
             {
                 cm.MapMember(c => c.Name).SetElementName("name");
                 cm.MapMember(c => c.Address1).SetElementName("address1");
@@ -97,7 +96,7 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb
                 cm.MapMember(c => c.Region).SetElementName("region");
             });
 
-            BsonClassMap.RegisterClassMap<MerchItem>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<MerchItem>(cm =>
             {
                 cm.MapMember(c => c.Id).SetElementName("_id").SetSerializer(new StringSerializer(BsonType.ObjectId));
                 cm.MapMember(c => c.ImagePath).SetElementName("imagePath");
@@ -113,7 +112,7 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb
                 cm.MapMember(c => c.Slug).SetElementName("slug");
             });
 
-            BsonClassMap.RegisterClassMap<MerchCategoryType>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<MerchCategoryType>(cm =>
             {
                 cm.MapMember(c => c.Id).SetElementName("_id").SetSerializer(new StringSerializer(BsonType.ObjectId));
                 cm.MapMember(c => c.Name).SetElementName("name");
@@ -121,13 +120,13 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb
                 cm.MapMember(c => c.SubcategoryTypes).SetElementName("subcategorytypes");
             });
 
-            BsonClassMap.RegisterClassMap<MerchSubcategoryType>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<MerchSubcategoryType>(cm =>
             {
                 cm.MapMember(c => c.Name).SetElementName("name");
                 cm.MapMember(c => c.Order).SetElementName("order");
             });
 
-            BsonClassMap.RegisterClassMap<MerchOption>(cm =>
+            BsonClassMapRegistration.RegisterIfNeeded<MerchOption>(cm =>
             {
                 cm.MapMember(c => c.Id).SetElementName("_id").SetSerializer(new StringSerializer(BsonType.ObjectId));
                 cm.MapMember(c => c.Name).SetElementName("name");

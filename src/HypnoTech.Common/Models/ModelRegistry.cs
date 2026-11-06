@@ -1,15 +1,29 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HypnoTech.Common.Models
 {
     public static class ModelRegistry
     {
+        private static readonly object RegistrationLock = new object();
+
         public static List<ModelRegistryMap> Registrations = new List<ModelRegistryMap>();
 
         public static void Register(Type type, string dataName, string displayName)
         {
-            Registrations.Add(new ModelRegistryMap(type, dataName, displayName));
+            lock (RegistrationLock)
+            {
+                if (Registrations.Any(registration =>
+                        registration.Type == type &&
+                        registration.DataName == dataName &&
+                        registration.DisplayName == displayName))
+                {
+                    return;
+                }
+
+                Registrations.Add(new ModelRegistryMap(type, dataName, displayName));
+            }
         }
     }
 

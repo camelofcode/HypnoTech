@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+    <PackageReference Include="Testcontainers.MongoDb" />
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/HypnoTech.Cms.MongoDb/HypnoTech.Cms.MongoDb.csproj" />
+    <ProjectReference Include="../../src/HypnoTech.Common.Dal.MongoDb/HypnoTech.Common.Dal.MongoDb.csproj" />
+    <ProjectReference Include="../../src/HypnoTech.Ecommerce.Dal.MongoDb/HypnoTech.Ecommerce.Dal.MongoDb.csproj" />
+    <ProjectReference Include="../../src/HypnoTech.Media.Dal.MongoDb/HypnoTech.Media.Dal.MongoDb.csproj" />
+  </ItemGroup>
+
+</Project>

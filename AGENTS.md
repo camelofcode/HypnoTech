@@ -31,6 +31,11 @@ dynamic CMS pipeline, persistence mappings, repository contracts, public routes,
 stored data. Run `verify-engine-change` after implementation to choose and execute the
 checks appropriate to the changed paths.
 
+Run the `author-characterisation-tests` skill when adding or changing unit,
+integration, architecture, or future browser tests. It defines the shared conventions
+for synthetic fixtures, static registry isolation, MongoDB compatibility targets, and
+characterisation-first assertions.
+
 ## Source and generated assets
 
 Authored browser source is under the frontend-asset directories such as
@@ -47,6 +52,7 @@ Never edit a generated `wwwroot` bundle directly. Change its source, run
 ```bash
 dotnet restore HypnoTech.slnx
 dotnet build HypnoTech.slnx -c Release --no-restore
+dotnet test HypnoTech.slnx -c Release --no-build
 npm ci
 npm run check:frontend
 ```
