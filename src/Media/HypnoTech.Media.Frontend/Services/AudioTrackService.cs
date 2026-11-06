@@ -31,7 +31,7 @@ namespace HypnoTech.Media.Frontend.Services
         public async Task<ICollection<AudioTrack>> GetTracksForPlayerAsync(CancellationToken cancellationToken = default)
         {
             var tracks = await _repository.GetTracksForPlayerAsync(cancellationToken);
-            return _audioTrackEnrichmentService.EnrichAudioTracks(tracks);
+            return await _audioTrackEnrichmentService.EnrichAudioTracksAsync(tracks, cancellationToken);
         }
     }
 }

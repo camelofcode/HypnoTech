@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using HypnoTech.Ecommerce.Dal.Repositories;
 using HypnoTech.Frontend.Attributes;
 using HypnoTech.Frontend.Controllers;
@@ -15,12 +16,13 @@ public sealed class ShopController : SpaController
     }
 
     [NavigationLink("shop")]
-    public IActionResult Index() => AjaxPartialView(_merch.GetMerch());
+    public async Task<IActionResult> Index() =>
+        AjaxPartialView(await _merch.GetMerchAsync(HttpContext.RequestAborted));
 
     [HttpGet("shop/{slug}")]
-    public IActionResult Details(string slug)
+    public async Task<IActionResult> Details(string slug)
     {
-        var item = _merch.GetMerchItem(slug);
+        var item = await _merch.GetMerchItemAsync(slug, HttpContext.RequestAborted);
         return item == null ? NotFound() : AjaxPartialView(item);
     }
 }

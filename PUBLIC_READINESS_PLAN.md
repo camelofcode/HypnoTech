@@ -618,6 +618,8 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
       `ReplaceOneAsync`, `DeleteOneAsync`, and `CountDocumentsAsync` as appropriate.
 - [x] Add async methods across Common, Ecommerce, and Media repositories in bounded
       module-sized changes.
+- [x] Add async methods to the public example's focused read repositories and Media
+      enrichment hook so its database-backed routes are async end to end.
 - [x] Update CMS and module services to await repository I/O.
 - [x] Propagate cancellation tokens without replacing them with `CancellationToken.None`.
 - [x] Convert select-list, seed, and child-population database access to async flows.
@@ -629,6 +631,8 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [x] Convert `CmsController<T>` I/O actions to `async Task<IActionResult>`.
 - [x] Convert settings, ecommerce, media, and other I/O-bound controllers in small
       reviewed groups.
+- [x] Convert the public example's Articles, Artists, Events, Home, Media, and Shop
+      database-backed actions while retaining synchronous render-only actions.
 - [x] Preserve synchronous actions that perform only validation or in-memory work.
 - [x] Replace blocking `ApiService` HTTP calls with awaited `HttpClient` calls.
 - [x] Replace PayPal v1 `.Result` calls in engine request paths with awaited SDK calls
@@ -961,6 +965,8 @@ stating that work was done.
 | 2026-11-06 | Phase 6 | Added an in-process PayPal REST double without a new test dependency and completed aggregate verification for the Ecommerce async slice. | A local Kestrel server characterises OAuth, create success, create validation failure, execute success, request totals, and response mapping without contacting live or sandbox PayPal. All 30 projects build in Release with zero warnings/errors; CMS unit tests pass 25/25, Common unit tests 10/10, architecture tests 3/3, MongoDB contracts 16/16 across all three targets, demo integration tests 13/13, and the real Chromium/Podman journeys 5/5. | This change |
 | 2026-11-06 | Phase 6 | Converted Media audio, video, and photo-album repositories and services, the player tag helper, and the public example Media controller to native async MongoDB request paths. | Existing synchronous APIs remain native compatibility members; collection/BSON names, album date ordering, URL lookup, audio enrichment, feature gates, DI, player JSON/markup, routes, and partial-navigation behavior are unchanged. The architecture guard now covers Media. | This change |
 | 2026-11-06 | Phase 6 | Added Media sync/async repository and service characterisation and completed aggregate verification for the slice. | All 30 projects build in Release with zero warnings/errors; CMS unit tests pass 25/25, Common unit tests 10/10, architecture tests 3/3, MongoDB contracts 18/18 across 4.0.3, 8.0.32, and 9.0.4, demo integration tests 14/14, and the Chromium/Podman journeys 5/5 including Media navigation, player, gallery, and video behavior. | This change |
+| 2026-11-06 | Phase 6 | Closed the remaining public-example async gap across Articles, Artists, Events, Home, Media, Shop, focused read repositories, and artist-based audio enrichment. | Every database-backed Lantern House action now propagates `RequestAborted`; independent Home and Media reads run concurrently; an additive Media enrichment async hook preserves sync-only consumer compatibility; render-only Cart remains synchronous. | This change |
+| 2026-11-06 | Phase 6 | Added the `author-async-request-paths` repository skill and extended async verification to the example request surface. | The skill records controller inheritance, generated CMS, public/admin dependency boundaries, provider-neutral DAL, native async, cancellation, concurrency, and retained-sync conventions. Its validator passes; the 30-project Release build has zero warnings/errors; focused architecture tests pass 3/3; focused demo integration tests pass 15/15; and the complete Podman/Chromium solution passes 76/76. | This change |
 
 ## Immediate next actions
 
