@@ -6,9 +6,9 @@
 >
 > **Last updated:** 2026-11-06
 >
-> **Current phase:** Phase 0 complete; Phase 1 not started
+> **Current phase:** Phase 0 complete; Phase 1 in progress
 >
-> **Next action:** Begin the Phase 1 publication-history secret scan and third-party licensing inventory.
+> **Next action:** Resolve the source-licence/copyright decision and replace or remove the pre-existing corrupted Montserrat font snapshots through a verified, visually tested change.
 
 ## How to maintain this document
 
@@ -126,7 +126,7 @@ date.
 | --- | --- | --- | --- |
 | Planning | Evidence-based roadmap and tracking system | Complete | Pre-work |
 | 0 | Stable baseline preserved | Complete | Pre-work |
-| 1 | Repository safe and understandable for public release | Not started | v0.1 |
+| 1 | Repository safe and understandable for public release | In progress | v0.1 |
 | 2 | CMS and MongoDB behaviour characterised by tests | Not started | v0.1 |
 | 3 | Projects physically organised without semantic changes | Not started | v0.1 |
 | 4 | Original public example admin and website | Not started | v0.1 |
@@ -214,15 +214,18 @@ tested migration decision.
 
 ### 1.1 Secrets and history audit
 
-- [ ] Scan the current tree and every historical commit for credentials and secrets.
-- [ ] Inspect deleted history as well as current configuration.
-- [ ] Check connection strings, SMTP credentials, API keys, payment credentials,
+- [x] Scan the current tree and every historical commit for credentials and secrets.
+- [x] Inspect deleted history as well as current configuration.
+- [x] Check connection strings, SMTP credentials, API keys, payment credentials,
       certificates, seed users, and private URLs.
-- [ ] Rotate any exposed credential before cleaning history.
-- [ ] If required, clean history with a reviewed procedure or publish a deliberately
-      clean public history while retaining the private bundle.
-- [ ] Re-scan the exact history intended for publication.
-- [ ] Record the scanner, version, command, date, and result in the work log.
+- [x] Rotate any exposed credential before cleaning history. No exposed credential was
+      found, so no rotation was required.
+- [x] If required, clean history with a reviewed procedure or publish a deliberately
+      clean public history while retaining the private bundle. No cleanup was indicated.
+- [ ] Re-scan the exact history intended for publication immediately before visibility
+      changes.
+- [x] Record the scanner, version, command, date, and result in the work log and
+      `docs/audits/publication-history-2026-11-06.md`.
 
 ### 1.2 Licensing and third-party material
 
@@ -232,60 +235,63 @@ tested migration decision.
       written agreement.
 - [ ] Describe the project as **source-available for noncommercial use**, not OSI open
       source, if a noncommercial licence is selected.
-- [ ] Audit Bootstrap, jQuery, validation libraries, TinyMCE, Font Awesome, fonts, npm
+- [x] Audit Bootstrap, jQuery, validation libraries, TinyMCE, Font Awesome, fonts, npm
       build tools, and NuGet dependencies.
-- [ ] Preserve required third-party licence files.
-- [ ] Add `THIRD_PARTY_NOTICES.md` with source, version, licence, and location.
-- [ ] Define a contribution policy compatible with any future dual-licensing model.
+- [x] Preserve existing third-party licence files and add common MIT and SIL OFL 1.1
+      texts for vendored assets that lacked a tracked licence copy.
+- [x] Add `THIRD_PARTY_NOTICES.md` with source, version, licence, and location.
+- [x] Define a contribution policy compatible with any future dual-licensing model.
+      External code contributions remain closed pending an explicit agreement/process.
 
 ### 1.3 GitHub language classification and frontend reproducibility
 
-- [ ] Add a root `.gitattributes`.
-- [ ] Mark third-party `lib` trees as `linguist-vendored`.
-- [ ] Mark generated `wwwroot` bundle/output trees as `linguist-generated`.
-- [ ] Do not mark authored JavaScript as C# or otherwise misclassify it.
-- [ ] Verify the result locally with GitHub Linguist if practical.
+- [x] Add a root `.gitattributes`.
+- [x] Mark third-party `lib` trees as `linguist-vendored`.
+- [x] Mark generated `wwwroot` bundle/output trees as `linguist-generated`.
+- [x] Do not mark authored JavaScript as C# or otherwise misclassify it.
+- [x] Verify attributes locally with `git check-attr`; a full local GitHub Linguist
+      installation was not introduced solely for this check.
 - [ ] Push to a branch and confirm the GitHub language bar after its cache refreshes.
-- [ ] Keep runtime assets self-hosted and checked in.
-- [ ] Keep exact npm build-tool versions and the root lockfile.
-- [ ] Use `npm ci` in automation.
-- [ ] Keep generated runtime assets committed so ordinary .NET consumers do not need
+- [x] Keep runtime assets self-hosted and checked in.
+- [x] Keep exact npm build-tool versions and the root lockfile.
+- [x] Require `npm ci` in documented verification and future automation.
+- [x] Keep generated runtime assets committed so ordinary .NET consumers do not need
       npm merely to build or use the engine.
 
 ### 1.4 Public repository documentation
 
-- [ ] Add `README.md` with purpose, feature summary, status, and quickstart.
-- [ ] Add `SECURITY.md`.
-- [ ] Add `CONTRIBUTING.md`.
-- [ ] Add `docs/architecture.md`.
-- [ ] Add `docs/compatibility.md` with tested .NET, Node, and MongoDB versions.
+- [x] Add `README.md` with purpose, feature summary, status, and quickstart.
+- [x] Add `SECURITY.md`.
+- [x] Add `CONTRIBUTING.md`.
+- [x] Add `docs/architecture.md`.
+- [x] Add `docs/compatibility.md` with tested .NET, Node, and MongoDB versions.
 - [x] Add this public-readiness roadmap and work record.
-- [ ] Add `.editorconfig` after documenting existing formatting conventions.
-- [ ] Avoid combining repository hygiene with a wholesale nullable-reference or
+- [x] Add `.editorconfig` after documenting existing formatting conventions.
+- [x] Avoid combining repository hygiene with a wholesale nullable-reference or
       warnings-as-errors migration.
 
 ### 1.5 Agent guidance and repository skills
 
 Add a compact root `AGENTS.md` containing:
 
-- [ ] Repository purpose and architecture map.
-- [ ] Standard restore, build, frontend, and test commands.
-- [ ] Public API and production-data compatibility rules.
-- [ ] The authoritative source versus generated asset locations.
-- [ ] A rule not to edit generated bundles directly.
-- [ ] A rule to preserve persisted MongoDB member names unless a migration is planned.
-- [ ] A requirement for characterisation tests before dynamic CMS changes.
-- [ ] The boundary excluding private site repositories.
-- [ ] The boundary deferring payment-provider work.
-- [ ] Explicit triggers for the initial repository skills.
+- [x] Repository purpose and architecture map.
+- [x] Standard restore, build, frontend, and test commands.
+- [x] Public API and production-data compatibility rules.
+- [x] The authoritative source versus generated asset locations.
+- [x] A rule not to edit generated bundles directly.
+- [x] A rule to preserve persisted MongoDB member names unless a migration is planned.
+- [x] A requirement for characterisation tests before dynamic CMS changes.
+- [x] The boundary excluding private site repositories.
+- [x] The boundary deferring payment-provider work.
+- [x] Explicit triggers for the initial repository skills.
 
 Start with only two narrow skills:
 
-- [ ] `.agents/skills/verify-engine-change/`
+- [x] `.agents/skills/verify-engine-change/`
   - Select and run the appropriate build, frontend freshness, unit, integration, and
     browser checks for the changed paths.
   - Report commands, results, skips, and remaining verification gaps.
-- [ ] `.agents/skills/cms-compatibility-review/`
+- [x] `.agents/skills/cms-compatibility-review/`
   - Review changes affecting mappings, forms, dynamic controllers, routes,
     repositories, persisted data, and public behaviour before implementation.
   - Require a compatibility decision and targeted test plan.
@@ -295,11 +301,13 @@ good later candidate once the release process has been exercised manually.
 
 ### Exit gate
 
-- [ ] The exact publication history has passed the secret scan.
+- [ ] The exact publication history has passed the final pre-publication secret scan.
 - [ ] Source and third-party licensing are explicit.
-- [ ] GitHub language classification represents authored code honestly.
-- [ ] A new contributor can understand and build the engine from repository docs.
-- [ ] Agent instructions are concise, accurate, and backed by working commands.
+- [ ] GitHub language classification represents authored code honestly after the remote
+      cache refreshes; local attribute and byte checks pass.
+- [x] A new contributor can understand and build the engine from repository docs.
+- [x] Agent instructions are concise, accurate, and both repository skills pass the
+      skill validator.
 
 ## Phase 2 — Characterisation and test foundation
 
@@ -808,14 +816,18 @@ These apply throughout all phases:
 | Q-007 | Should external contributions be accepted before a contributor-licensing process exists? | Phase 7 | Open |
 | Q-008 | Which relational provider should be implemented first once the provider matrix is rechecked? | Phase 9 | Proposed: PostgreSQL if compatible |
 | Q-009 | How long should synchronous compatibility methods remain after public controllers move to async APIs? | Phase 6 | Proposed: retain through v0.1 and review for the next breaking release |
+| Q-010 | Which verified Montserrat release should replace the 18 corrupted baseline font files, or should Montserrat be removed? | Phase 1 | Open; requires a visual compatibility check |
+| Q-011 | Is the legacy PayPal/Braintree NuGet provenance gap acceptable until the deferred payment work, given that binaries are restored rather than vendored? | Phase 1 | Open; package metadata declares no licence |
 
 ## Risks and mitigations
 
 | Risk | Impact | Mitigation | Status |
 | --- | --- | --- | --- |
 | MongoDB 4.0.3 compatibility regresses after a driver change | Production failure | Preserve driver 3.4.3 on support branch and test the 4.0.3 image before changes | Known baseline; test pending |
-| Secrets exist in compact Git history | Credential exposure on publication | Full-history scan, rotation, clean history, second scan | Open |
-| Third-party assets lack clear notices | Copyright/licensing problem | Inventory files and dependencies; preserve licences; add notices | Open |
+| Secrets exist in compact Git history | Credential exposure on publication | Full-history scan, rotation, clean history, final pre-publication scan | Initial history and working-tree scans clean; final scan pending |
+| Third-party assets lack clear notices | Copyright/licensing problem | Inventory files and dependencies; preserve licences; add notices | Inventory and notices complete; source licence and two provenance decisions pending |
+| Tracked Montserrat fonts are corrupted | Broken fonts or an unreviewed visual change | Select a verified source/version, record hashes/licence, and visually test replacement or removal | Open; all 18 baseline `.ttf` files fail parsing |
+| Legacy PayPal packages declare no licence metadata | Unclear provenance and public maintenance risk | Do not misstate the licence; document that packages are restored, then resolve provenance or replacement deliberately | Open; provider replacement remains out of scope |
 | Physical moves break private site references | Consumer builds fail | Pin production to support branch; temporary smoke builds; optional shims | Open |
 | Static registries make tests order-dependent | Flaky test suite | Serial collections or explicit reset/idempotent registration support | Open |
 | Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Open |
@@ -834,13 +846,14 @@ These apply throughout all phases:
 | 2026-11-06 | D-003 | Additional ecommerce payment providers remain out of scope. | Accepted | They have a separate existing plan and are unrelated to public readiness. |
 | 2026-11-06 | D-004 | Use this file as the living roadmap and delivery record. | Accepted | Keeps planned, completed, and outstanding work visible in the repository. |
 | 2026-11-06 | D-005 | Preserve production with a tag and support branch before public work. | Accepted | Allows public `main` to evolve without forcing production dependency upgrades. |
-| 2026-11-06 | D-006 | Keep self-hosted JavaScript and use Linguist vendor/generated classification. | Proposed | Fixes misleading statistics without weakening runtime reliability. |
+| 2026-11-06 | D-006 | Keep self-hosted JavaScript and use Linguist vendor/generated classification. | Accepted | Fixes misleading statistics without weakening runtime reliability. |
 | 2026-11-06 | D-007 | Use xUnit v3, Testcontainers, and a focused Playwright suite. | Proposed | Matches current experience and provides layered verification. |
 | 2026-11-06 | D-008 | Use a provider-neutral EF implementation with thin driver packages. | Proposed | Avoids duplicated repositories and unnecessary database drivers. |
 | 2026-11-06 | D-009 | Add an async-I/O modernisation phase before the v0.1 public release. | Accepted | Public CMS and other request paths should use genuine async provider APIs while preserving compatibility and avoiding fake async. |
 | 2026-11-06 | D-010 | Complete async contracts while MongoDB is still the only DAL. | Accepted | Prevents building a synchronous EF Core DAL and then repeating the async conversion. |
 | 2026-11-06 | D-011 | Build the example admin and website before the Playwright suite. | Accepted | Browser tests need a stable public example as their system under test. |
 | 2026-11-06 | D-012 | Introduce `main` during Phase 0 and retain frozen `master` temporarily. | Accepted | Establishes the intended PR target early without breaking an unknown checkout that still pulls `master`. |
+| 2026-11-06 | D-013 | Do not accept unsolicited external code contributions until source licensing and contributor terms are explicit. | Accepted | Avoids ambiguous ownership and preserves the option of a later dual-licensing model. |
 
 ## Work log
 
@@ -860,11 +873,20 @@ stating that work was done.
 | 2026-11-06 | Phase 0 | Published immutable baseline refs and introduced the future default branch. | Remote tag `production-baseline-2026-11-06`, `support/legacy-production`, and `main` point to `95c9f6a`; GitHub default changed to `main`; frozen `master` retained. | This change |
 | 2026-11-06 | Phase 0 | Created and published `public-readiness` from the preserved baseline. | Local branch tracks `origin/public-readiness`; roadmap is its first change. | This change |
 | 2026-11-06 | Phase 0 | Captured and verified the production build/toolchain baseline. | .NET SDK 10.0.401; Node 24.18.0; npm 11.16.0; 21-project Release build succeeded with zero warnings/errors; all four frontend outputs current; fingerprints recorded in `docs/baselines/production-2026-11-06.md`. | This change |
+| 2026-11-06 | Phase 0 | Confirmed the verified Git bundle was copied to durable private backup storage. | User confirmed the external backup; the workspace copy remains available for now. | External backup, not committed |
+| 2026-11-06 | Phase 1 | Scanned all reachable Git history and the current working tree for secrets, then performed supplemental path-only configuration/credential review. | Gitleaks 8.30.1 checksum verified; initial 10 commits/~26.94 MB, working tree/~85.07 MB, and post-foundation 11 commits/~26.99 MB scanned with no leaks; command and scope recorded in `docs/audits/publication-history-2026-11-06.md`. | This change |
+| 2026-11-06 | Phase 1 | Audited bundled browser assets, fonts, npm build dependencies, and all unique direct/transitive NuGet packages. | `THIRD_PARTY_NOTICES.md` records versions, licences, locations, unknown snapshot versions, and the PayPal/Braintree metadata gap; existing notices retained and common MIT/OFL texts added. | This change |
+| 2026-11-06 | Phase 1 | Added public-facing repository documentation, compatibility guidance, Linguist classification, and conservative formatting defaults. | Local `git check-attr` marks vendored/generated samples correctly; authored bytes outside those paths are ~396 KB C# versus ~75 KB JavaScript plus ~8.6 KB build tooling; no runtime asset was moved to a CDN. | This change |
+| 2026-11-06 | Phase 1 | Added compact `AGENTS.md` and the initial verification and CMS compatibility-review skills. | Both `SKILL.md` files pass the skill-creator `quick_validate.py` validator; triggers and output requirements are explicit. | This change |
+| 2026-11-06 | Phase 1 | Identified pre-existing corruption in every tracked Montserrat font rather than silently replacing unknown binaries. | All 18 `.ttf` files fail `fc-query`; font-table bytes contain UTF-8 replacement sequences and match the preserved baseline. | This change |
+| 2026-11-06 | Phase 1 | Ran the repository verification workflow across the Phase 1 foundation change. | `git diff --check` passed; the 21-project Release build passed with zero warnings/errors; all four frontend outputs were current; both skills validated. | This change |
 
 ## Immediate next actions
 
-1. Move the verified Git bundle to durable private backup storage when convenient.
-2. Begin the Phase 1 full-history secret scan before changing repository visibility.
-3. Inventory third-party frontend assets, fonts, NuGet packages, and npm build tools.
-4. Confirm or revise the proposed source licence and commercial-licensing model.
-5. Review and accept or revise proposed decisions D-006 through D-008.
+1. Confirm or revise the proposed PolyForm Noncommercial/commercial-licensing model and
+   supply the copyright name/contact to use.
+2. Choose a verified Montserrat replacement/removal approach and perform a visual check.
+3. Decide whether the legacy PayPal/Braintree package provenance gap may remain until
+   the deferred payment work.
+4. Push the Phase 1 foundation and confirm GitHub's refreshed language classification.
+5. Re-scan the exact final commit immediately before changing repository visibility.
