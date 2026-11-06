@@ -70,7 +70,9 @@ The programme has two intended releases:
 - Changes to the SelfHypnosis repository or its committed files.
 - Publishing private content, branding, seed data, templates, or imagery from either
   site.
-- Migrating the production MongoDB deployment as part of v0.1.
+- Migrating the production MongoDB deployment as part of v0.1. A deferred, non-
+  executable runbook is recorded in
+  [`docs/operations/mongodb-production-migration.md`](docs/operations/mongodb-production-migration.md).
 - PayPal v2, Stripe, or other work described in `ecommerce-payments-plan.md`.
 - Exhaustive test coverage.
 - Windows as a required CI or production platform.
@@ -164,6 +166,13 @@ These remain proposals until marked **Accepted** in the decision log.
 | Public examples | New neutral demo content, never sanitised private-site content |
 | Persistence | Shared provider-neutral EF code plus thin provider-specific packages |
 | Payments | Keep the existing payment plan deferred and out of v0.1/v0.2 scope |
+
+### Deferred operational plans
+
+- [Future production MongoDB migration](docs/operations/mongodb-production-migration.md)
+  — prefer a rehearsed blue/green logical BSON migration to a pinned Podman container;
+  retain successive in-place major upgrades as the fallback. No production work is
+  authorised by this plan.
 
 ## Phase 0 — Preserve and define the stable baseline
 
@@ -877,6 +886,7 @@ These apply throughout all phases:
 | 2026-11-06 | D-018 | Treat the missing licence metadata in the restored legacy PayPal/Braintree NuGet packages as an explicit, non-blocking publication risk until later existing-PayPal work. | Accepted | The engine repository does not redistribute those binaries, the uncertainty is disclosed, and replacing payment providers remains out of scope. |
 | 2026-11-06 | D-019 | Use xUnit v3's Microsoft Testing Platform v2 runner and Microsoft's MTP coverage extension rather than the legacy VSTest/coverlet collector path. | Accepted | .NET 10 supports the unified runner, xUnit 4 defaults to MTP v2, and the current coverlet collector does not support MTP v2. |
 | 2026-11-06 | D-020 | Fix the four Phase 2 MongoDB characterisation failures while retaining MongoDB.Driver 3.4.3 and testing MongoDB 4.0.3, 8.0.32, and 9.0.4. | Accepted | Empty searches, null child IDs, boundary moves, and repeated startup should be safe; no persisted format or production version floor changes. |
+| 2026-11-06 | D-021 | Prefer a separately authorised blue/green logical BSON migration to a pinned Podman-hosted MongoDB release over successive in-place production upgrades. | Accepted for future planning | Keeps the existing native deployment unchanged until cutover, preserves a simple rollback point, and retains the same low-cost capacity class; the container route proceeds only if rehearsal shows no meaningful regression. |
 
 ## Work log
 
@@ -910,6 +920,7 @@ stating that work was done.
 | 2026-11-06 | Phase 2 | Added dynamic CMS mapping, controller, route, form, service, upload, Common helper, and architecture characterisation tests using synthetic fixtures and isolated static state. | Focused CMS, Common, and architecture suites run independently and as part of the solution. | This change |
 | 2026-11-06 | Phase 2 | Added Testcontainers repository contracts for production MongoDB 4.0.3, supported MongoDB 8.0.32, and current MongoDB 9.0.4, running through the rootless Podman API socket without `podman-docker`. | All three images start and the suite covers CRUD, paging, sorting, search, ordering, BSON, children, list/gallery IDs, select lists, seed, DI, legacy documents, and repeated registration; initial failure modes were captured before correction. | This change |
 | 2026-11-06 | Phase 2 | Corrected the four failures exposed by the initial MongoDB contracts without upgrading the driver or changing persisted data. | Empty-field search returns no rows; null child IDs remain unset; ordering boundaries are no-ops; repeated Common/Ecommerce/Media startup is idempotent. All behaviours pass against MongoDB 4.0.3, 8.0.32, and 9.0.4. | This change |
+| 2026-11-06 | Future operations planning | Added a non-executable production MongoDB migration runbook covering logical BSON transfer, a pinned Podman container, rehearsal, verification, cutover, and rollback. | Vendor upgrade, dump/restore, platform, Podman, and production guidance reviewed; no server connection or production change was made. | This change |
 
 ## Immediate next actions
 
