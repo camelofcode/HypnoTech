@@ -9,7 +9,7 @@
 
     <ProjectReference Include="..\HypnoTech.Media.Models\HypnoTech.Media.Models.csproj" />
     <ProjectReference Include="..\HypnoTech.Media.Dal\HypnoTech.Media.Dal.csproj" />
-    <ProjectReference Include="..\HypnoTech.MongoDb\HypnoTech.MongoDb.csproj" />
+    <ProjectReference Include="..\..\Persistence\HypnoTech.MongoDb\HypnoTech.MongoDb.csproj" />
     <PackageReference Include="MongoDB.Driver" Version="3.4.3" />
   </ItemGroup>
 

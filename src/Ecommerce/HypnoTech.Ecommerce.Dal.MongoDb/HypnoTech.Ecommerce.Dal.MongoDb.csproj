@@ -6,10 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
-    <ProjectReference Include="..\HypnoTech.Common.Models\HypnoTech.Common.Models.csproj" />
+    <ProjectReference Include="..\..\Common\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
+    <ProjectReference Include="..\..\Common\HypnoTech.Common.Models\HypnoTech.Common.Models.csproj" />
     <ProjectReference Include="..\HypnoTech.Ecommerce.Dal\HypnoTech.Ecommerce.Dal.csproj" />
-    <ProjectReference Include="..\HypnoTech.MongoDb\HypnoTech.MongoDb.csproj" />
+    <ProjectReference Include="..\..\Persistence\HypnoTech.MongoDb\HypnoTech.MongoDb.csproj" />
     <PackageReference Include="MongoDB.Driver" Version="3.4.3" />
   </ItemGroup>
 

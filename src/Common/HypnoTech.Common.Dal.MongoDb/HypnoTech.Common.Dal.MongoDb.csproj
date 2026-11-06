@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
-    <ProjectReference Include="..\HypnoTech.MongoDb\HypnoTech.MongoDb.csproj" />
+    <ProjectReference Include="..\..\Persistence\HypnoTech.MongoDb\HypnoTech.MongoDb.csproj" />
     <PackageReference Include="MongoDB.Driver" Version="3.4.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>

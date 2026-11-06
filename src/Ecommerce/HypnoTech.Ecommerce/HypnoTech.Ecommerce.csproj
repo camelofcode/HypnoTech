@@ -22,9 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HypnoTech.Cms\HypnoTech.Cms.csproj" />
-    <ProjectReference Include="..\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
-    <ProjectReference Include="..\HypnoTech.Common.Emails\HypnoTech.Common.Emails.csproj" />
+    <ProjectReference Include="..\..\Cms\HypnoTech.Cms\HypnoTech.Cms.csproj" />
+    <ProjectReference Include="..\..\Common\HypnoTech.Common.Dal\HypnoTech.Common.Dal.csproj" />
+    <ProjectReference Include="..\..\Common\HypnoTech.Common.Emails\HypnoTech.Common.Emails.csproj" />
     <ProjectReference Include="..\HypnoTech.Ecommerce.Dal\HypnoTech.Ecommerce.Dal.csproj" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>

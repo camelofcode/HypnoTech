@@ -2,9 +2,9 @@
 
 HypnoTech is a set of ASP.NET Core libraries used by a host application. It is organised
 around four functional modules—CMS, Common, Ecommerce, and Media—with shared frontend
-and MongoDB infrastructure. The physical project layout is intentionally unchanged for
-now because production consumers reference the existing paths; a later, mechanical
-phase will align the folders with the virtual groups already present in `HypnoTech.slnx`.
+and MongoDB infrastructure. The physical project layout matches those functional areas
+under `src/`; production consumers remain pinned to the preserved support branch whose
+project paths are unchanged.
 
 ## Layers and modules
 

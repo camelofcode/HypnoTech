@@ -58,15 +58,14 @@ browser tests remain later roadmap phases.
 
 ## Repository layout
 
-The solution already groups projects by module, although the physical projects remain
-flat under `src/` until the dedicated structure-only phase:
+Source projects are grouped physically by functional area:
 
-- `src/HypnoTech.Cms*` — dynamic CMS, contracts, and MongoDB implementation;
-- `src/HypnoTech.Common*` — shared services, models, security, email, and DAL contracts;
-- `src/HypnoTech.Ecommerce*` — ecommerce domain, admin/frontend support, and DAL;
-- `src/HypnoTech.Media*` — media domain, frontend support, and DAL;
-- `src/HypnoTech.Frontend*` — general website helpers and frontend source;
-- `src/HypnoTech.MongoDb` — shared MongoDB infrastructure;
+- `src/Cms/` — dynamic CMS, contracts, MongoDB implementation, and frontend source;
+- `src/Common/` — shared services, models, security, email, and DAL contracts;
+- `src/Ecommerce/` — ecommerce domain, admin/frontend support, DAL, and frontend source;
+- `src/Media/` — media domain, frontend support, DAL, and frontend source;
+- `src/Frontend/` — general website helpers and shared frontend source;
+- `src/Persistence/` — shared MongoDB infrastructure;
 - `tests/` — xUnit v3 unit, architecture, and Testcontainers integration tests;
 - `tools/` — deterministic frontend build tooling.
 

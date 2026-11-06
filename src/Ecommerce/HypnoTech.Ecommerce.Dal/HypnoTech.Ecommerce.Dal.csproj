@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HypnoTech.Common\HypnoTech.Common.csproj" />
+    <ProjectReference Include="..\..\Common\HypnoTech.Common\HypnoTech.Common.csproj" />
     <ProjectReference Include="..\HypnoTech.Ecommerce.Models\HypnoTech.Ecommerce.Models.csproj" />
   </ItemGroup>
 

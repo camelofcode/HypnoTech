@@ -6,9 +6,9 @@
 >
 > **Last updated:** 2026-11-06
 >
-> **Current phase:** Phase 0 complete; Phase 1 in progress
+> **Current phase:** Phase 3 complete; remaining Phase 1 publication gates stay open
 >
-> **Next action:** Confirm GitHub's language classification when this branch reaches `main`, then repeat the exact-history scan immediately before changing repository visibility.
+> **Next action:** Review and merge the structure-only Phase 3 pull request, then begin Phase 4's original public example applications.
 
 ## How to maintain this document
 
@@ -130,7 +130,7 @@ date.
 | 0 | Stable baseline preserved | Complete | Pre-work |
 | 1 | Repository safe and understandable for public release | In progress | v0.1 |
 | 2 | CMS and MongoDB behaviour characterised by tests | Complete | v0.1 |
-| 3 | Projects physically organised without semantic changes | Not started | v0.1 |
+| 3 | Projects physically organised without semantic changes | Complete | v0.1 |
 | 4 | Original public example admin and website | Not started | v0.1 |
 | 5 | Focused Playwright portfolio smoke suite | Not started | v0.1 |
 | 6 | Async I/O modernisation | Not started | v0.1 |
@@ -440,26 +440,26 @@ v0.1 policy is:
 
 ### Work
 
-- [ ] Confirm the compatibility policy before moving files.
-- [ ] Perform moves with `git mv` in a dedicated mechanical commit.
-- [ ] Do not combine moves with namespace, assembly, API, or behaviour changes.
-- [ ] Update `HypnoTech.slnx`.
-- [ ] Update every engine `ProjectReference`.
-- [ ] Update npm workspace paths.
-- [ ] Update frontend builder path configuration.
-- [ ] Update documentation and automation paths.
-- [ ] Preserve assembly names and `_content/HypnoTech.*` static asset paths.
-- [ ] Confirm the diff is overwhelmingly recognised as renames.
-- [ ] Run all build, frontend, unit, and integration checks.
-- [ ] Run temporary private-consumer smoke builds without committing site changes.
+- [x] Confirm the compatibility policy before moving files.
+- [x] Perform moves with `git mv` in a dedicated mechanical commit.
+- [x] Do not combine moves with namespace, assembly, API, or behaviour changes.
+- [x] Update `HypnoTech.slnx`.
+- [x] Update every engine `ProjectReference`.
+- [x] Update npm workspace paths.
+- [x] Update frontend builder path configuration.
+- [x] Update documentation and automation paths.
+- [x] Preserve assembly names and `_content/HypnoTech.*` static asset paths.
+- [x] Confirm the diff is overwhelmingly recognised as renames.
+- [x] Run all build, frontend, unit, and integration checks.
+- [x] Run temporary private-consumer smoke builds without committing site changes.
 
 ### Exit gate
 
-- [ ] Public branch has the intended physical organisation.
-- [ ] No namespace, public API, assembly identity, persisted name, or asset URL changed
+- [x] Public branch has the intended physical organisation.
+- [x] No namespace, public API, assembly identity, persisted name, or asset URL changed
       accidentally.
-- [ ] All automated verification passes.
-- [ ] Production consumers remain untouched and pinned to their stable engine branch.
+- [x] All automated verification passes.
+- [x] Production consumers remain untouched and pinned to their stable engine branch.
 
 ## Phase 4 — Original public example applications
 
@@ -836,7 +836,7 @@ These apply throughout all phases:
 | Q-002 | What exact MongoDB server version is deployed? | Phase 0 | Answered: 4.0.3 |
 | Q-003 | Is PolyForm Noncommercial plus separate commercial licensing acceptable? | Phase 1 | Answered: accepted |
 | Q-004 | What copyright name and contact should appear in licence files? | Phase 1 | Answered: `Copyright © 2026 Christopher Clayton`; commercial contact through `github.com/camelofcode` |
-| Q-005 | Must unchanged private sites ever consume reorganised public `main`, or may they remain pinned to the support branch? | Phase 3 | Proposed: remain pinned |
+| Q-005 | Must unchanged private sites ever consume reorganised public `main`, or may they remain pinned to the support branch? | Phase 3 | Answered: remain pinned |
 | Q-006 | What neutral theme should the public demo use? | Phase 4 | Open |
 | Q-007 | Should external contributions be accepted before a contributor-licensing process exists? | Phase 7 | Answered: no external contributions will be accepted |
 | Q-008 | Which relational provider should be implemented first once the provider matrix is rechecked? | Phase 9 | Proposed: PostgreSQL if compatible |
@@ -887,6 +887,7 @@ These apply throughout all phases:
 | 2026-11-06 | D-019 | Use xUnit v3's Microsoft Testing Platform v2 runner and Microsoft's MTP coverage extension rather than the legacy VSTest/coverlet collector path. | Accepted | .NET 10 supports the unified runner, xUnit 4 defaults to MTP v2, and the current coverlet collector does not support MTP v2. |
 | 2026-11-06 | D-020 | Fix the four Phase 2 MongoDB characterisation failures while retaining MongoDB.Driver 3.4.3 and testing MongoDB 4.0.3, 8.0.32, and 9.0.4. | Accepted | Empty searches, null child IDs, boundary moves, and repeated startup should be safe; no persisted format or production version floor changes. |
 | 2026-11-06 | D-021 | Prefer a separately authorised blue/green logical BSON migration to a pinned Podman-hosted MongoDB release over successive in-place production upgrades. | Accepted for future planning | Keeps the existing native deployment unchanged until cutover, preserves a simple rollback point, and retains the same low-cost capacity class; the container route proceeds only if rehearsal shows no meaningful regression. |
+| 2026-11-06 | D-022 | Keep unchanged production consumers pinned to `support/legacy-production` while public `main` adopts the functional source layout. | Accepted | Avoids private-site edits and path shims while the preserved branch remains an exact, buildable production dependency. |
 
 ## Work log
 
@@ -921,6 +922,8 @@ stating that work was done.
 | 2026-11-06 | Phase 2 | Added Testcontainers repository contracts for production MongoDB 4.0.3, supported MongoDB 8.0.32, and current MongoDB 9.0.4, running through the rootless Podman API socket without `podman-docker`. | All three images start and the suite covers CRUD, paging, sorting, search, ordering, BSON, children, list/gallery IDs, select lists, seed, DI, legacy documents, and repeated registration; initial failure modes were captured before correction. | This change |
 | 2026-11-06 | Phase 2 | Corrected the four failures exposed by the initial MongoDB contracts without upgrading the driver or changing persisted data. | Empty-field search returns no rows; null child IDs remain unset; ordering boundaries are no-ops; repeated Common/Ecommerce/Media startup is idempotent. All behaviours pass against MongoDB 4.0.3, 8.0.32, and 9.0.4. | This change |
 | 2026-11-06 | Future operations planning | Added a non-executable production MongoDB migration runbook covering logical BSON transfer, a pinned Podman container, rehearsal, verification, cutover, and rollback. | Vendor upgrade, dump/restore, platform, Podman, and production guidance reviewed; no server connection or production change was made. | This change |
+| 2026-11-06 | Phase 3 | Reorganised all engine source projects under `Cms`, `Common`, `Ecommerce`, `Media`, `Persistence`, and `Frontend` without changing namespaces, assembly names, APIs, behaviour, or asset bytes. | Mechanical commit changes 827 files and is overwhelmingly detected as 100% renames; only solution, project-reference, npm-workspace, builder, architecture-test path, and documentation references changed content. | `5e17d2a` and this change |
+| 2026-11-06 | Phase 3 | Completed aggregate verification and isolated compatibility smoke builds. | The 25-project Release build passed with 0 warnings/errors after suppressing only `NU1900` from the unavailable NuGet audit service; all four frontend outputs are current; two complete Podman-backed runs passed 46/46 tests; all five static-web-asset base paths remain `_content/HypnoTech.*`; temporary Esoteric and SelfHypnosis copies compiled against `support/legacy-production` with 0 warnings/errors and `SkipFrontendBuild=true`, leaving the real private repositories untouched. A separate historical Esoteric npm 6 asset attempt reached the frontend step after compiling every .NET assembly, then failed on its existing lockfile parser (`browserslist`) rather than an engine source error. | This change |
 
 ## Immediate next actions
 

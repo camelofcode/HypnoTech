@@ -15,19 +15,19 @@ Unobtrusive also retain their upstream licence files in place.
 
 | Component | Vendored version/evidence | Licence and attribution | Tracked location |
 | --- | --- | --- | --- |
-| Bootstrap | 4.3.1 | MIT; Copyright 2011–2019 The Bootstrap Authors and Twitter, Inc. | `src/HypnoTech.Cms.Frontend/lib/bootstrap` |
-| Popper.js | Snapshot bundled in 2017; exact version was not recorded | MIT; Copyright Federico Zivolo 2017; notice embedded in the file | `src/HypnoTech.Cms.Frontend/lib/bootstrap/popper.min.js` |
-| Start Bootstrap Simple Sidebar | 2019 snapshot; exact release was not recorded | MIT; Copyright 2013–2019 Start Bootstrap; notice embedded in the file | `src/HypnoTech.Cms.Frontend/lib/bootstrapSidebar` |
+| Bootstrap | 4.3.1 | MIT; Copyright 2011–2019 The Bootstrap Authors and Twitter, Inc. | `src/Cms/HypnoTech.Cms.Frontend/lib/bootstrap` |
+| Popper.js | Snapshot bundled in 2017; exact version was not recorded | MIT; Copyright Federico Zivolo 2017; notice embedded in the file | `src/Cms/HypnoTech.Cms.Frontend/lib/bootstrap/popper.min.js` |
+| Start Bootstrap Simple Sidebar | 2019 snapshot; exact release was not recorded | MIT; Copyright 2013–2019 Start Bootstrap; notice embedded in the file | `src/Cms/HypnoTech.Cms.Frontend/lib/bootstrapSidebar` |
 | Cookies.js | 1.2.4-pre | Public-domain dedication; Scott Hamper; notice embedded in the file | CMS and Ecommerce frontend `lib/cookie-js` |
-| Font Awesome Free | 5.13.0 | Code: MIT; icons: CC BY 4.0; fonts: SIL OFL 1.1; Fonticons, Inc.; terms are identified in the SCSS header | `src/HypnoTech.Cms.Frontend/lib/fontawesome` |
+| Font Awesome Free | 5.13.0 | Code: MIT; icons: CC BY 4.0; fonts: SIL OFL 1.1; Fonticons, Inc.; terms are identified in the SCSS header | `src/Cms/HypnoTech.Cms.Frontend/lib/fontawesome` |
 | jQuery | 3.3.1 (CMS), 3.5.1 (Frontend) | MIT; JS Foundation and other contributors | CMS and Frontend `lib/jquery` |
-| jQuery Validation | 1.17.0 | MIT; Copyright Jörn Zaefferer and contributors | `src/HypnoTech.Cms.Frontend/lib/jquery-validation` |
-| jQuery Validation Unobtrusive | 3.2.11 | Apache-2.0; .NET Foundation | `src/HypnoTech.Cms.Frontend/lib/jquery-validation-unobtrusive` |
+| jQuery Validation | 1.17.0 | MIT; Copyright Jörn Zaefferer and contributors | `src/Cms/HypnoTech.Cms.Frontend/lib/jquery-validation` |
+| jQuery Validation Unobtrusive | 3.2.11 | Apache-2.0; .NET Foundation | `src/Cms/HypnoTech.Cms.Frontend/lib/jquery-validation-unobtrusive` |
 | Knockout | 3.5.1 | MIT; Knockout.js team | CMS, Ecommerce, and Media frontend `lib/knockout/knockout.js` |
 | Knockout Validation | Vendored snapshot; upstream version was not recorded | MIT; Eric M. Barnard and contributors; notice embedded in the file | Ecommerce and Media frontend `lib/knockout/knockout.validation.js` |
-| Lodash core custom build | 4.17.15 | MIT; OpenJS Foundation and other contributors; notice embedded in the file | `src/HypnoTech.Cms.Frontend/lib/lodash` |
-| TinyMCE Community | 5.2.1 | LGPL-2.1-or-later or commercial licence; Copyright Tiny Technologies, Inc.; full LGPL 2.1 text retained | `src/HypnoTech.Cms.Frontend/lib/tinymce` |
-| Navigo | Vendored snapshot; upstream version was not recorded; SHA-256 `3b1cd4166cd8c2ed6dfc6ffabd135e59c042ce1085ab2f8f01f1c1919ba7a54f` | MIT; Krasimir Tsonev and contributors | `src/HypnoTech.Frontend.Frontend/lib/navigo` |
+| Lodash core custom build | 4.17.15 | MIT; OpenJS Foundation and other contributors; notice embedded in the file | `src/Cms/HypnoTech.Cms.Frontend/lib/lodash` |
+| TinyMCE Community | 5.2.1 | LGPL-2.1-or-later or commercial licence; Copyright Tiny Technologies, Inc.; full LGPL 2.1 text retained | `src/Cms/HypnoTech.Cms.Frontend/lib/tinymce` |
+| Navigo | Vendored snapshot; upstream version was not recorded; SHA-256 `3b1cd4166cd8c2ed6dfc6ffabd135e59c042ce1085ab2f8f01f1c1919ba7a54f` | MIT; Krasimir Tsonev and contributors | `src/Frontend/HypnoTech.Frontend.Frontend/lib/navigo` |
 
 Upstream licence references:
 
@@ -41,7 +41,7 @@ dependency-refresh change should replace each unknown snapshot with a verified,
 integrity-pinned version while preserving runtime behaviour.
 
 The Phase 1 audit also found 18 corrupted Montserrat `.ttf` files in
-`src/HypnoTech.Cms.Frontend/fonts`. They failed `fc-query`, contained replacement bytes,
+`src/Cms/HypnoTech.Cms.Frontend/fonts`. They failed `fc-query`, contained replacement bytes,
 and were not referenced by authored or generated engine CSS. They were removed with the
 copyright holder's approval rather than being published as working fonts or replaced by
 an unverified release. They remain recoverable from the production baseline tag and

@@ -1,36 +1,36 @@
 <Solution>
-  <Folder Name="/src/">
-    <Project Path="src/HypnoTech.Frontend/HypnoTech.Frontend.csproj" />
+  <Folder Name="/src/Frontend/">
+    <Project Path="src/Frontend/HypnoTech.Frontend/HypnoTech.Frontend.csproj" />
   </Folder>
   <Folder Name="/src/Cms/">
-    <Project Path="src/HypnoTech.Cms.Contracts/HypnoTech.Cms.Contracts.csproj" />
-    <Project Path="src/HypnoTech.Cms.MongoDb/HypnoTech.Cms.MongoDb.csproj" />
-    <Project Path="src/HypnoTech.Cms/HypnoTech.Cms.csproj" />
+    <Project Path="src/Cms/HypnoTech.Cms.Contracts/HypnoTech.Cms.Contracts.csproj" />
+    <Project Path="src/Cms/HypnoTech.Cms.MongoDb/HypnoTech.Cms.MongoDb.csproj" />
+    <Project Path="src/Cms/HypnoTech.Cms/HypnoTech.Cms.csproj" />
   </Folder>
   <Folder Name="/src/Common/">
-    <Project Path="src/HypnoTech.Common.Dal.MongoDb/HypnoTech.Common.Dal.MongoDb.csproj" />
-    <Project Path="src/HypnoTech.Common.Dal/HypnoTech.Common.Dal.csproj" />
-    <Project Path="src/HypnoTech.Common.Emails/HypnoTech.Common.Emails.csproj" />
-    <Project Path="src/HypnoTech.Common.Models/HypnoTech.Common.Models.csproj" />
-    <Project Path="src/HypnoTech.Common.Security/HypnoTech.Common.Security.csproj" />
-    <Project Path="src/HypnoTech.Common/HypnoTech.Common.csproj" />
+    <Project Path="src/Common/HypnoTech.Common.Dal.MongoDb/HypnoTech.Common.Dal.MongoDb.csproj" />
+    <Project Path="src/Common/HypnoTech.Common.Dal/HypnoTech.Common.Dal.csproj" />
+    <Project Path="src/Common/HypnoTech.Common.Emails/HypnoTech.Common.Emails.csproj" />
+    <Project Path="src/Common/HypnoTech.Common.Models/HypnoTech.Common.Models.csproj" />
+    <Project Path="src/Common/HypnoTech.Common.Security/HypnoTech.Common.Security.csproj" />
+    <Project Path="src/Common/HypnoTech.Common/HypnoTech.Common.csproj" />
   </Folder>
   <Folder Name="/src/Ecommerce/">
-    <Project Path="src/HypnoTech.Ecommerce.Dal.MongoDb/HypnoTech.Ecommerce.Dal.MongoDb.csproj" />
-    <Project Path="src/HypnoTech.Ecommerce.Dal/HypnoTech.Ecommerce.Dal.csproj" />
-    <Project Path="src/HypnoTech.Ecommerce.Frontend/HypnoTech.Ecommerce.Frontend.csproj" />
-    <Project Path="src/HypnoTech.Ecommerce.Models/HypnoTech.Ecommerce.Models.csproj" />
-    <Project Path="src/HypnoTech.Ecommerce/HypnoTech.Ecommerce.csproj" />
+    <Project Path="src/Ecommerce/HypnoTech.Ecommerce.Dal.MongoDb/HypnoTech.Ecommerce.Dal.MongoDb.csproj" />
+    <Project Path="src/Ecommerce/HypnoTech.Ecommerce.Dal/HypnoTech.Ecommerce.Dal.csproj" />
+    <Project Path="src/Ecommerce/HypnoTech.Ecommerce.Frontend/HypnoTech.Ecommerce.Frontend.csproj" />
+    <Project Path="src/Ecommerce/HypnoTech.Ecommerce.Models/HypnoTech.Ecommerce.Models.csproj" />
+    <Project Path="src/Ecommerce/HypnoTech.Ecommerce/HypnoTech.Ecommerce.csproj" />
   </Folder>
   <Folder Name="/src/Media/">
-    <Project Path="src/HypnoTech.Media.Dal.MongoDb/HypnoTech.Media.Dal.MongoDb.csproj" />
-    <Project Path="src/HypnoTech.Media.Dal/HypnoTech.Media.Dal.csproj" />
-    <Project Path="src/HypnoTech.Media.Frontend/HypnoTech.Media.Frontend.csproj" />
-    <Project Path="src/HypnoTech.Media.Models/HypnoTech.Media.Models.csproj" />
-    <Project Path="src/HypnoTech.Media/HypnoTech.Media.csproj" />
+    <Project Path="src/Media/HypnoTech.Media.Dal.MongoDb/HypnoTech.Media.Dal.MongoDb.csproj" />
+    <Project Path="src/Media/HypnoTech.Media.Dal/HypnoTech.Media.Dal.csproj" />
+    <Project Path="src/Media/HypnoTech.Media.Frontend/HypnoTech.Media.Frontend.csproj" />
+    <Project Path="src/Media/HypnoTech.Media.Models/HypnoTech.Media.Models.csproj" />
+    <Project Path="src/Media/HypnoTech.Media/HypnoTech.Media.csproj" />
   </Folder>
   <Folder Name="/src/Persistence/">
-    <Project Path="src/HypnoTech.MongoDb/HypnoTech.MongoDb.csproj" />
+    <Project Path="src/Persistence/HypnoTech.MongoDb/HypnoTech.MongoDb.csproj" />
   </Folder>
   <Folder Name="/tests/Architecture/">
     <Project Path="tests/HypnoTech.ArchitectureTests/HypnoTech.ArchitectureTests.csproj" />
