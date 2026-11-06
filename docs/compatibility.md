@@ -9,7 +9,7 @@ test covers the combination.
 | Component | Verified version | Evidence/meaning |
 | --- | --- | --- |
 | Engine | commit `95c9f6a` | Revision used by both live sites when the baseline was captured |
-| .NET SDK | 10.0.401 | Built all 21 source and four test projects in Release with zero warnings and errors |
+| .NET SDK | 10.0.401 | Compiled all 30 source, example, and test projects in Release; the final offline audit-feed check emitted only `NU1900` and no compiler warning or error |
 | Target framework | .NET 10 (`net10.0`) | All current projects target this framework |
 | Operating system | Linux | Development verification and production platform |
 | Node.js | 24.18.0 | Ran the root frontend freshness check |
@@ -57,11 +57,10 @@ A future Windows smoke job may be informative and non-blocking.
 ## Example application verification
 
 The Lantern House public example has been exercised on Linux against the pinned
-MongoDB 8.0.32 development target. The real admin host seeds an isolated database in
-the automated integration suite; manual smoke checks cover admin authentication,
-dynamic CMS navigation, public content/detail routes, local audio/video assets,
-server-calculated basket and postage totals, desktop and mobile rendering, and the
-fail-closed payment-route boundary.
-
-Focused browser automation remains a Phase 5 gate, so this evidence does not yet claim
-repeatable end-to-end browser coverage. See `PUBLIC_READINESS_PLAN.md` for that work.
+MongoDB 8.0.32 development target. The Playwright for .NET suite runs the real admin
+and public hosts with a unique database and upload store, fresh browser contexts, and
+headless Chromium. Its five journeys cover authentication and authorization, dynamic
+CMS validation/CRUD/search/ordering/duplication, a real image upload reaching the
+public website, representative Media, server-calculated basket and postage totals,
+the fail-closed checkout boundary, and a 390 px mobile navigation smoke test. Failures
+retain a trace, screenshot, browser errors, and both application logs.

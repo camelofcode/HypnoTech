@@ -18,8 +18,8 @@ The engine currently provides:
 ## Status
 
 This is pre-release software under active public-readiness work. It is not yet a
-public release: the reusable projects now include an original runnable example, while
-browser coverage, async I/O modernisation, and CI remain roadmap work. Existing
+public release: the reusable projects now include an original runnable example and a
+focused browser suite, while async I/O modernisation and CI remain roadmap work. Existing
 production users remain pinned to the preserved baseline and MongoDB Server 4.0.3
 compatibility remains a hard gate.
 
@@ -38,9 +38,10 @@ Prerequisites:
 ```bash
 dotnet restore HypnoTech.slnx
 dotnet build HypnoTech.slnx -c Release --no-restore
-dotnet test HypnoTech.slnx -c Release --no-build
 npm ci
 npm run check:frontend
+./tests/run-end-to-end.sh
+dotnet test HypnoTech.slnx -c Release --no-build
 ```
 
 Generated frontend assets are committed, so normal .NET consumers do not need npm.
@@ -56,7 +57,8 @@ MongoDB suite runs the same repository contracts against production MongoDB 4.0.
 pinned MongoDB 8.0 and 9.0 releases. Podman setup, focused commands, and coverage
 instructions are in [`tests/README.md`](tests/README.md). The runnable original
 [`Lantern House example`](examples/README.md) demonstrates the CMS, Media, Ecommerce,
-Frontend, and MongoDB modules; browser tests remain a later roadmap phase.
+Frontend, and MongoDB modules. Its focused Playwright suite runs with
+`./tests/run-end-to-end.sh`.
 
 ## Repository layout
 
@@ -68,7 +70,7 @@ Source projects are grouped physically by functional area:
 - `src/Media/` — media domain, frontend support, DAL, and frontend source;
 - `src/Frontend/` — general website helpers and shared frontend source;
 - `src/Persistence/` — shared MongoDB infrastructure;
-- `tests/` — xUnit v3 unit, architecture, and Testcontainers integration tests;
+- `tests/` — xUnit v3 unit, architecture, Testcontainers integration, and Playwright tests;
 - `examples/` — the fictional Lantern House admin, public website, and safe seed data;
 - `tools/` — deterministic frontend build tooling.
 

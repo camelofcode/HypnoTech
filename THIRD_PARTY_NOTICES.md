@@ -108,6 +108,7 @@ the solution, not only explicit `PackageReference` entries.
 | Microsoft.ApplicationInsights | 2.23.0 | MIT |
 | Microsoft.Bcl.AsyncInterfaces | 6.0.0 | MIT |
 | Microsoft.DiaSymReader | 2.2.10 | MIT |
+| Microsoft.Playwright | 1.64.1 | MIT |
 | Microsoft.Testing.Extensions.CodeCoverage | 18.11.2 | Microsoft .NET Library licence (licence file in package) |
 | Microsoft.Testing.Extensions.Telemetry | 2.5.1 | MIT |
 | Microsoft.Testing.Extensions.TrxReport.Abstractions | 2.5.1 | MIT |
@@ -141,6 +142,10 @@ the solution, not only explicit `PackageReference` entries.
 | xunit.v3 and component packages | 4.0.2 | Apache-2.0 |
 | xunit.analyzers | 2.2.0 | Apache-2.0 |
 | ZstdSharp.Port | 0.7.3 | MIT |
+
+The Playwright package is restored from NuGet. Its matching Chromium binary is
+downloaded into Playwright's user cache for local/CI test execution and is not tracked
+or distributed by this repository.
 
 The legacy `PayPal` and `BraintreeHttp-Dotnet` packages contain no licence expression,
 licence URL, project URL, or licence file in the restored `.nupkg`. They are referenced

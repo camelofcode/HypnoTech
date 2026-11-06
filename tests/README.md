@@ -57,6 +57,26 @@ TESTCONTAINERS_RYUK_DISABLED=true \
 dotnet test tests/HypnoTech.Demo.IntegrationTests -c Release
 ```
 
+## Focused browser suite
+
+The Playwright suite starts one pinned MongoDB 8.0 container and the real Lantern
+House Admin and Website on dynamic ports. Five isolated Chromium journeys cover
+authentication and authorization, dynamic CMS authoring and ordering, a real image
+upload reaching the public site, Media, server-calculated basket/checkout totals, and
+mobile navigation. The checkout journey cannot submit an order or contact a payment
+provider.
+
+With rootless Podman, one command builds the hosts and tests, installs the Chromium
+revision pinned by Playwright when needed, and runs the suite:
+
+```bash
+./tests/run-end-to-end.sh
+```
+
+Failures retain a screenshot, trace, browser errors, and application logs under
+`TestResults/Playwright/<test-name>/`. Detailed trace instructions are in
+[`HypnoTech.Demo.EndToEndTests/README.md`](HypnoTech.Demo.EndToEndTests/README.md).
+
 ## Full suite and coverage
 
 Once the container API is configured, run the solution:
@@ -64,6 +84,9 @@ Once the container API is configured, run the solution:
 ```bash
 dotnet test HypnoTech.slnx -c Release
 ```
+
+On a fresh machine, run `./tests/run-end-to-end.sh` once first so the pinned Chromium
+binary is available to the end-to-end project included in the solution.
 
 Generate an informational Cobertura report for a focused project with:
 

@@ -1,5 +1,5 @@
 // ReSharper disable InconsistentNaming
-tinymce.PluginManager.add('youtube', function (editor) {
+typeof tinymce !== 'undefined' && tinymce.PluginManager.add('youtube', function (editor) {
     var uploading = false;
 
     function openDialog() {

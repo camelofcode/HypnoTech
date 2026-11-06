@@ -48,6 +48,7 @@
     <Project Path="tests/HypnoTech.Common.UnitTests/HypnoTech.Common.UnitTests.csproj" />
   </Folder>
   <Folder Name="/tests/Examples/">
+    <Project Path="tests/HypnoTech.Demo.EndToEndTests/HypnoTech.Demo.EndToEndTests.csproj" />
     <Project Path="tests/HypnoTech.Demo.IntegrationTests/HypnoTech.Demo.IntegrationTests.csproj" />
   </Folder>
 </Solution>

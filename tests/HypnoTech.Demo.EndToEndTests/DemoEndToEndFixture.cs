@@ -1,0 +1,227 @@
+using System;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
+using Microsoft.Playwright;
+using Xunit;
+
+namespace HypnoTech.Demo.EndToEndTests;
+
+public sealed class DemoEndToEndFixture : IAsyncLifetime
+{
+    private const int MongoPort = 27017;
+
+    private readonly IContainer _mongo = new ContainerBuilder("mongo:8.0.32-noble")
+        .WithPortBinding(MongoPort, assignRandomHostPort: true)
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(MongoPort))
+        .Build();
+    private readonly ConcurrentQueue<string> _applicationLogs = new();
+    private readonly string _databaseName = $"hypnotech_e2e_{Guid.NewGuid():N}";
+    private readonly string _uploadPath = Path.Combine(
+        Path.GetTempPath(),
+        $"hypnotech-e2e-uploads-{Guid.NewGuid():N}");
+    private Process _adminProcess;
+    private Process _websiteProcess;
+    private IPlaywright _playwright;
+
+    public DemoEndToEndFixture()
+    {
+        RepositoryRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../.."));
+        AdminPort = GetAvailablePort();
+        WebsitePort = GetAvailablePort();
+    }
+
+    public string RepositoryRoot { get; }
+
+    public int AdminPort { get; }
+
+    public int WebsitePort { get; }
+
+    public string AdminUrl => $"http://localhost:{AdminPort}";
+
+    public string WebsiteUrl => $"http://localhost:{WebsitePort}";
+
+    public IBrowser Browser { get; private set; }
+
+    public async ValueTask InitializeAsync()
+    {
+        Directory.CreateDirectory(_uploadPath);
+        await _mongo.StartAsync();
+
+        _adminProcess = StartApplication(
+            "admin",
+            "examples/HypnoTech.Demo.Admin/HypnoTech.Demo.Admin.csproj",
+            AdminPort);
+        await WaitForReadyAsync("admin", $"{AdminUrl}/Home/Login", _adminProcess);
+
+        _websiteProcess = StartApplication(
+            "website",
+            "examples/HypnoTech.Demo.Website/HypnoTech.Demo.Website.csproj",
+            WebsitePort);
+        await WaitForReadyAsync("website", WebsiteUrl, _websiteProcess);
+
+        _playwright = await Playwright.CreateAsync();
+        Browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        {
+            Headless = true
+        });
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (Browser != null)
+        {
+            await Browser.CloseAsync();
+        }
+
+        _playwright?.Dispose();
+        StopApplication(_websiteProcess);
+        StopApplication(_adminProcess);
+        await _mongo.DisposeAsync();
+
+        if (Directory.Exists(_uploadPath))
+        {
+            Directory.Delete(_uploadPath, recursive: true);
+        }
+    }
+
+    public string CreateArtifactDirectory(string testName)
+    {
+        var path = GetArtifactDirectory(testName);
+        Directory.CreateDirectory(path);
+        return path;
+    }
+
+    public void ClearArtifactDirectory(string testName)
+    {
+        var path = GetArtifactDirectory(testName);
+        if (Directory.Exists(path))
+        {
+            Directory.Delete(path, recursive: true);
+        }
+    }
+
+    public void WriteApplicationLogs(string artifactDirectory)
+    {
+        File.WriteAllLines(
+            Path.Combine(artifactDirectory, "applications.log"),
+            _applicationLogs);
+    }
+
+    private Process StartApplication(string name, string project, int port)
+    {
+        var startInfo = new ProcessStartInfo("dotnet")
+        {
+            WorkingDirectory = RepositoryRoot,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
+        startInfo.ArgumentList.Add("run");
+        startInfo.ArgumentList.Add("--project");
+        startInfo.ArgumentList.Add(Path.Combine(RepositoryRoot, project));
+        startInfo.ArgumentList.Add("--configuration");
+        startInfo.ArgumentList.Add("Release");
+        startInfo.ArgumentList.Add("--no-build");
+        startInfo.ArgumentList.Add("--no-launch-profile");
+
+        startInfo.Environment["ASPNETCORE_ENVIRONMENT"] = "Development";
+        startInfo.Environment["ASPNETCORE_URLS"] = $"http://127.0.0.1:{port}";
+        startInfo.Environment["Mongo__Server"] = _mongo.Hostname;
+        startInfo.Environment["Mongo__Port"] = _mongo.GetMappedPublicPort(MongoPort).ToString();
+        startInfo.Environment["Mongo__Database"] = _databaseName;
+        startInfo.Environment["UploadPath"] = _uploadPath;
+        startInfo.Environment["HostURL"] = name == "admin" ? AdminUrl : WebsiteUrl;
+        startInfo.Environment["CanonicalUrl"] = WebsiteUrl;
+        startInfo.Environment["Cms__AdminUrl"] = AdminUrl;
+
+        var process = new Process { StartInfo = startInfo, EnableRaisingEvents = true };
+        process.OutputDataReceived += (_, args) => RecordApplicationLog(name, args.Data);
+        process.ErrorDataReceived += (_, args) => RecordApplicationLog(name, args.Data);
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+        return process;
+    }
+
+    private async Task WaitForReadyAsync(string name, string url, Process process)
+    {
+        using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
+        for (var attempt = 0; attempt < 120; attempt++)
+        {
+            if (process.HasExited)
+            {
+                throw new InvalidOperationException(
+                    $"The {name} application exited during startup.{Environment.NewLine}" +
+                    string.Join(Environment.NewLine, _applicationLogs));
+            }
+
+            try
+            {
+                using var response = await client.GetAsync(url);
+                if ((int)response.StatusCode < 500)
+                {
+                    return;
+                }
+            }
+            catch (HttpRequestException)
+            {
+            }
+            catch (TaskCanceledException)
+            {
+            }
+
+            await Task.Delay(250);
+        }
+
+        throw new TimeoutException(
+            $"The {name} application did not become ready.{Environment.NewLine}" +
+            string.Join(Environment.NewLine, _applicationLogs));
+    }
+
+    private void RecordApplicationLog(string name, string line)
+    {
+        if (!string.IsNullOrWhiteSpace(line))
+        {
+            _applicationLogs.Enqueue($"[{DateTimeOffset.UtcNow:O}] [{name}] {line}");
+        }
+    }
+
+    private string GetArtifactDirectory(string testName)
+    {
+        var safeName = string.Concat(testName.Select(character =>
+            char.IsLetterOrDigit(character) || character is '-' or '_' ? character : '_'));
+        return Path.Combine(RepositoryRoot, "TestResults", "Playwright", safeName);
+    }
+
+    private static int GetAvailablePort()
+    {
+        using var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        return ((IPEndPoint)listener.LocalEndpoint).Port;
+    }
+
+    private static void StopApplication(Process process)
+    {
+        if (process == null)
+        {
+            return;
+        }
+
+        if (!process.HasExited)
+        {
+            process.Kill(entireProcessTree: true);
+            process.WaitForExit(5000);
+        }
+
+        process.Dispose();
+    }
+}
