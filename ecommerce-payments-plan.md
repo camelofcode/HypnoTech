@@ -6,7 +6,7 @@ This is the repository-specific implementation plan for adding PayPal v2 and Str
 
 The editable ecommerce frontend is:
 
-src/HypnoTech.Ecommerce.Frontend.Frontend/js/checkout.js
+src/Ecommerce/HypnoTech.Ecommerce.Frontend.Frontend/js/checkout.js
 
 That source is authoritative for the generated browser bundle. Do not edit generated wwwroot assets directly.
 
@@ -24,10 +24,10 @@ The target is an additive provider-neutral core with v1 retained as a compatibil
 
 ### Existing PayPal v1 implementation
 
-- src/HypnoTech.Ecommerce.Frontend.Frontend/js/checkout.js has the only payment button and calls payWithPaypal.
-- src/HypnoTech.Ecommerce.Frontend/Controllers/CheckoutController.cs owns Pay, Complete, and Cancelled.
-- src/HypnoTech.Ecommerce.Frontend/Services/CheckoutService.cs currently combines pricing, payment orchestration, order persistence, download-code allocation, and email.
-- src/HypnoTech.Ecommerce.Frontend/Services/PayPalService.cs uses the legacy PayPal package and PayPal.v1.
+- src/Ecommerce/HypnoTech.Ecommerce.Frontend.Frontend/js/checkout.js has the only payment button and calls payWithPaypal.
+- src/Ecommerce/HypnoTech.Ecommerce.Frontend/Controllers/CheckoutController.cs owns Pay, Complete, and Cancelled.
+- src/Ecommerce/HypnoTech.Ecommerce.Frontend/Services/CheckoutService.cs currently combines pricing, payment orchestration, order persistence, download-code allocation, and email.
+- src/Ecommerce/HypnoTech.Ecommerce.Frontend/Services/PayPalService.cs uses the legacy PayPal package and PayPal.v1.
 - PaypalCreateResponse, PaypalExecuteResponse, and PaymentCompletion contain PayPal-specific fields.
 - OrderRepository finds and completes orders by PaymentId, assuming SaleId, PayerId, and SaleUrl are PayPal values.
 - Config and the CMS settings page currently expose only one PaypalConfig.
@@ -128,7 +128,7 @@ Recommended PaymentAttempt fields:
 
 ### Additive Order fields
 
-Add fields to src/HypnoTech.Ecommerce.Models/Order.cs without removing or renaming existing PayPal fields:
+Add fields to src/Ecommerce/HypnoTech.Ecommerce.Models/Order.cs without removing or renaming existing PayPal fields:
 
 - PaymentProvider (paypal-v1, paypal-v2, or stripe)
 - InternalOrderId
@@ -160,7 +160,7 @@ Keep CompleteOrder(paymentId) and CancelOrder(paymentId) as v1 adapters.
 
 Use unique Mongo indexes for internal order IDs, provider references, and processed event IDs where the schema permits. Duplicate completion must return the existing completed order and must not allocate another code or send another email.
 
-Update src/HypnoTech.Common.Dal.MongoDb/StartupBuilderExtensions.cs with BSON mappings. Confirm missing fields deserialize safely for existing records.
+Update src/Common/HypnoTech.Common.Dal.MongoDb/StartupBuilderExtensions.cs with BSON mappings. Confirm missing fields deserialize safely for existing records.
 
 ## PayPal v2 implementation
 
@@ -248,7 +248,7 @@ Refactor GetPaymentId so it is explicitly a v1 compatibility resolver. New flows
 
 ### Raw ecommerce frontend
 
-Refactor src/HypnoTech.Ecommerce.Frontend.Frontend/js/checkout.js around shared helpers:
+Refactor src/Ecommerce/HypnoTech.Ecommerce.Frontend.Frontend/js/checkout.js around shared helpers:
 
 - buildCheckoutPayload() for address, country, delivery choice, and cart identifiers.
 - validateCheckout() for the existing Knockout validation.
@@ -303,11 +303,11 @@ Prefer environment/secret-store overrides. If CMS remains the operational source
 
 Update:
 
-- src/HypnoTech.Common.Models/Settings/Config.cs
+- src/Common/HypnoTech.Common.Models/Settings/Config.cs
 - new PaypalV2Config.cs and StripeConfig.cs
-- src/HypnoTech.Common.Dal.MongoDb/StartupBuilderExtensions.cs
-- src/HypnoTech.Cms/Areas/Settings/Views/Config/Index.cshtml
-- restored raw source src/HypnoTech.Cms.Frontend/js/config.js
+- src/Common/HypnoTech.Common.Dal.MongoDb/StartupBuilderExtensions.cs
+- src/Cms/HypnoTech.Cms/Areas/Settings/Views/Config/Index.cshtml
+- restored raw source src/Cms/HypnoTech.Cms.Frontend/js/config.js
 - startup registration and configuration validation
 
 Register typed provider clients through IHttpClientFactory or official SDK clients. Do not construct clients per request with secrets read ad hoc from the database.
@@ -399,16 +399,16 @@ Rollback is a feature-flag change: disable new providers while v1 readers and ro
 
 | Area | Files | Planned change |
 | --- | --- | --- |
-| Frontend source | src/HypnoTech.Ecommerce.Frontend.Frontend/js/checkout.js | Provider-neutral state/helpers; retain v1 alias; add v2/Stripe starts. |
+| Frontend source | src/Ecommerce/HypnoTech.Ecommerce.Frontend.Frontend/js/checkout.js | Provider-neutral state/helpers; retain v1 alias; add v2/Stripe starts. |
 | Ecommerce views | sites/Esoteric/Esoteric.Website/Views/Checkout/* | Provider controls and neutral result/pending views. |
-| Controller | src/HypnoTech.Ecommerce.Frontend/Controllers/CheckoutController.cs | Preserve v1 actions; add provider actions and webhooks. |
-| Orchestration | src/HypnoTech.Ecommerce.Frontend/Services/CheckoutService.cs | Delegate to neutral payment and fulfillment services. |
+| Controller | src/Ecommerce/HypnoTech.Ecommerce.Frontend/Controllers/CheckoutController.cs | Preserve v1 actions; add provider actions and webhooks. |
+| Orchestration | src/Ecommerce/HypnoTech.Ecommerce.Frontend/Services/CheckoutService.cs | Delegate to neutral payment and fulfillment services. |
 | Providers | Services/PayPalService.cs, new PayPalV2Service.cs, new StripePaymentService.cs | Isolate v1, PayPal Orders v2, and Stripe Checkout. |
 | Contracts | Services/Interfaces/*, new payment models | Provider-neutral session/completion contracts. |
-| Persistence | src/HypnoTech.Ecommerce.Models/Order.cs, PaymentAttempt.cs, Ecommerce.Dal/Repositories/* | Provider references, attempts, indexes, and idempotent transitions. |
+| Persistence | src/Ecommerce/HypnoTech.Ecommerce.Models/Order.cs, PaymentAttempt.cs, Ecommerce.Dal/Repositories/* | Provider references, attempts, indexes, and idempotent transitions. |
 | Configuration | Common.Models/Settings/*, Mongo startup mappings | PayPal v2 and Stripe options; preserve v1 options. |
-| CMS | src/HypnoTech.Cms/Areas/Settings/Views/Config/Index.cshtml, src/HypnoTech.Cms.Frontend/js/config.js | Masked settings and public-config projection. |
-| Admin order UI | src/HypnoTech.Ecommerce/Areas/Settings/Views/Order/Details.cshtml | Provider-neutral payment details. |
+| CMS | src/Cms/HypnoTech.Cms/Areas/Settings/Views/Config/Index.cshtml, src/Cms/HypnoTech.Cms.Frontend/js/config.js | Masked settings and public-config projection. |
+| Admin order UI | src/Ecommerce/HypnoTech.Ecommerce/Areas/Settings/Views/Order/Details.cshtml | Provider-neutral payment details. |
 | Startup | Ecommerce StartupBuilderExtensions.cs | Provider clients, options, webhook handling, and fulfillment. |
 
 ## Acceptance criteria
