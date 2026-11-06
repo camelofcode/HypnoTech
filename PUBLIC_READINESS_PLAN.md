@@ -6,9 +6,9 @@
 >
 > **Last updated:** 2026-11-06
 >
-> **Current phase:** Phase 6 in progress; CMS, Common-backed admin, and Ecommerce I/O paths converted
+> **Current phase:** Phase 6 in progress; CMS, Common, Ecommerce, and Media I/O paths converted
 >
-> **Next action:** Convert Media in the final bounded module slice, then run the Phase 6 exit-gate review.
+> **Next action:** Review custom MVC result execution and complete the Phase 6 exit-gate review.
 
 ## How to maintain this document
 
@@ -616,9 +616,9 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
       ordered movement.
 - [x] Use MongoDB `FirstOrDefaultAsync`, `ToListAsync`, `InsertOneAsync`,
       `ReplaceOneAsync`, `DeleteOneAsync`, and `CountDocumentsAsync` as appropriate.
-- [ ] Add async methods across Common, Ecommerce, and Media repositories in bounded
+- [x] Add async methods across Common, Ecommerce, and Media repositories in bounded
       module-sized changes.
-- [ ] Update CMS and module services to await repository I/O.
+- [x] Update CMS and module services to await repository I/O.
 - [x] Propagate cancellation tokens without replacing them with `CancellationToken.None`.
 - [x] Convert select-list, seed, and child-population database access to async flows.
 - [x] Decide whether multi-document ordered movement needs a transaction or documented
@@ -627,7 +627,7 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 ### Controller and infrastructure work
 
 - [x] Convert `CmsController<T>` I/O actions to `async Task<IActionResult>`.
-- [ ] Convert settings, ecommerce, media, and other I/O-bound controllers in small
+- [x] Convert settings, ecommerce, media, and other I/O-bound controllers in small
       reviewed groups.
 - [x] Preserve synchronous actions that perform only validation or in-memory work.
 - [x] Replace blocking `ApiService` HTTP calls with awaited `HttpClient` calls.
@@ -649,18 +649,18 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [x] Add a repository check that rejects new blocking task waits in request-path code,
       with documented exceptions if any remain.
 - [x] Compare routes and representative HTTP responses before and after conversion.
-- [ ] Record retained synchronous APIs and their planned lifetime.
+- [x] Record retained synchronous APIs and their planned lifetime.
 
 ### Exit gate
 
 - [x] Dynamic CMS controller-to-MongoDB request paths are async end to end.
-- [ ] Other high-value database and network request paths are async end to end.
-- [ ] Cancellation reaches the underlying I/O provider across every module; complete for
-      CMS and converted Common paths.
-- [ ] No unapproved `.Result`, `.Wait()`, or `GetAwaiter().GetResult()` remains in
+- [x] Other high-value database and network request paths are async end to end.
+- [x] Cancellation reaches the underlying I/O provider across every module, with the
+      documented PayPal v1 transport limitation.
+- [x] No unapproved `.Result`, `.Wait()`, or `GetAwaiter().GetResult()` remains in
       request-path code.
 - [x] CPU-only code has not been wrapped in fake async.
-- [ ] All unit, integration, and browser tests pass without route or behaviour changes.
+- [x] All unit, integration, and browser tests pass without route or behaviour changes.
 
 ## Phase 7 — CI, documentation, and the v0.1 public release
 
@@ -959,10 +959,12 @@ stating that work was done.
 | 2026-11-06 | Phase 6 | Converted Ecommerce catalogue, basket, checkout, postage, order, download-code, country, email, tag-helper, and settings-controller request paths to native async repository and provider APIs. | Existing routes, responses, calculation rules, flash messages, BSON names, and payment-provider scope remain unchanged. Constructor-time MongoDB reads were removed. PayPal v1 calls are awaited by all engine request paths; its two retained synchronous compatibility members are the documented exception because the obsolete SDK exposes no synchronous transport. | This change |
 | 2026-11-06 | Phase 6 | Added Ecommerce async repository characterisation and extended the blocking-wait guard to the Ecommerce source tree. | The catalogue, postage, order lifecycle, download-code depletion, and cancellation contracts pass against MongoDB 4.0.3, 8.0.32, and 9.0.4 without contacting a payment provider. The architecture suite passes with only the explicit PayPal v1 compatibility adapter allowlisted. | This change |
 | 2026-11-06 | Phase 6 | Added an in-process PayPal REST double without a new test dependency and completed aggregate verification for the Ecommerce async slice. | A local Kestrel server characterises OAuth, create success, create validation failure, execute success, request totals, and response mapping without contacting live or sandbox PayPal. All 30 projects build in Release with zero warnings/errors; CMS unit tests pass 25/25, Common unit tests 10/10, architecture tests 3/3, MongoDB contracts 16/16 across all three targets, demo integration tests 13/13, and the real Chromium/Podman journeys 5/5. | This change |
+| 2026-11-06 | Phase 6 | Converted Media audio, video, and photo-album repositories and services, the player tag helper, and the public example Media controller to native async MongoDB request paths. | Existing synchronous APIs remain native compatibility members; collection/BSON names, album date ordering, URL lookup, audio enrichment, feature gates, DI, player JSON/markup, routes, and partial-navigation behavior are unchanged. The architecture guard now covers Media. | This change |
+| 2026-11-06 | Phase 6 | Added Media sync/async repository and service characterisation and completed aggregate verification for the slice. | All 30 projects build in Release with zero warnings/errors; CMS unit tests pass 25/25, Common unit tests 10/10, architecture tests 3/3, MongoDB contracts 18/18 across 4.0.3, 8.0.32, and 9.0.4, demo integration tests 14/14, and the Chromium/Podman journeys 5/5 including Media navigation, player, gallery, and video behavior. | This change |
 
 ## Immediate next actions
 
-1. Convert Media repositories, services, tag helpers, and controllers as the final bounded async slice.
-2. Review custom MVC result execution and complete the Phase 6 exit-gate verification.
-3. Complete aggregate and browser verification across all converted async paths.
+1. Review custom MVC result execution and the remaining `AllowSynchronousIO` settings.
+2. Complete the Phase 6 exit-gate verification and mark the phase complete if green.
+3. Begin Phase 7 CI and public-release documentation.
 4. Re-scan the exact final commit immediately before changing repository visibility.

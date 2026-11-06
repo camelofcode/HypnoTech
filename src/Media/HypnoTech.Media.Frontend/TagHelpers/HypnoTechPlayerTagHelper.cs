@@ -2,6 +2,8 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using HypnoTech.Media.Frontend.Services;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace HypnoTech.Media.Frontend.TagHelpers
@@ -13,28 +15,33 @@ namespace HypnoTech.Media.Frontend.TagHelpers
 
         public string PlayerElementId { get; set; }
 
+        [ViewContext]
+        [HtmlAttributeNotBound]
+        public ViewContext ViewContext { get; set; }
+
         public HypnoTechPlayerTagHelper(IAudioTrackService audioTrackService)
         {
             _audioTrackService = audioTrackService;
         }
 
-        public override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
+        public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             StringBuilder sb = new StringBuilder();
 
             sb.Append("<script type=\"text/javascript\">");
-            sb.Append($"var playerModel = new PlayerViewModel({Serialize()});");
+            sb.Append($"var playerModel = new PlayerViewModel({await SerializeAsync()});");
             sb.Append($"ko.applyBindings(playerModel, document.getElementById(\"{PlayerElementId}\"));");
             sb.Append("</script>");
             output.TagName = null;
             output.PostContent.SetHtmlContent(sb.ToString());
 
-            return base.ProcessAsync(context, output);
         }
 
-        private string Serialize()
+        private async Task<string> SerializeAsync()
         {
-            return JsonSerializer.Serialize(_audioTrackService.GetTracksForPlayer(), new JsonSerializerOptions()
+            var tracks = await _audioTrackService.GetTracksForPlayerAsync(
+                ViewContext.HttpContext.RequestAborted);
+            return JsonSerializer.Serialize(tracks, new JsonSerializerOptions()
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = false

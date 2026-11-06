@@ -4,6 +4,7 @@ using HypnoTech.Frontend.Attributes;
 using HypnoTech.Frontend.Controllers;
 using HypnoTech.Media.Frontend.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Demo.Website.Controllers;
 
@@ -21,13 +22,13 @@ public sealed class MediaController : SpaController
     }
 
     [NavigationLink("media")]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         return AjaxPartialView(new MediaViewModel
         {
-            Audio = _audio.GetTracksForPlayer().ToList(),
-            PhotoAlbums = _photos.GetPhotoAlbums().ToList(),
-            Videos = _videos.GetVideos().ToList()
+            Audio = (await _audio.GetTracksForPlayerAsync(HttpContext.RequestAborted)).ToList(),
+            PhotoAlbums = (await _photos.GetPhotoAlbumsAsync(HttpContext.RequestAborted)).ToList(),
+            Videos = (await _videos.GetVideosAsync(HttpContext.RequestAborted)).ToList()
         });
     }
 }

@@ -56,13 +56,13 @@ A future Windows smoke job may be informative and non-blocking.
 
 ## Async API transition
 
-The Phase 6 CMS, Common-backed admin, and Ecommerce request paths use native async
-MongoDB, file, stream, SMTP, and HTTP APIs and propagate the request cancellation token.
-Existing synchronous repository and service members remain available through v0.1 for
-source compatibility. They retain native synchronous implementations rather than
-calling the new async members. Async members are the primary API used by engine
-controllers. Removal or obsolescence of the sync surface is deferred to a separately
-documented breaking release.
+The Phase 6 CMS, Common-backed admin, Ecommerce, and Media request paths use native
+async MongoDB, file, stream, SMTP, and HTTP APIs and propagate the request cancellation
+token. Existing synchronous repository and service members remain available through
+v0.1 for source compatibility. They retain native synchronous implementations rather
+than calling the new async members. Async members are the primary API used by engine
+controllers, module tag helpers, and the public example. Removal or obsolescence of the
+sync surface is deferred to a separately documented breaking release.
 
 PayPal v1 is the narrow documented exception. Its 2018 SDK exposes only a task-returning
 HTTP transport and no cancellation-token overload. Engine request paths await that SDK

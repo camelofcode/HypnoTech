@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Media.Dal.Repositories;
 using HypnoTech.Media.Models;
 
@@ -7,6 +9,7 @@ namespace HypnoTech.Media.Frontend.Services
     public interface IVideoService
     {
         ICollection<YouTubeVideo> GetVideos();
+        Task<ICollection<YouTubeVideo>> GetVideosAsync(CancellationToken cancellationToken = default);
     }
 
     public class VideoService : IVideoService
@@ -21,6 +24,11 @@ namespace HypnoTech.Media.Frontend.Services
         public ICollection<YouTubeVideo> GetVideos()
         {
             return _repository.GetVideos();
+        }
+
+        public Task<ICollection<YouTubeVideo>> GetVideosAsync(CancellationToken cancellationToken = default)
+        {
+            return _repository.GetVideosAsync(cancellationToken);
         }
     }
 }

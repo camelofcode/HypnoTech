@@ -4,6 +4,8 @@ using HypnoTech.Media.Dal.Repositories;
 using HypnoTech.Media.Models;
 using HypnoTech.MongoDb;
 using Microsoft.Extensions.Options;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Media.Dal.MongoDb.Repositories
 {
@@ -16,6 +18,12 @@ namespace HypnoTech.Media.Dal.MongoDb.Repositories
         public ICollection<YouTubeVideo> GetVideos()
         {
             return GetAll<YouTubeVideo>().ToList();
+        }
+
+        public async Task<ICollection<YouTubeVideo>> GetVideosAsync(CancellationToken cancellationToken = default)
+        {
+            return (await GetAllAsync<YouTubeVideo>(
+                cancellationToken: cancellationToken)).ToList();
         }
     }
 }
