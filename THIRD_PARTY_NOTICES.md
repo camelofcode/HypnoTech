@@ -97,7 +97,7 @@ the solution, not only explicit `PackageReference` entries.
 | Microsoft.Extensions.Configuration.Binder | 10.0.0 | MIT |
 | Microsoft.Extensions.DependencyInjection | 10.0.12 | MIT |
 | Microsoft.Extensions.DependencyInjection.Abstractions | 10.0.12 | MIT |
-| Microsoft.Extensions.DependencyModel | 10.0.0 | MIT |
+| Microsoft.Extensions.DependencyModel | 10.0.0 / 10.0.10 | MIT |
 | Microsoft.Extensions.Diagnostics.Abstractions | 10.0.0 | MIT |
 | Microsoft.Extensions.FileProviders.Abstractions | 10.0.0 | MIT |
 | Microsoft.Extensions.Hosting.Abstractions | 10.0.0 | MIT |
@@ -105,6 +105,14 @@ the solution, not only explicit `PackageReference` entries.
 | Microsoft.Extensions.Logging.Abstractions | 10.0.0 | MIT |
 | Microsoft.Extensions.Options | 10.0.0 | MIT |
 | Microsoft.Extensions.Primitives | 10.0.12 | MIT |
+| Microsoft.ApplicationInsights | 2.23.0 | MIT |
+| Microsoft.Bcl.AsyncInterfaces | 6.0.0 | MIT |
+| Microsoft.DiaSymReader | 2.2.10 | MIT |
+| Microsoft.Testing.Extensions.CodeCoverage | 18.11.2 | Microsoft .NET Library licence (licence file in package) |
+| Microsoft.Testing.Extensions.Telemetry | 2.5.1 | MIT |
+| Microsoft.Testing.Extensions.TrxReport.Abstractions | 2.5.1 | MIT |
+| Microsoft.Testing.Platform / MSBuild | 2.5.1 | MIT |
+| Microsoft.Win32.Registry | 5.0.0 | MIT |
 | MongoDB.Bson | 3.4.3 | Apache-2.0 |
 | MongoDB.Driver | 3.4.3 | Apache-2.0 |
 | Newtonsoft.Json | 13.0.4 | MIT |
@@ -124,6 +132,14 @@ the solution, not only explicit `PackageReference` entries.
 | SkiaSharp.NativeAssets.macOS | 4.152.1 | MIT |
 | SkiaSharp.NativeAssets.Win32 | 4.152.1 | MIT |
 | Snappier | 1.3.1 | BSD-3-Clause |
+| System.Security.AccessControl | 6.0.1 | MIT |
+| Testcontainers / Testcontainers.MongoDb | 4.16.0 | MIT |
+| BouncyCastle.Cryptography | 2.7.0 | MIT |
+| Docker.DotNet.Enhanced and transport packages | 4.3.3 | MIT |
+| SharpZipLib | 1.4.2 | MIT |
+| SSH.NET | 2026.0.0 | MIT |
+| xunit.v3 and component packages | 4.0.2 | Apache-2.0 |
+| xunit.analyzers | 2.2.0 | Apache-2.0 |
 | ZstdSharp.Port | 0.7.3 | MIT |
 
 The legacy `PayPal` and `BraintreeHttp-Dotnet` packages contain no licence expression,

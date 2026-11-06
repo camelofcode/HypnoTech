@@ -32,10 +32,12 @@ Prerequisites:
 
 - a .NET 10 SDK compatible with `global.json`;
 - Node.js 22 or newer and npm 11.16.0 for rebuilding frontend assets.
+- Docker or Podman with its Docker-compatible API socket for MongoDB integration tests.
 
 ```bash
 dotnet restore HypnoTech.slnx
 dotnet build HypnoTech.slnx -c Release --no-restore
+dotnet test HypnoTech.slnx -c Release --no-build
 npm ci
 npm run check:frontend
 ```
@@ -48,8 +50,11 @@ npm run build:frontend
 npm run check:frontend
 ```
 
-Tests and a runnable example will be added in later roadmap phases. Until then, the
-Release build and frontend freshness check are the baseline verification commands.
+The unit, architecture, and MongoDB characterisation suites are under `tests/`. The
+MongoDB suite runs the same repository contracts against production MongoDB 4.0.3 and
+a pinned supported MongoDB 8.0 release. Podman setup, focused commands, and coverage
+instructions are in [`tests/README.md`](tests/README.md). A runnable public example and
+browser tests remain later roadmap phases.
 
 ## Repository layout
 
@@ -62,6 +67,7 @@ flat under `src/` until the dedicated structure-only phase:
 - `src/HypnoTech.Media*` — media domain, frontend support, and DAL;
 - `src/HypnoTech.Frontend*` — general website helpers and frontend source;
 - `src/HypnoTech.MongoDb` — shared MongoDB infrastructure;
+- `tests/` — xUnit v3 unit, architecture, and Testcontainers integration tests;
 - `tools/` — deterministic frontend build tooling.
 
 `*.Frontend` runtime projects contain committed `wwwroot` output. Similarly named
