@@ -353,31 +353,33 @@ tests/
 - [x] Use Testcontainers for .NET with an xUnit lifecycle fixture.
 - [x] Run the repository against the exact production `mongo:4.0.3` image.
 - [x] Run it against the supported, pinned `mongo:8.0.32-noble` image.
+- [x] Run it against the current, pinned `mongo:9.0.4` image.
 - [x] Generic add, get, edit, and remove.
 - [x] Pagination and total-page calculations.
 - [x] Default and explicit sorting.
 - [x] Search, including zero, one, and multiple searchable fields.
 - [x] Ordered item movement and boundary behaviour.
 - [x] Persisted BSON member names.
-- [x] Child population, including the current null-reference behaviour.
+- [x] Child population, including a missing optional child reference.
 - [x] List and gallery identifier generation.
 - [x] Select-list lookup.
 - [x] Seed behaviour.
 - [x] Common, ecommerce, and media repository registration.
 - [x] Deserialisation of representative legacy documents.
-- [x] Repeated application-host construction and BSON mapping registration, including
-      the current duplicate-registration failure.
+- [x] Repeated application-host construction and idempotent BSON/model registration.
 
-### Characterisation findings
+### Resolved characterisation findings
 
-The initial suite intentionally records four behaviours for a separately reviewed
-fix, rather than changing production semantics inside the test-foundation work:
+The initial suite exposed four failure modes. A compatibility-reviewed follow-up fixed
+them without changing routes, interfaces, collection names, BSON names, stored data, or
+the MongoDB.Driver 3.4.3 baseline:
 
-- search with zero searchable fields sends an empty `$or` that MongoDB rejects;
-- child population dereferences a null child ID;
-- an ordered move beyond either boundary throws after no adjacent item is found;
-- repeated Common MongoDB startup in one process re-registers BSON class maps and
-  throws `ArgumentException`.
+- search with zero searchable fields returns no matches instead of sending an invalid
+  empty `$or`;
+- child population skips a null child ID;
+- an ordered move beyond either boundary is an idempotent no-op;
+- repeated Common, Ecommerce, and Media MongoDB startup reuses explicitly registered
+  BSON class maps and avoids duplicate model-registry entries.
 
 ### Exit gate
 
@@ -843,7 +845,7 @@ These apply throughout all phases:
 | Tracked Montserrat fonts are corrupted | Broken fonts or an unreviewed visual change | Remove only after confirming no authored/generated CSS reference and retain recovery through the baseline refs/bundle | Resolved; owner approved removal of all 18 unreferenced files |
 | Legacy PayPal packages declare no licence metadata | Unclear provenance and public maintenance risk | Do not misstate the licence; document that packages are restored, then resolve provenance during later existing-PayPal work | Accepted known risk; binaries are not committed and provider replacement remains out of scope |
 | Physical moves break private site references | Consumer builds fail | Pin production to support branch; temporary smoke builds; optional shims | Open |
-| Static registries make tests order-dependent | Flaky test suite | Serial collections and explicit reset of mutable public registries; separately fix non-idempotent BSON registration | Mitigated in tests; production idempotence finding open |
+| Static registries make tests order-dependent | Flaky test suite | Serial collections and explicit reset of mutable public registries; make BSON and model registration idempotent | Resolved for current registrations; tests remain serial where global mappings are intentionally mutated |
 | Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Open |
 | Playwright suite becomes slow or brittle | CI friction | Keep a small journey-based Chromium suite; retain traces on failure | Open |
 | Async conversion changes routes or behaviour | Public regression | Characterisation tests first; preserve action names/routes; convert in bounded slices | Open |
@@ -874,6 +876,7 @@ These apply throughout all phases:
 | 2026-11-06 | D-017 | Do not accept external code or documentation contributions. | Accepted | Keeps the engine under a single copyright holder and avoids contributor rights complicating separate commercial licensing. |
 | 2026-11-06 | D-018 | Treat the missing licence metadata in the restored legacy PayPal/Braintree NuGet packages as an explicit, non-blocking publication risk until later existing-PayPal work. | Accepted | The engine repository does not redistribute those binaries, the uncertainty is disclosed, and replacing payment providers remains out of scope. |
 | 2026-11-06 | D-019 | Use xUnit v3's Microsoft Testing Platform v2 runner and Microsoft's MTP coverage extension rather than the legacy VSTest/coverlet collector path. | Accepted | .NET 10 supports the unified runner, xUnit 4 defaults to MTP v2, and the current coverlet collector does not support MTP v2. |
+| 2026-11-06 | D-020 | Fix the four Phase 2 MongoDB characterisation failures while retaining MongoDB.Driver 3.4.3 and testing MongoDB 4.0.3, 8.0.32, and 9.0.4. | Accepted | Empty searches, null child IDs, boundary moves, and repeated startup should be safe; no persisted format or production version floor changes. |
 
 ## Work log
 
@@ -905,7 +908,8 @@ stating that work was done.
 | 2026-11-06 | Phase 1 | Added the accepted source and commercial-licensing model and made the no-contributions policy explicit. | Root `LICENSE.md` is byte-for-byte identical to the official PolyForm Noncommercial 1.0.0 download; `NOTICE`, `COMMERCIAL-LICENSE.md`, README, package metadata, and contribution guidance identify Christopher Clayton and the separate commercial route; a test NuGet package contains the licence, notice, and README. | This change |
 | 2026-11-06 | Phase 2 | Added four xUnit v3/Microsoft Testing Platform projects, centrally pinned test dependencies, informational coverage, and a repository-local characterisation-test authoring skill. | Skill validator passes; 25-project Release build passes with zero warnings/errors; the CMS report covers 629/2577 lines (24.41%) with no threshold. | This change |
 | 2026-11-06 | Phase 2 | Added dynamic CMS mapping, controller, route, form, service, upload, Common helper, and architecture characterisation tests using synthetic fixtures and isolated static state. | Focused CMS, Common, and architecture suites run independently and as part of the solution. | This change |
-| 2026-11-06 | Phase 2 | Added Testcontainers repository contracts for production MongoDB 4.0.3 and supported MongoDB 8.0.32, running through the rootless Podman API socket without `podman-docker`. | Both images start and the suite covers CRUD, paging, sorting, search, ordering, BSON, children, list/gallery IDs, select lists, seed, DI, legacy documents, and repeated registration; current defects are recorded above. | This change |
+| 2026-11-06 | Phase 2 | Added Testcontainers repository contracts for production MongoDB 4.0.3, supported MongoDB 8.0.32, and current MongoDB 9.0.4, running through the rootless Podman API socket without `podman-docker`. | All three images start and the suite covers CRUD, paging, sorting, search, ordering, BSON, children, list/gallery IDs, select lists, seed, DI, legacy documents, and repeated registration; initial failure modes were captured before correction. | This change |
+| 2026-11-06 | Phase 2 | Corrected the four failures exposed by the initial MongoDB contracts without upgrading the driver or changing persisted data. | Empty-field search returns no rows; null child IDs remain unset; ordering boundaries are no-ops; repeated Common/Ecommerce/Media startup is idempotent. All behaviours pass against MongoDB 4.0.3, 8.0.32, and 9.0.4. | This change |
 
 ## Immediate next actions
 

@@ -52,7 +52,8 @@ a focused test or roadmap note first; fix it only in a separately reviewed chang
 ## Exercise MongoDB compatibility
 
 - Always run repository contracts against the exact production baseline
-  `mongo:4.0.3` and one pinned, supported MongoDB release.
+  `mongo:4.0.3`, one pinned supported MongoDB release, and the pinned current major
+  release.
 - Keep MongoDB.Driver at the repository baseline unless dependency work is explicitly
   in scope.
 - Assert collection and BSON element names, IDs, missing/legacy fields, search escaping
@@ -66,7 +67,7 @@ a focused test or roadmap note first; fix it only in a separately reviewed chang
 
 1. Run the focused test project while iterating.
 2. Repeat stateful or ordering-sensitive tests to expose leaked state.
-3. Run the full unit/architecture selection, then both MongoDB targets when changed.
+3. Run the full unit/architecture selection, then all MongoDB targets when changed.
 4. Generate coverage as information; do not add a high global threshold without a
    reviewed baseline.
 5. Run `verify-engine-change`, then update `PUBLIC_READINESS_PLAN.md` with commands,

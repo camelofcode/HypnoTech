@@ -6,7 +6,6 @@ using HypnoTech.MongoDb;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 
 namespace HypnoTech.Media.Dal.MongoDb
@@ -31,7 +30,7 @@ namespace HypnoTech.Media.Dal.MongoDb
         {
             if (configuration.GetValue("Media:AudioEnabled", false))
             {
-                BsonClassMap.RegisterClassMap<AudioTrack>(cm =>
+                BsonClassMapRegistration.RegisterIfNeeded<AudioTrack>(cm =>
                 {
                     cm.MapMember(c => c.Id).SetElementName("_id")
                         .SetSerializer(new StringSerializer(BsonType.ObjectId));
@@ -45,7 +44,7 @@ namespace HypnoTech.Media.Dal.MongoDb
 
             if (configuration.GetValue("Media:YouTubeVideosEnabled", false))
             {
-                BsonClassMap.RegisterClassMap<YouTubeVideo>(cm =>
+                BsonClassMapRegistration.RegisterIfNeeded<YouTubeVideo>(cm =>
                 {
                     cm.MapMember(c => c.Id).SetElementName("_id")
                         .SetSerializer(new StringSerializer(BsonType.ObjectId));
@@ -57,7 +56,7 @@ namespace HypnoTech.Media.Dal.MongoDb
 
             if (configuration.GetValue("Media:PhotoAlbumsEnabled", false))
             {
-                BsonClassMap.RegisterClassMap<PhotoAlbum>(cm =>
+                BsonClassMapRegistration.RegisterIfNeeded<PhotoAlbum>(cm =>
                 {
                     cm.MapMember(c => c.Id).SetElementName("_id")
                         .SetSerializer(new StringSerializer(BsonType.ObjectId));
@@ -69,7 +68,7 @@ namespace HypnoTech.Media.Dal.MongoDb
                 });
                 ModelRegistry.Register(typeof(PhotoAlbum), "photoalbums", "Photo Albums");
 
-                BsonClassMap.RegisterClassMap<Photo>(cm =>
+                BsonClassMapRegistration.RegisterIfNeeded<Photo>(cm =>
                 {
                     cm.MapMember(c => c.Id).SetElementName("_id")
                         .SetSerializer(new StringSerializer(BsonType.ObjectId));

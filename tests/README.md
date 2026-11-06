@@ -16,9 +16,10 @@ dotnet test tests/HypnoTech.ArchitectureTests -c Release
 
 ## MongoDB integration suite
 
-The Testcontainers fixture starts both `mongo:4.0.3` (the production compatibility
-baseline) and `mongo:8.0.32-noble` (a pinned supported release). The tests create unique
-databases and delete the containers and databases they create.
+The Testcontainers fixture starts `mongo:4.0.3` (the production compatibility
+baseline), `mongo:8.0.32-noble` (a pinned supported release), and `mongo:9.0.4` (the
+current major release). The tests create unique databases and delete the containers
+and databases they create.
 
 With Docker, run:
 
@@ -59,16 +60,15 @@ dotnet test tests/HypnoTech.Cms.UnitTests -c Release \
 
 Test output and coverage reports are written below the ignored `TestResults/` folder.
 
-## Current behaviour captured deliberately
+## Corrected legacy behaviour
 
-The characterisation suite records several behaviours that may deserve later fixes:
+The first characterisation run exposed several legacy failure modes. They are now
+covered as corrected behaviour on all MongoDB targets:
 
-- searching a mapping with no searchable fields produces an invalid empty `$or` and
-  MongoDB rejects the request;
-- a registered child whose reference ID is null causes child population to throw;
-- moving an ordered item beyond the collection boundary throws;
-- constructing the Common MongoDB registration more than once in one process attempts
-  to register the same BSON class maps again and throws.
+- searching a mapping with no searchable fields returns an empty result;
+- a registered child whose reference ID is null remains unset;
+- moving an ordered item beyond the collection boundary is a no-op;
+- repeated Common, Ecommerce, and Media MongoDB startup reuses existing BSON class maps
+  and model-registry entries.
 
-Change these assertions only in a reviewed behaviour-fix change with MongoDB 4.0.3
-coverage, rather than weakening them during structural refactoring.
+These assertions protect the fixes during structural refactoring and async conversion.

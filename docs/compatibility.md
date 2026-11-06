@@ -16,7 +16,8 @@ test covers the combination.
 | npm | 11.16.0 | Lockfile install/build tool version recorded by `packageManager` |
 | MongoDB.Driver | 3.4.3 | Current package version in every MongoDB implementation |
 | MongoDB Server | 4.0.3 | Current live-site version; repository contracts pass against the exact container image |
-| Additional MongoDB target | 8.0.32 | Same repository contracts pass against the pinned supported release |
+| Supported MongoDB target | 8.0.32 | Same repository contracts pass against the pinned supported release |
+| Current MongoDB target | 9.0.4 | Same repository contracts pass against the pinned current major release |
 | Container runtime | Podman 5.8.9 | Testcontainers exercised through the rootless Docker-compatible API socket |
 
 The complete captured fingerprints are in
@@ -43,7 +44,9 @@ reversible migration plan before changing this pair.
 
 MongoDB 4.0.3 is an old production constraint, not a recommendation for new
 deployments. The additional `mongo:8.0.32-noble` target is supported through October
-2029 and does not replace the production-baseline test.
+2029, while `mongo:9.0.4` exercises the current major release. Neither replaces the
+production-baseline test. These contracts verify the engine operations they cover;
+they do not claim support for every MongoDB 9.0 feature.
 
 ## Platform policy
 

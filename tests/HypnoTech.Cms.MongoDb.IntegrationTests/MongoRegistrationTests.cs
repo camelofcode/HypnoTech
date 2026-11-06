@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System;
 using HypnoTech.Cms.Contracts.Interfaces;
 using HypnoTech.Cms.MongoDb;
 using HypnoTech.Common.Dal.Repositories;
@@ -7,6 +6,7 @@ using HypnoTech.Ecommerce.Dal.Repositories;
 using HypnoTech.Media.Dal.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson.Serialization;
 using Xunit;
 
 namespace HypnoTech.Cms.MongoDb.IntegrationTests;
@@ -32,9 +32,33 @@ public sealed class MongoRegistrationTests
         Assert.Contains(services, descriptor => descriptor.ServiceType == typeof(IVideoRepository));
         Assert.Contains(services, descriptor => descriptor.ServiceType == typeof(IPhotoAlbumRepository));
 
+        var registryCount = HypnoTech.Common.Models.ModelRegistry.Registrations.Count;
         var secondServices = new ServiceCollection();
-        Assert.Throws<ArgumentException>(() =>
-            HypnoTech.Common.Dal.MongoDb.StartupBuilderExtensions.UseMongoDbForCommon(secondServices, configuration));
+
+        secondServices.UseMongoDbForCms(configuration);
+        HypnoTech.Common.Dal.MongoDb.StartupBuilderExtensions.UseMongoDbForCommon(secondServices, configuration);
+        HypnoTech.Ecommerce.Dal.MongoDb.StartupBuilderExtensions.UseMongoDbForEcommerce(secondServices, configuration);
+        HypnoTech.Media.Dal.MongoDb.StartupBuilderExtensions.UseMongoDbForMedia(secondServices, configuration);
+
+        Assert.Contains(secondServices, descriptor => descriptor.ServiceType == typeof(IUserRepository));
+        Assert.Contains(secondServices, descriptor => descriptor.ServiceType == typeof(IMerchRepository));
+        Assert.Contains(secondServices, descriptor => descriptor.ServiceType == typeof(IAudioTrackRepository));
+        Assert.Equal(registryCount, HypnoTech.Common.Models.ModelRegistry.Registrations.Count);
+        Assert.Equal(
+            "username",
+            BsonClassMap.LookupClassMap(typeof(HypnoTech.Common.Models.Settings.AdminUser))
+                .GetMemberMap(nameof(HypnoTech.Common.Models.Settings.AdminUser.Username))
+                .ElementName);
+        Assert.Equal(
+            "imagePath",
+            BsonClassMap.LookupClassMap(typeof(HypnoTech.Ecommerce.Models.MerchItem))
+                .GetMemberMap(nameof(HypnoTech.Ecommerce.Models.MerchItem.ImagePath))
+                .ElementName);
+        Assert.Equal(
+            "related",
+            BsonClassMap.LookupClassMap(typeof(HypnoTech.Media.Models.AudioTrack))
+                .GetMemberMap(nameof(HypnoTech.Media.Models.AudioTrack.RelatedId))
+                .ElementName);
     }
 
     private static IConfiguration BuildConfiguration()

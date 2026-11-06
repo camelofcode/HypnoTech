@@ -52,7 +52,7 @@ npm run check:frontend
 
 The unit, architecture, and MongoDB characterisation suites are under `tests/`. The
 MongoDB suite runs the same repository contracts against production MongoDB 4.0.3 and
-a pinned supported MongoDB 8.0 release. Podman setup, focused commands, and coverage
+pinned MongoDB 8.0 and 9.0 releases. Podman setup, focused commands, and coverage
 instructions are in [`tests/README.md`](tests/README.md). A runnable public example and
 browser tests remain later roadmap phases.
 

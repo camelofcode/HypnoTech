@@ -107,20 +107,22 @@ public sealed class CmsRepositoryContractTests : IClassFixture<MongoCompatibilit
     }
 
     [Fact]
-    public void Search_with_no_searchable_members_is_rejected_by_mongodb()
+    public void Search_with_no_searchable_members_returns_no_items()
     {
         ForEachTarget((_, options) =>
         {
             var repository = new CmsRepository<NonSearchableDocument>(options);
             repository.Add(new NonSearchableDocument { Name = "Present but not searchable" });
 
-            Assert.Throws<MongoCommandException>(() =>
-                repository.GetPaged<NonSearchableDocument>(new CmsListRequest { Search = "Present" }));
+            var result = repository.GetPaged<NonSearchableDocument>(new CmsListRequest { Search = "Present" });
+
+            Assert.Empty(result.Items);
+            Assert.Equal(0, result.TotalPages);
         });
     }
 
     [Fact]
-    public void Ordered_movement_swaps_adjacent_items_and_boundary_move_throws()
+    public void Ordered_movement_swaps_adjacent_items_and_boundary_moves_are_no_ops()
     {
         ForEachTarget((_, options) =>
         {
@@ -136,7 +138,11 @@ public sealed class CmsRepositoryContractTests : IClassFixture<MongoCompatibilit
 
             Assert.Equal(2, repository.GetById(first.Id).Order);
             Assert.Equal(1, repository.GetById(second.Id).Order);
-            Assert.ThrowsAny<Exception>(() => repository.MoveUp(second.Id));
+            repository.MoveUp(second.Id);
+            repository.MoveDown(third.Id);
+
+            Assert.Equal(1, repository.GetById(second.Id).Order);
+            Assert.Equal(3, repository.GetById(third.Id).Order);
         });
     }
 
@@ -191,7 +197,7 @@ public sealed class CmsRepositoryContractTests : IClassFixture<MongoCompatibilit
     }
 
     [Fact]
-    public void Registered_child_with_null_reference_currently_throws()
+    public void Registered_child_with_null_reference_leaves_child_unset()
     {
         FormClassMapping.GetMapping<SyntheticArticle>()
             .RegisterChild(article => article.Child, article => article.ChildId, "syntheticChildren");
@@ -201,7 +207,9 @@ public sealed class CmsRepositoryContractTests : IClassFixture<MongoCompatibilit
             var article = new SyntheticArticle { Heading = "No child reference" };
             repository.Add(article);
 
-            Assert.Throws<NullReferenceException>(() => repository.GetById(article.Id));
+            var loaded = repository.GetById(article.Id);
+
+            Assert.Null(loaded.Child);
         });
     }
 
