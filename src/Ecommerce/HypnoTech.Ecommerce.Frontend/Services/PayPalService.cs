@@ -124,7 +124,7 @@ namespace HypnoTech.Ecommerce.Frontend.Services
             return ToExecuteResponse(result, paymentId, payerId, config);
         }
 
-        private static PayPalHttpClient BuildClient(PaypalConfig config)
+        protected virtual PayPalHttpClient BuildClient(PaypalConfig config)
         {
             PayPalEnvironment environment = config.IsProduction
                 ? new LiveEnvironment(config.ApiClientId, config.ApiClientSecret)
