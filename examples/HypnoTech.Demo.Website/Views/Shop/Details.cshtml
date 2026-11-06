@@ -1,0 +1,8 @@
+@model MerchItem
+@{
+    ViewData["Title"] = Model.Name;
+}
+<article class="product-detail" data-testid="product-detail">
+    <img src="@Model.ImagePath" alt="" />
+    <div><span class="eyebrow">@Model.Category · @Model.SubCategory</span><h1>@Model.Name</h1><p>@Model.Description</p><p class="product-price">£@Model.Price</p>@if (Model.Options?.Any() == true) { <label for="product-option">Choose an option</label><select id="product-option">@foreach (var option in Model.Options) { <option value="@option.Id">@option.Name</option> }</select> }<button class="button button-primary js-add-to-cart" type="button" data-merch-id="@Model.Id" data-option-select="product-option">Add to basket</button><p class="inline-message" role="status" data-add-message></p><p class="fine-print">This is a fictional product. The demo never accepts payment or creates a fulfilment request.</p></div>
+</article>

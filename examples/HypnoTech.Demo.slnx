@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/examples/">
+    <Project Path="HypnoTech.Demo.Admin/HypnoTech.Demo.Admin.csproj" />
+    <Project Path="HypnoTech.Demo.Models/HypnoTech.Demo.Models.csproj" />
+    <Project Path="HypnoTech.Demo.Website/HypnoTech.Demo.Website.csproj" />
+  </Folder>
+</Solution>

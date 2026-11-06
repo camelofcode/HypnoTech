@@ -54,9 +54,14 @@ Linux is the required development/CI and production platform for the first publi
 release. Windows previously worked as a development platform but is not a release gate.
 A future Windows smoke job may be informative and non-blocking.
 
-## Not yet verified
+## Example application verification
 
-The repository does not yet contain a runnable public example or browser tests.
-Consequently, no end-to-end application support claim is made yet. Those gates are
-tracked in `PUBLIC_READINESS_PLAN.md` and this document must be updated as the matrix
-gains verified configurations.
+The Lantern House public example has been exercised on Linux against the pinned
+MongoDB 8.0.32 development target. The real admin host seeds an isolated database in
+the automated integration suite; manual smoke checks cover admin authentication,
+dynamic CMS navigation, public content/detail routes, local audio/video assets,
+server-calculated basket and postage totals, desktop and mobile rendering, and the
+fail-closed payment-route boundary.
+
+Focused browser automation remains a Phase 5 gate, so this evidence does not yet claim
+repeatable end-to-end browser coverage. See `PUBLIC_READINESS_PLAN.md` for that work.

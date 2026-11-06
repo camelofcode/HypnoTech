@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+    <PackageReference Include="Testcontainers.MongoDb" />
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../examples/HypnoTech.Demo.Admin/HypnoTech.Demo.Admin.csproj" />
+    <ProjectReference Include="../../examples/HypnoTech.Demo.Website/HypnoTech.Demo.Website.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="../../examples/HypnoTech.Demo.Admin/SeedData/**/*.json"
+             Link="SeedData/%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <Target Name="CopyWebsiteStaticWebAssetsManifestForInProcessHost" AfterTargets="Build">
+    <Copy SourceFiles="$(OutDir)HypnoTech.Demo.Website.staticwebassets.runtime.json"
+          DestinationFiles="$(OutDir)$(AssemblyName).staticwebassets.runtime.json" />
+  </Target>
+
+</Project>

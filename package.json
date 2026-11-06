@@ -10,6 +10,7 @@
     "@parcel/watcher": false
   },
   "workspaces": [
+    "examples/HypnoTech.Demo.Website.Frontend",
     "src/Cms/HypnoTech.Cms.Frontend",
     "src/Ecommerce/HypnoTech.Ecommerce.Frontend.Frontend",
     "src/Frontend/HypnoTech.Frontend.Frontend",

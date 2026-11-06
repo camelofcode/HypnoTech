@@ -1,0 +1,37 @@
+[
+  {
+    "_id": { "$oid": "64b810000000000000000001" },
+    "key": "events",
+    "text": "Events",
+    "order": 1,
+    "enabled": true
+  },
+  {
+    "_id": { "$oid": "64b810000000000000000002" },
+    "key": "articles",
+    "text": "Stories",
+    "order": 2,
+    "enabled": true
+  },
+  {
+    "_id": { "$oid": "64b810000000000000000003" },
+    "key": "artists",
+    "text": "Artists",
+    "order": 3,
+    "enabled": true
+  },
+  {
+    "_id": { "$oid": "64b810000000000000000004" },
+    "key": "media",
+    "text": "Watch & listen",
+    "order": 4,
+    "enabled": true
+  },
+  {
+    "_id": { "$oid": "64b810000000000000000005" },
+    "key": "shop",
+    "text": "Shop",
+    "order": 5,
+    "enabled": true
+  }
+]

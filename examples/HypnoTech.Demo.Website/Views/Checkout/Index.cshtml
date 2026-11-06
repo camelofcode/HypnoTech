@@ -1,0 +1,47 @@
+@model HypnoTech.Ecommerce.Frontend.Models.CheckoutViewModel
+@{
+    ViewData["Title"] = "Demo checkout";
+}
+<header class="page-header">
+    <span class="eyebrow">Calculation-only checkout</span>
+    <h1>Review delivery</h1>
+    <p>This page exercises the platform checkout model. It cannot submit an order or contact a payment provider.</p>
+</header>
+<section id="checkout" class="section cart-layout" data-testid="checkout-page">
+    <div>
+        <h2>Items</h2>
+        <p data-bind="visible: items().length === 0">Your basket is empty.</p>
+        <div data-bind="foreach: items">
+            <div class="cart-row checkout-row">
+                <div><strong data-bind="text: displayName"></strong><span data-bind="text: formattedRowPrice"></span></div>
+                <div class="quantity-controls">
+                    <button type="button" data-bind="click: $parent.decreaseQuantity" aria-label="Reduce quantity">−</button>
+                    <span data-bind="text: quantity"></span>
+                    <button type="button" data-bind="click: $parent.increaseQuantity" aria-label="Increase quantity">+</button>
+                    <button class="text-button" type="button" data-bind="click: $parent.removeAll">Remove</button>
+                </div>
+            </div>
+        </div>
+        <button class="text-button" type="button" data-bind="click: clearCart, visible: items().length > 0">Clear basket</button>
+    </div>
+    <aside class="order-summary">
+        <h2>Delivery calculation</h2>
+        <label for="checkout-country">Delivery country</label>
+        <select id="checkout-country" data-bind="options: countries, optionsText: 'name', optionsValue: 'code', value: countryCode"></select>
+        <label for="checkout-delivery">Delivery method</label>
+        <select id="checkout-delivery" data-bind="options: deliveryOptions, optionsText: 'text', optionsValue: 'value', value: specialDelivery"></select>
+        <dl>
+            <div><dt>Items</dt><dd data-bind="text: formattedSubtotal">£0.00</dd></div>
+            <div data-bind="visible: showPostage"><dt>Postage</dt><dd data-bind="text: formattedPostage">£0.00</dd></div>
+            <div class="total" data-bind="visible: showPostage"><dt>Demo total</dt><dd data-bind="text: formattedTotal">£0.00</dd></div>
+        </dl>
+        <div class="checkout-safety is-visible" data-testid="demo-checkout-safety">
+            <strong>This is where the public demo stops.</strong>
+            <p>No payment button is rendered. No order, email, download code or fulfilment request can be created.</p>
+        </div>
+    </aside>
+</section>
+
+@section Scripts {
+    <hypnotech-checkout-config checkout-element-id="checkout" />
+}

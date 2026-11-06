@@ -1,0 +1,5 @@
+[
+  { "DisplayText": "United Kingdom", "Code": "GB", "Region": "UK" },
+  { "DisplayText": "France", "Code": "FR", "Region": "EU" },
+  { "DisplayText": "United States", "Code": "US", "Region": "ROW1" }
+]

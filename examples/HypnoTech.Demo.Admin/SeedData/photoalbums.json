@@ -1,0 +1,25 @@
+[
+  {
+    "Id": "64b400000000000000000001",
+    "Url": "rooms-in-light",
+    "Title": "Rooms in light",
+    "Date": "2026-09-01T12:00:00Z",
+    "Photos": [
+      {
+        "Id": "64b410000000000000000001",
+        "ImagePath": "/Images/Demo/artwork-rose.svg",
+        "Caption": "The fictional courtyard before an evening performance."
+      },
+      {
+        "Id": "64b410000000000000000002",
+        "ImagePath": "/Images/Demo/artwork-indigo.svg",
+        "Caption": "Studio Two prepared for a workshop."
+      },
+      {
+        "Id": "64b410000000000000000003",
+        "ImagePath": "/Images/Demo/artwork-mint.svg",
+        "Caption": "A quiet stage and a single warm lamp."
+      }
+    ]
+  }
+]

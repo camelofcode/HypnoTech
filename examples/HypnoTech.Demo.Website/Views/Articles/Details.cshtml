@@ -1,0 +1,10 @@
+@model Article
+@{
+    ViewData["Title"] = Model.Title;
+}
+<article class="article-detail" data-testid="article-detail">
+    <header><span class="eyebrow">@Model.PublishedAt.ToString("d MMMM yyyy")</span><h1>@Model.Title</h1><p>@Model.Summary</p></header>
+    <img class="feature-image" src="@Model.HeroImagePath" alt="" />
+    <div class="rich-copy">@Html.Raw(Model.Body)</div>
+    <a class="back-link" asp-action="Index" data-navigo>← Back to stories</a>
+</article>

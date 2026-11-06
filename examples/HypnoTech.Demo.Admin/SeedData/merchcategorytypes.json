@@ -1,0 +1,12 @@
+[
+  {
+    "Id": "64b600000000000000000001",
+    "Name": "Shop",
+    "Order": 0,
+    "SubcategoryTypes": [
+      { "Name": "Prints", "Order": 0 },
+      { "Name": "Objects", "Order": 1 },
+      { "Name": "Audio", "Order": 2 }
+    ]
+  }
+]

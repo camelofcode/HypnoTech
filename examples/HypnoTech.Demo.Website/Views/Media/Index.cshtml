@@ -1,0 +1,70 @@
+@model MediaViewModel
+@{
+    ViewData["Title"] = "Watch and listen";
+}
+<header class="page-header">
+    <span class="eyebrow">Media library</span>
+    <h1>Watch &amp; listen</h1>
+    <p>CMS-managed audio, YouTube video and photo galleries, plus a self-hosted motion sample.</p>
+</header>
+
+<section class="section media-section" data-testid="media-audio">
+    <div>
+        <span class="eyebrow">Platform audio player</span>
+        <h2>Lantern signal</h2>
+        <p>Select a CMS-managed track here, then keep listening in the persistent player while browsing the site.</p>
+    </div>
+    <div class="audio-library">
+        @foreach (var track in Model.Audio)
+        {
+            <button class="audio-track-card" type="button" data-play-track-id="@track.Id">
+                <img src="@track.ImagePath" alt="" />
+                <span><strong>@track.Title</strong><small>Play in persistent player</small></span>
+            </button>
+        }
+    </div>
+</section>
+<section class="section" data-testid="youtube-videos">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">CMS-managed video</span>
+            <h2>YouTube showcase</h2>
+        </div>
+        <p>The video record is managed through HypnoTech Media. The iframe is only created after the visitor opens the lightbox.</p>
+    </div>
+    <div class="video-grid">
+        @foreach (var video in Model.Videos)
+        {
+            <button class="video-card" type="button" data-video-id="@video.YouTubeId" data-video-title="@video.Title">
+                <img src="@video.ThumbnailUrl" alt="" />
+                <span><strong>@video.Title</strong><small>Open video</small></span>
+            </button>
+        }
+    </div>
+</section>
+
+<section class="section media-section media-video" data-testid="media-video">
+    <div>
+        <span class="eyebrow">Self-hosted video</span>
+        <h2>Light study</h2>
+        <p>A tiny locally generated MP4 demonstrates byte-range delivery without a CDN.</p>
+    </div>
+    <video controls muted loop preload="metadata" poster="/Images/Demo/artwork-indigo.svg">
+        <source src="/Files/Demo/lantern-motion.mp4" type="video/mp4" />
+    </video>
+</section>
+
+<section class="section" data-testid="photo-galleries">
+    <div class="section-heading">
+        <div><span class="eyebrow">Photo galleries</span><h2>@Model.PhotoAlbums.FirstOrDefault()?.Title</h2></div>
+    </div>
+    @foreach (var album in Model.PhotoAlbums)
+    {
+        <div class="gallery">
+            @foreach (var photo in album.Photos)
+            {
+                <figure><img src="@photo.ImagePath" alt="" /><figcaption>@photo.Caption</figcaption></figure>
+            }
+        </div>
+    }
+</section>

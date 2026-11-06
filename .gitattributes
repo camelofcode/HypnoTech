@@ -2,6 +2,7 @@
 # tracked because the engine deliberately ships self-contained frontend assets.
 src/**/lib/** linguist-vendored
 src/**/wwwroot/** linguist-generated
+examples/**/wwwroot/** linguist-generated
 
 # Normalise text files without changing binary assets.
 * text=auto

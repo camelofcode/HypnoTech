@@ -1,0 +1,12 @@
+[
+  {
+    "Id": "64b800000000000000000001",
+    "Name": "Small parcel",
+    "UnitedKingdom": { "Alone": 3.50, "WithOthers": 1.00 },
+    "EuropeanUnion": { "Alone": 7.00, "WithOthers": 2.00 },
+    "RestOfWorld1": { "Alone": 9.00, "WithOthers": 3.00 },
+    "RestOfWorld2": { "Alone": 10.00, "WithOthers": 3.50 },
+    "RestOfWorld3": { "Alone": 12.00, "WithOthers": 4.00 },
+    "CanDelete": false
+  }
+]

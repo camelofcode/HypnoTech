@@ -1,0 +1,16 @@
+@model IReadOnlyCollection<Article>
+@{
+    ViewData["Title"] = "Stories";
+}
+<header class="page-header"><span class="eyebrow">From the house</span><h1>Stories</h1><p>News, interviews and notes from a venue that exists only for this demo.</p></header>
+<section class="section story-grid" data-testid="articles-list">
+    @foreach (var article in Model)
+    {
+        <article class="story-card">
+            <img src="@article.HeroImagePath" alt="" />
+            <p class="meta">@article.PublishedAt.ToString("d MMMM yyyy")</p>
+            <h2><a href="/articles/@article.Slug" data-navigo>@article.Title</a></h2>
+            <p>@article.Summary</p>
+        </article>
+    }
+</section>

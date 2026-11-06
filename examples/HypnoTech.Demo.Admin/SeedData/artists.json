@@ -1,0 +1,32 @@
+[
+  {
+    "Id": "64b000000000000000000001",
+    "Name": "Mara Vale",
+    "Discipline": "Music",
+    "Biography": "A composer building warm, slow-moving pieces from field recordings and prepared piano.",
+    "ImagePath": "/Images/Demo/artwork-amber.svg",
+    "Website": "https://example.test/artists/mara-vale",
+    "Featured": true,
+    "Order": 0
+  },
+  {
+    "Id": "64b000000000000000000002",
+    "Name": "Jon Bell",
+    "Discipline": "Performance",
+    "Biography": "A movement artist interested in playful audience participation and accessible public performance.",
+    "ImagePath": "/Images/Demo/artwork-indigo.svg",
+    "Website": "https://example.test/artists/jon-bell",
+    "Featured": true,
+    "Order": 1
+  },
+  {
+    "Id": "64b000000000000000000003",
+    "Name": "The Paper Lantern Collective",
+    "Discipline": "Visual art",
+    "Biography": "A fictional studio group making large-scale installations from paper, light and reusable materials.",
+    "ImagePath": "/Images/Demo/artwork-mint.svg",
+    "Website": "https://example.test/artists/paper-lantern",
+    "Featured": false,
+    "Order": 2
+  }
+]

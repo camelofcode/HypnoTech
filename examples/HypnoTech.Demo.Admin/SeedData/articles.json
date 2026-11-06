@@ -1,0 +1,22 @@
+[
+  {
+    "Id": "64b100000000000000000001",
+    "Title": "A new season after dark",
+    "Summary": "Lantern House opens its fictional autumn programme with performances, workshops and late gallery evenings.",
+    "Body": "<p>Our new season brings artists and neighbours together for a month of small, surprising encounters.</p><p>Everything in this public example is synthetic and exists only to demonstrate the HypnoTech CMS.</p>",
+    "PublishedAt": "2026-09-10T18:00:00Z",
+    "HeroImagePath": "/Images/Demo/artwork-rose.svg",
+    "Featured": true,
+    "Slug": "a-new-season-after-dark"
+  },
+  {
+    "Id": "64b100000000000000000002",
+    "Title": "Inside the listening room",
+    "Summary": "How a compact room can become a generous space for attentive listening.",
+    "Body": "<p>The listening room is designed for unhurried performances, clear sound and a close relationship between artist and audience.</p>",
+    "PublishedAt": "2026-08-22T12:00:00Z",
+    "HeroImagePath": "/Images/Demo/artwork-indigo.svg",
+    "Featured": false,
+    "Slug": "inside-the-listening-room"
+  }
+]

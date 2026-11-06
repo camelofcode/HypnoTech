@@ -58,6 +58,13 @@ This seam is intended to support other persistence providers later. A host also 
 the relevant CMS, Ecommerce, Media, and frontend registration/configuration methods.
 The Phase 4 example applications will become the canonical executable composition.
 
+Admin and public website hosts have different dependency boundaries. The Admin host
+owns `FormClassMapping` registrations and the CMS repository provider. A public website
+shares neutral model/BSON metadata but uses focused read repositories over the base
+persistence project; it must not reference `HypnoTech.Cms` or
+`HypnoTech.Cms.MongoDb`. Besides keeping edit behavior server-side, this prevents CMS
+controllers and admin static assets from flowing into the public application.
+
 ## Frontend assets
 
 Authored JavaScript and SCSS live in the frontend-asset directories, alongside pinned
@@ -68,6 +75,20 @@ minifies JavaScript and compiles/minifies CMS styles into the runtime projects'
 The generated outputs are committed so a .NET consumer does not need Node.js. Runtime
 assets remain self-hosted. The root `package-lock.json` and exact devDependency versions
 make regeneration reproducible; `npm run check:frontend` detects stale output.
+
+See [frontend-integration.md](frontend-integration.md) for the consuming-host contract,
+including partial navigation, persistent player and cart components, shared events,
+page scripts, and intentional full-document boundaries.
+
+## Building CMS models
+
+The dynamic controller convention is configured through the fluent
+`FormClassMapping<T>` API and a provider-specific persistence mapping. The public
+Lantern House models demonstrate the supported field families, relationships,
+ordering, nested lists, uploads, generated values, roles, search and default sorting.
+
+See [cms-models.md](cms-models.md) for an end-to-end host guide with executable example
+code.
 
 ## Compatibility boundaries
 

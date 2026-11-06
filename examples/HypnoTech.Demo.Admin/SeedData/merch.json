@@ -1,0 +1,29 @@
+[
+  {
+    "Id": "64b700000000000000000001",
+    "ImagePath": "/Images/Demo/artwork-amber.svg",
+    "Name": "Lantern House risograph",
+    "Description": "A fictional two-colour A3 print on recycled paper.",
+    "Category": "Shop",
+    "SubCategory": "Prints",
+    "Price": "14.00",
+    "PostageProfile": "Small parcel",
+    "Options": [
+      { "Id": "64b710000000000000000001", "Name": "Amber" },
+      { "Id": "64b710000000000000000002", "Name": "Indigo" }
+    ],
+    "Slug": "lantern-house-risograph"
+  },
+  {
+    "Id": "64b700000000000000000002",
+    "ImagePath": "/Images/Demo/artwork-rose.svg",
+    "Name": "Listening room field notes",
+    "Description": "A short fictional audio edition supplied as a demonstration object.",
+    "Category": "Shop",
+    "SubCategory": "Audio",
+    "Price": "6.50",
+    "PostageProfile": "Small parcel",
+    "Options": [],
+    "Slug": "listening-room-field-notes"
+  }
+]

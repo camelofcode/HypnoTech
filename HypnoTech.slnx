@@ -32,6 +32,11 @@
   <Folder Name="/src/Persistence/">
     <Project Path="src/Persistence/HypnoTech.MongoDb/HypnoTech.MongoDb.csproj" />
   </Folder>
+  <Folder Name="/examples/">
+    <Project Path="examples/HypnoTech.Demo.Admin/HypnoTech.Demo.Admin.csproj" />
+    <Project Path="examples/HypnoTech.Demo.Models/HypnoTech.Demo.Models.csproj" />
+    <Project Path="examples/HypnoTech.Demo.Website/HypnoTech.Demo.Website.csproj" />
+  </Folder>
   <Folder Name="/tests/Architecture/">
     <Project Path="tests/HypnoTech.ArchitectureTests/HypnoTech.ArchitectureTests.csproj" />
   </Folder>
@@ -41,5 +46,8 @@
   </Folder>
   <Folder Name="/tests/Common/">
     <Project Path="tests/HypnoTech.Common.UnitTests/HypnoTech.Common.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Examples/">
+    <Project Path="tests/HypnoTech.Demo.IntegrationTests/HypnoTech.Demo.IntegrationTests.csproj" />
   </Folder>
 </Solution>

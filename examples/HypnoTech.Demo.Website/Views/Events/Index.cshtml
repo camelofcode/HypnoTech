@@ -1,0 +1,14 @@
+@model IReadOnlyCollection<Event>
+@{
+    ViewData["Title"] = "Events";
+}
+<header class="page-header"><span class="eyebrow">The programme</span><h1>Events</h1><p>Fictional performances, workshops and exhibitions managed through dynamic CMS controllers.</p></header>
+<section class="section event-list" data-testid="events-list">
+    @foreach (var item in Model)
+    {
+        <article>
+            <img src="@item.ImagePath" alt="" />
+            <div><span class="pill">@item.Type</span><p class="meta">@item.StartsAt.ToString("dddd d MMMM · HH:mm") · @item.Venue</p><h2><a href="/events/@item.Slug" data-navigo>@item.Title</a></h2><p>@item.Summary</p><strong>£@item.TicketPrice</strong></div>
+        </article>
+    }
+</section>
