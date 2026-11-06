@@ -56,13 +56,21 @@ A future Windows smoke job may be informative and non-blocking.
 
 ## Async API transition
 
-The Phase 6 CMS and Common-backed admin request paths use native async MongoDB, file,
-stream, SMTP, and HTTP APIs and propagate the request cancellation token. Existing
-synchronous repository and service members remain available through v0.1 for source
-compatibility. They retain native synchronous implementations; they do not block on
-async methods with `.Wait()`, `.Result`, or `GetAwaiter().GetResult()`. Async members
-are the primary API used by engine controllers. Removal or obsolescence of the sync
-surface is deferred to a separately documented breaking release.
+The Phase 6 CMS, Common-backed admin, and Ecommerce request paths use native async
+MongoDB, file, stream, SMTP, and HTTP APIs and propagate the request cancellation token.
+Existing synchronous repository and service members remain available through v0.1 for
+source compatibility. They retain native synchronous implementations rather than
+calling the new async members. Async members are the primary API used by engine
+controllers. Removal or obsolescence of the sync surface is deferred to a separately
+documented breaking release.
+
+PayPal v1 is the narrow documented exception. Its 2018 SDK exposes only a task-returning
+HTTP transport and no cancellation-token overload. Engine request paths await that SDK
+directly; the two old synchronous `IPayPalService` members remain as an isolated blocking
+compatibility adapter and are allowlisted by the architecture check. Once a side-effecting
+PayPal call starts, the async path awaits it to completion rather than abandoning a remote
+payment operation that the SDK cannot actually cancel. No live or sandbox payment is made
+by the automated tests.
 
 ## Example application verification
 

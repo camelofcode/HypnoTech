@@ -47,7 +47,9 @@ The demo suite starts a pinned MongoDB 8.0 container, launches the real admin ho
 seeds an isolated database, and checks representative CMS, navigation, Media, and
 Ecommerce data. It also verifies that the documented admin password is stored only as
 a bcrypt hash and that real payment routes remain blocked while pricing routes stay
-available.
+available. A dependency-free local Kestrel double exercises the legacy PayPal REST
+contract for OAuth, successful creation, validation failure, and execution; it never
+contacts live or sandbox PayPal.
 
 With rootless Podman:
 

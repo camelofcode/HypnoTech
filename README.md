@@ -19,8 +19,9 @@ The engine currently provides:
 
 This is pre-release software under active public-readiness work. It is not yet a
 public release: the reusable projects now include an original runnable example and a
-focused browser suite, while async I/O modernisation and CI remain roadmap work. Existing
-production users remain pinned to the preserved baseline and MongoDB Server 4.0.3
+focused browser suite. Async I/O modernisation is in progress across bounded engine
+modules, while CI remains roadmap work. Existing production users remain pinned to
+the preserved baseline and MongoDB Server 4.0.3
 compatibility remains a hard gate.
 
 See [PUBLIC_READINESS_PLAN.md](PUBLIC_READINESS_PLAN.md) for the phased roadmap and

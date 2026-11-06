@@ -2,6 +2,8 @@ using System.Linq;
 using HypnoTech.Ecommerce.Dal.Repositories;
 using HypnoTech.Ecommerce.Frontend.Services.Interfaces;
 using HypnoTech.Ecommerce.Models.Basket;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Ecommerce.Frontend.Services
 {
@@ -18,6 +20,25 @@ namespace HypnoTech.Ecommerce.Frontend.Services
         {
             var merchItems = _merchRepository.GetMerchFlattened();
 
+            BasketDetails details = new BasketDetails();
+
+            foreach (var summaryItem in summary.Items)
+            {
+                var merchItem = merchItems.FirstOrDefault(p => p.Id == summaryItem.MerchId);
+                if (merchItem != null)
+                {
+                    details.AddItem(summaryItem, merchItem);
+                }
+            }
+
+            return details;
+        }
+
+        public async Task<BasketDetails> GetDetailsAsync(
+            BasketSummary summary,
+            CancellationToken cancellationToken = default)
+        {
+            var merchItems = await _merchRepository.GetMerchFlattenedAsync(cancellationToken);
             BasketDetails details = new BasketDetails();
 
             foreach (var summaryItem in summary.Items)

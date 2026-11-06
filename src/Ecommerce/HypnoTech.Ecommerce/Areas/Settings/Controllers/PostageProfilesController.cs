@@ -25,11 +25,11 @@ namespace HypnoTech.Ecommerce.Areas.Settings.Controllers
             _flashMessage = flashMessage;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var model = new PostageProfilesViewModel
             {
-                Profiles = _repository.GetProfiles()
+                Profiles = await _repository.GetProfilesAsync(HttpContext.RequestAborted)
             };
 
             return View(model);
@@ -43,7 +43,7 @@ namespace HypnoTech.Ecommerce.Areas.Settings.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Add(PostageProfile profile)
+        public async Task<IActionResult> Add(PostageProfile profile)
         {
             var message = profile.Validate();
             if (!string.IsNullOrEmpty(message))
@@ -52,19 +52,21 @@ namespace HypnoTech.Ecommerce.Areas.Settings.Controllers
                 return View(profile);
             }
 
-            _repository.AddProfile(profile);
+            await _repository.AddProfileAsync(profile, HttpContext.RequestAborted);
             _flashMessage.Confirmation($"Postage Profile '{profile.Name}' added.");
             return RedirectToAction("Index");
         }
 
-        public IActionResult Edit(string id)
+        public async Task<IActionResult> Edit(string id)
         {
-            return View(_repository.GetProfileForEdit(id));
+            return View(await _repository.GetProfileForEditAsync(
+                id,
+                HttpContext.RequestAborted));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(PostageProfile profile)
+        public async Task<IActionResult> Edit(PostageProfile profile)
         {
             var message = profile.Validate();
             if (!string.IsNullOrEmpty(message))
@@ -73,17 +75,21 @@ namespace HypnoTech.Ecommerce.Areas.Settings.Controllers
                 return RedirectToAction("Edit", new { id = profile.Id });
             }
 
-            _repository.UpdateProfile(profile);
+            await _repository.UpdateProfileAsync(profile, HttpContext.RequestAborted);
             _flashMessage.Confirmation($"Postage Profile '{profile.Name}' updated.");
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Remove(string id)
+        public async Task<IActionResult> Remove(string id)
         {
-            var profile = _repository.GetProfileForEdit(id);
-            var message = _repository.RemoveProfile(id);
+            var profile = await _repository.GetProfileForEditAsync(
+                id,
+                HttpContext.RequestAborted);
+            var message = await _repository.RemoveProfileAsync(
+                id,
+                HttpContext.RequestAborted);
             if (!string.IsNullOrEmpty(message))
             {
                 _flashMessage.Danger(message);

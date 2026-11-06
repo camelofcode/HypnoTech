@@ -55,17 +55,18 @@ public sealed class RepositoryArchitectureTests
     }
 
     [Fact]
-    public void Cms_common_and_persistence_source_does_not_block_on_tasks()
+    public void Converted_request_path_source_does_not_block_on_tasks()
     {
         var root = FindRepositoryRoot();
         var scopedDirectories = new[]
         {
             "src/Cms",
             "src/Common",
-            "src/Persistence"
+            "src/Persistence",
+            "src/Ecommerce"
         };
         var blockingPattern = new Regex(
-            @"\.Wait\s*\(|\.GetAwaiter\s*\(\s*\)\s*\.GetResult\s*\(\s*\)|\.Result\b(?!\s*=)",
+            @"\.Wait\s*\(|\.GetAwaiter\s*\(\s*\)\s*\.GetResult\s*\(\s*\)|\.Result\b(?!\s*[=<])",
             RegexOptions.Compiled);
 
         var violations = scopedDirectories
@@ -76,11 +77,18 @@ public sealed class RepositoryArchitectureTests
             .SelectMany(path => File.ReadLines(path)
                 .Select((line, index) => new { path, line, number = index + 1 }))
             .Where(candidate => blockingPattern.IsMatch(candidate.line))
+            .Where(candidate => !IsApprovedPayPalV1CompatibilityAdapter(candidate.path, candidate.line))
             .Select(candidate =>
                 $"{Path.GetRelativePath(root, candidate.path)}:{candidate.number}: {candidate.line.Trim()}")
             .ToList();
 
         Assert.Empty(violations);
+    }
+
+    private static bool IsApprovedPayPalV1CompatibilityAdapter(string path, string line)
+    {
+        return Path.GetFileName(path) == "PayPalService.cs" &&
+               line.Contains("client.Execute(request).Result", StringComparison.Ordinal);
     }
 
     private static string FindRepositoryRoot()

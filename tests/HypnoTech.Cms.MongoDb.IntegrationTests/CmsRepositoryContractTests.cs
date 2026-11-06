@@ -17,7 +17,7 @@ using Xunit;
 
 namespace HypnoTech.Cms.MongoDb.IntegrationTests;
 
-public sealed class CmsRepositoryContractTests : IClassFixture<MongoCompatibilityFixture>, IDisposable
+public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoCompatibilityFixture>, IDisposable
 {
     private readonly MongoCompatibilityFixture _fixture;
 

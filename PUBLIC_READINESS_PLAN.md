@@ -6,9 +6,9 @@
 >
 > **Last updated:** 2026-11-06
 >
-> **Current phase:** Phase 6 in progress; CMS and Common-backed admin I/O paths converted
+> **Current phase:** Phase 6 in progress; CMS, Common-backed admin, and Ecommerce I/O paths converted
 >
-> **Next action:** Review the CMS async slice, then convert Ecommerce and Media in bounded module slices.
+> **Next action:** Convert Media in the final bounded module slice, then run the Phase 6 exit-gate review.
 
 ## How to maintain this document
 
@@ -593,7 +593,7 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
       `GetAwaiter().GetResult()` in request paths.
 - [ ] Preserve routes, response types, validation, flash messages, persisted BSON names,
       and observable ordering.
-- [ ] Keep the existing PayPal v1 routes and behaviour; replacing its sync-over-async
+- [x] Keep the existing PayPal v1 routes and behaviour; replacing its sync-over-async
       calls must not expand into the deferred payment-provider work.
 
 ### Compatibility approach
@@ -631,8 +631,8 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
       reviewed groups.
 - [x] Preserve synchronous actions that perform only validation or in-memory work.
 - [x] Replace blocking `ApiService` HTTP calls with awaited `HttpClient` calls.
-- [ ] Replace PayPal v1 `.Result` calls with awaited SDK calls while preserving the
-      existing provider and routes.
+- [x] Replace PayPal v1 `.Result` calls in engine request paths with awaited SDK calls
+      while preserving the existing provider and routes.
 - [x] Use async SMTP sending and async template/file reads where supported.
 - [x] Use `IFormFile.CopyToAsync`, async streams, and async file writes for uploads.
 - [ ] Review custom MVC result execution and remove the synchronous-I/O server option if
@@ -956,10 +956,13 @@ stating that work was done.
 | 2026-11-06 | Phase 5 | Generalised the Playwright runner and artifacts across Chromium, Firefox, and WebKit, and made the eventual CI matrix explicit. | Firefox passes 5/5 natively; WebKit passes 5/5 in Playwright's supported Ubuntu image. The WebKit run exposed that its stricter localhost handling rejected the CMS `Secure` cookie over HTTP, so the harness now serves Admin over test-only ephemeral HTTPS without changing production cookie policy. Phase 7 now requires all three engines on Ubuntu and plans non-blocking Windows/macOS portability coverage where hosted-runner container support permits it. | This change |
 | 2026-11-06 | Phase 6 | Converted the complete CMS request surface and its Common-backed admin dependencies to native async I/O while retaining the existing synchronous repository/service API for compatibility. | Dynamic CRUD, ordering, children, select lists, seeding, uploads, settings, users, authentication, accounts, password reset, backups, email/SMTP, uploaded-file reads, and navbar-cache HTTP calls now propagate `RequestAborted` to MongoDB, streams, files, SMTP, and HTTP. Pure mapping, validation, hashing, image transformation, metadata, and render-only actions remain synchronous. Sync members keep native sync implementations rather than blocking on async. | This change |
 | 2026-11-06 | Phase 6 | Added async characterisation coverage and a blocking-wait architecture guard for the converted layers. | Release build passes with zero warnings/errors; CMS unit tests pass 25/25; MongoDB contracts pass async CRUD/paging/ordering/children/select-list/seed behavior on 4.0.3, 8.0.32, and 9.0.4; the complete Chromium/Podman solution passes 68/68 including the final architecture guard. | This change |
+| 2026-11-06 | Phase 6 | Converted Ecommerce catalogue, basket, checkout, postage, order, download-code, country, email, tag-helper, and settings-controller request paths to native async repository and provider APIs. | Existing routes, responses, calculation rules, flash messages, BSON names, and payment-provider scope remain unchanged. Constructor-time MongoDB reads were removed. PayPal v1 calls are awaited by all engine request paths; its two retained synchronous compatibility members are the documented exception because the obsolete SDK exposes no synchronous transport. | This change |
+| 2026-11-06 | Phase 6 | Added Ecommerce async repository characterisation and extended the blocking-wait guard to the Ecommerce source tree. | The catalogue, postage, order lifecycle, download-code depletion, and cancellation contracts pass against MongoDB 4.0.3, 8.0.32, and 9.0.4 without contacting a payment provider. The architecture suite passes with only the explicit PayPal v1 compatibility adapter allowlisted. | This change |
+| 2026-11-06 | Phase 6 | Added an in-process PayPal REST double without a new test dependency and completed aggregate verification for the Ecommerce async slice. | A local Kestrel server characterises OAuth, create success, create validation failure, execute success, request totals, and response mapping without contacting live or sandbox PayPal. All 30 projects build in Release with zero warnings/errors; CMS unit tests pass 25/25, Common unit tests 10/10, architecture tests 3/3, MongoDB contracts 16/16 across all three targets, demo integration tests 13/13, and the real Chromium/Podman journeys 5/5. | This change |
 
 ## Immediate next actions
 
-1. Review the Phase 6 CMS/Common async slice.
-2. Convert Ecommerce, including the isolated PayPal v1 sync-over-async calls, without changing payment-provider scope or routes.
-3. Convert Media and remaining Common-backed public request paths, then complete aggregate/browser verification.
+1. Convert Media repositories, services, tag helpers, and controllers as the final bounded async slice.
+2. Review custom MVC result execution and complete the Phase 6 exit-gate verification.
+3. Complete aggregate and browser verification across all converted async paths.
 4. Re-scan the exact final commit immediately before changing repository visibility.
