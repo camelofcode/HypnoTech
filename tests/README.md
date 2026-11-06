@@ -41,6 +41,22 @@ Ryuk is disabled because a rootless Podman socket cannot provide the privileged 
 container it expects. Testcontainers still removes the test containers through normal
 fixture disposal.
 
+## Public example integration suite
+
+The demo suite starts a pinned MongoDB 8.0 container, launches the real admin host,
+seeds an isolated database, and checks representative CMS, navigation, Media, and
+Ecommerce data. It also verifies that the documented admin password is stored only as
+a bcrypt hash and that real payment routes remain blocked while pricing routes stay
+available.
+
+With rootless Podman:
+
+```bash
+DOCKER_HOST="unix://${XDG_RUNTIME_DIR}/podman/podman.sock" \
+TESTCONTAINERS_RYUK_DISABLED=true \
+dotnet test tests/HypnoTech.Demo.IntegrationTests -c Release
+```
+
 ## Full suite and coverage
 
 Once the container API is configured, run the solution:

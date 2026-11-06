@@ -1,0 +1,25 @@
+[
+  {
+    "Paypal": {
+      "ApiClientId": "",
+      "ApiClientSecret": "",
+      "ApiUrl": "",
+      "SalesUrl": "",
+      "PaymentCompleteUrl": "",
+      "PaymentCancelledUrl": "",
+      "IsProduction": false
+    },
+    "Email": {
+      "EnableEmails": false,
+      "SmtpServer": "",
+      "MailboxUser": "",
+      "MailboxPassword": "",
+      "Sender": "",
+      "DefaultRecipient": ""
+    },
+    "MainSite": {
+      "Url": "http://localhost:5100",
+      "ApiKey": "demo-only-api-key"
+    }
+  }
+]

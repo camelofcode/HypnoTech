@@ -6,9 +6,9 @@
 >
 > **Last updated:** 2026-11-06
 >
-> **Current phase:** Phase 3 complete; remaining Phase 1 publication gates stay open
+> **Current phase:** Phase 4 complete; remaining Phase 1 publication gates stay open
 >
-> **Next action:** Review and merge the structure-only Phase 3 pull request, then begin Phase 4's original public example applications.
+> **Next action:** Review and merge Phase 4, then build the focused Playwright journeys against the stable example hosts.
 
 ## How to maintain this document
 
@@ -131,7 +131,7 @@ date.
 | 1 | Repository safe and understandable for public release | In progress | v0.1 |
 | 2 | CMS and MongoDB behaviour characterised by tests | Complete | v0.1 |
 | 3 | Projects physically organised without semantic changes | Complete | v0.1 |
-| 4 | Original public example admin and website | Not started | v0.1 |
+| 4 | Original public example admin and website | Complete | v0.1 |
 | 5 | Focused Playwright portfolio smoke suite | Not started | v0.1 |
 | 6 | Async I/O modernisation | Not started | v0.1 |
 | 7 | CI, documentation, `main`, and public release | Not started | v0.1 |
@@ -485,39 +485,39 @@ content for publication.
 
 ### Features to demonstrate
 
-- [ ] Dynamic CMS controller generation.
-- [ ] Text, textarea, rich text, date, checkbox, money, hidden, generated, and read-only
+- [x] Dynamic CMS controller generation.
+- [x] Text, textarea, rich text, date, checkbox, money, hidden, generated, and read-only
       mappings.
-- [ ] Static, repository-backed, and nested select lists.
-- [ ] Images and file uploads.
-- [ ] Photo galleries and nested list items.
-- [ ] Ordering and duplication, including file-cloning behaviour.
-- [ ] Role restrictions.
-- [ ] Navigation and configuration.
-- [ ] News or articles.
-- [ ] Events.
-- [ ] People or team profiles.
-- [ ] Audio, video, and photo media.
-- [ ] Merchandise categories, items, options, postage, basket, and order administration.
-- [ ] Responsive public website rendering.
-- [ ] A safe fake/demo payment boundary or checkout stopping point; no new real payment
+- [x] Static, repository-backed, and nested select lists.
+- [x] Images and file uploads.
+- [x] Photo galleries and nested list items.
+- [x] Ordering and duplication, including file-cloning behaviour.
+- [x] Role restrictions.
+- [x] Navigation and configuration.
+- [x] News or articles.
+- [x] Events.
+- [x] People or team profiles.
+- [x] Audio, video, and photo media.
+- [x] Merchandise categories, items, options, postage, basket, and order administration.
+- [x] Responsive public website rendering.
+- [x] A safe fake/demo payment boundary or checkout stopping point; no new real payment
       provider.
 
 ### Developer experience
 
-- [ ] One documented command starts the required local database.
-- [ ] One documented command seeds safe demo data.
-- [ ] Both applications have documented start commands.
-- [ ] Development credentials are safe, explicit, and impossible to use in production.
-- [ ] The example doubles as an integration-test host.
+- [x] One documented command starts the required local database.
+- [x] One documented command seeds safe demo data.
+- [x] Both applications have documented start commands.
+- [x] Development credentials are safe, explicit, and impossible to use in production.
+- [x] The example doubles as an integration-test host.
 
 ### Exit gate
 
-- [ ] A fresh clone can launch the demo using only documented steps.
-- [ ] Major engine features are visibly demonstrated.
-- [ ] No private-site material or credentials are present.
-- [ ] Example behaviour is covered by integration tests.
-- [ ] The admin and website expose stable test hooks and startup commands required by
+- [x] A fresh clone can launch the demo using only documented steps.
+- [x] Major engine features are visibly demonstrated.
+- [x] No private-site material or credentials are present.
+- [x] Example behaviour is covered by integration tests.
+- [x] The admin and website expose stable test hooks and startup commands required by
       the Phase 5 Playwright harness.
 
 ## Phase 5 — Focused Playwright suite
@@ -837,7 +837,7 @@ These apply throughout all phases:
 | Q-003 | Is PolyForm Noncommercial plus separate commercial licensing acceptable? | Phase 1 | Answered: accepted |
 | Q-004 | What copyright name and contact should appear in licence files? | Phase 1 | Answered: `Copyright © 2026 Christopher Clayton`; commercial contact through `github.com/camelofcode` |
 | Q-005 | Must unchanged private sites ever consume reorganised public `main`, or may they remain pinned to the support branch? | Phase 3 | Answered: remain pinned |
-| Q-006 | What neutral theme should the public demo use? | Phase 4 | Open |
+| Q-006 | What neutral theme should the public demo use? | Phase 4 | Answered: Lantern House, a fictional independent arts venue |
 | Q-007 | Should external contributions be accepted before a contributor-licensing process exists? | Phase 7 | Answered: no external contributions will be accepted |
 | Q-008 | Which relational provider should be implemented first once the provider matrix is rechecked? | Phase 9 | Proposed: PostgreSQL if compatible |
 | Q-009 | How long should synchronous compatibility methods remain after public controllers move to async APIs? | Phase 6 | Proposed: retain through v0.1 and review for the next breaking release |
@@ -855,7 +855,7 @@ These apply throughout all phases:
 | Legacy PayPal packages declare no licence metadata | Unclear provenance and public maintenance risk | Do not misstate the licence; document that packages are restored, then resolve provenance during later existing-PayPal work | Accepted known risk; binaries are not committed and provider replacement remains out of scope |
 | Physical moves break private site references | Consumer builds fail | Pin production to support branch; temporary smoke builds; optional shims | Open |
 | Static registries make tests order-dependent | Flaky test suite | Serial collections and explicit reset of mutable public registries; make BSON and model registration idempotent | Resolved for current registrations; tests remain serial where global mappings are intentionally mutated |
-| Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Open |
+| Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Resolved; Lantern House is wholly original and the example tree contains no private-site references |
 | Playwright suite becomes slow or brittle | CI friction | Keep a small journey-based Chromium suite; retain traces on failure | Open |
 | Async conversion changes routes or behaviour | Public regression | Characterisation tests first; preserve action names/routes; convert in bounded slices | Open |
 | Async APIs are wrappers over blocking work | Misleading API and thread-pool pressure | Require native provider async APIs; prohibit `Task.Run` and blocking waits in request paths | Open |
@@ -888,6 +888,8 @@ These apply throughout all phases:
 | 2026-11-06 | D-020 | Fix the four Phase 2 MongoDB characterisation failures while retaining MongoDB.Driver 3.4.3 and testing MongoDB 4.0.3, 8.0.32, and 9.0.4. | Accepted | Empty searches, null child IDs, boundary moves, and repeated startup should be safe; no persisted format or production version floor changes. |
 | 2026-11-06 | D-021 | Prefer a separately authorised blue/green logical BSON migration to a pinned Podman-hosted MongoDB release over successive in-place production upgrades. | Accepted for future planning | Keeps the existing native deployment unchanged until cutover, preserves a simple rollback point, and retains the same low-cost capacity class; the container route proceeds only if rehearsal shows no meaningful regression. |
 | 2026-11-06 | D-022 | Keep unchanged production consumers pinned to `support/legacy-production` while public `main` adopts the functional source layout. | Accepted | Avoids private-site edits and path shims while the preserved branch remains an exact, buildable production dependency. |
+| 2026-11-06 | D-023 | Use Lantern House, a fictional independent arts venue, for the public example. | Accepted | It can demonstrate editorial, programme, media, and ecommerce features with wholly original synthetic content and branding. |
+| 2026-11-06 | D-024 | Keep the Phase 4 checkout as a fail-closed pricing demonstration and defer a reusable mock provider to the payment plan. | Accepted | Basket and postage calculations remain demonstrable, while payment/completion/cancellation routes return 410 before provider, order, email, download-code, or fulfilment code can run. |
 
 ## Work log
 
@@ -924,8 +926,13 @@ stating that work was done.
 | 2026-11-06 | Future operations planning | Added a non-executable production MongoDB migration runbook covering logical BSON transfer, a pinned Podman container, rehearsal, verification, cutover, and rollback. | Vendor upgrade, dump/restore, platform, Podman, and production guidance reviewed; no server connection or production change was made. | This change |
 | 2026-11-06 | Phase 3 | Reorganised all engine source projects under `Cms`, `Common`, `Ecommerce`, `Media`, `Persistence`, and `Frontend` without changing namespaces, assembly names, APIs, behaviour, or asset bytes. | Mechanical commit changes 827 files and is overwhelmingly detected as 100% renames; only solution, project-reference, npm-workspace, builder, architecture-test path, and documentation references changed content. | `5e17d2a` and this change |
 | 2026-11-06 | Phase 3 | Completed aggregate verification and isolated compatibility smoke builds. | The 25-project Release build passed with 0 warnings/errors after suppressing only `NU1900` from the unavailable NuGet audit service; all four frontend outputs are current; two complete Podman-backed runs passed 46/46 tests; all five static-web-asset base paths remain `_content/HypnoTech.*`; temporary Esoteric and SelfHypnosis copies compiled against `support/legacy-production` with 0 warnings/errors and `SkipFrontendBuild=true`, leaving the real private repositories untouched. A separate historical Esoteric npm 6 asset attempt reached the frontend step after compiling every .NET assembly, then failed on its existing lockfile parser (`browserslist`) rather than an engine source error. | This change |
+| 2026-11-06 | Phase 4 | Added the original Lantern House example models, admin, public website, seed data, self-hosted artwork/audio/video, Podman configuration, and developer guide. | The documented root-level seed command starts the real admin host, populates a fresh MongoDB 8.0 database, hashes `HypnoTechDemo!2026` with bcrypt, and exits; authenticated admin and representative public/detail/media routes return successfully. | This change |
+| 2026-11-06 | Phase 4 | Demonstrated dynamic CMS, navigation/configuration, Media, and Ecommerce behavior without allowing a real transaction. | Admin exposes generated Articles, Artists, and Events controllers plus Media/Ecommerce settings; the public site uses database-backed navigation, server-calculated basket/postage/tracked totals, and original responsive rendering; every provider/payment lifecycle route returns HTTP 410 before MVC. | This change |
+| 2026-11-06 | Phase 4 | Added an isolated Testcontainers example suite and stable future browser-test hooks. | Nine xUnit v3 tests pass through rootless Podman against MongoDB 8.0.32, covering host seeding, representative collections, bcrypt-only credential storage, blocked payment routes, and allowed basket/checkout calculation routes. Desktop and 390 px browser checks passed, including the mobile menu. | This change |
+| 2026-11-06 | Phase 4 | Completed aggregate verification and the final error-page smoke check. | The 29-project Release build passes with zero warnings/errors; all four frontend outputs are current; the full Podman-backed solution passes 55/55 tests including MongoDB 4.0.3, 8.0.32, and 9.0.4; `git diff --check` passes; and an unknown public route returns the original example 404 page with HTTP 404 rather than 500. | This change |
 
 ## Immediate next actions
 
-1. Confirm GitHub's refreshed language classification after this branch reaches `main`.
-2. Re-scan the exact final commit immediately before changing repository visibility.
+1. Review and merge Phase 4 into `main`.
+2. Build Phase 5's focused Playwright suite against the example applications.
+3. Re-scan the exact final commit immediately before changing repository visibility.

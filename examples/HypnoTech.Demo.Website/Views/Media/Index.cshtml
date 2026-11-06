@@ -1,0 +1,8 @@
+@model MediaViewModel
+@{
+    ViewData["Title"] = "Watch and listen";
+}
+<header class="page-header"><span class="eyebrow">Media library</span><h1>Watch &amp; listen</h1><p>Self-hosted synthetic media and CMS-managed photo galleries.</p></header>
+<section class="section media-section" data-testid="media-audio"><div><span class="eyebrow">Audio</span><h2>Lantern signal</h2><p>A short generated tone—no third-party recording or CDN.</p></div>@foreach (var track in Model.Audio) { <article class="audio-card"><img src="@track.ImagePath" alt="" /><div><strong>@track.Title</strong><span>@track.RelatedName</span><audio controls preload="metadata" src="@track.Path"></audio></div></article> }</section>
+<section class="section media-section media-video" data-testid="media-video"><div><span class="eyebrow">Video</span><h2>Light study</h2><p>A tiny locally generated motion sample demonstrates self-hosted video without an external platform.</p></div><video controls muted loop preload="metadata" poster="/images/artwork-indigo.svg"><source src="/media/lantern-motion.mp4" type="video/mp4" /></video></section>
+<section class="section" data-testid="photo-galleries"><div class="section-heading"><div><span class="eyebrow">Photo galleries</span><h2>@Model.PhotoAlbums.FirstOrDefault()?.Title</h2></div></div>@foreach (var album in Model.PhotoAlbums) { <div class="gallery">@foreach (var photo in album.Photos) { <figure><img src="@photo.ImagePath" alt="" /><figcaption>@photo.Caption</figcaption></figure> }</div> }</section>

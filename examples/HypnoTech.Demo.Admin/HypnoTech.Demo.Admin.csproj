@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../HypnoTech.Demo.Models/HypnoTech.Demo.Models.csproj" />
+    <ProjectReference Include="../../src/Cms/HypnoTech.Cms/HypnoTech.Cms.csproj" />
+    <ProjectReference Include="../../src/Cms/HypnoTech.Cms.MongoDb/HypnoTech.Cms.MongoDb.csproj" />
+    <ProjectReference Include="../../src/Common/HypnoTech.Common.Dal.MongoDb/HypnoTech.Common.Dal.MongoDb.csproj" />
+    <ProjectReference Include="../../src/Ecommerce/HypnoTech.Ecommerce/HypnoTech.Ecommerce.csproj" />
+    <ProjectReference Include="../../src/Ecommerce/HypnoTech.Ecommerce.Dal.MongoDb/HypnoTech.Ecommerce.Dal.MongoDb.csproj" />
+    <ProjectReference Include="../../src/Media/HypnoTech.Media/HypnoTech.Media.csproj" />
+    <ProjectReference Include="../../src/Media/HypnoTech.Media.Dal.MongoDb/HypnoTech.Media.Dal.MongoDb.csproj" />
+  </ItemGroup>
+
+</Project>

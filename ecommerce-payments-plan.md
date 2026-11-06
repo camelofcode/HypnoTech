@@ -19,6 +19,9 @@ The current flow is PayPal-specific:
 5. /Checkout/Complete executes the payment, completes the order, allocates download codes, and sends email.
 
 The target is an additive provider-neutral core with v1 retained as a compatibility adapter.
+It also includes a development-only mock provider for examples, automated tests, and
+local demonstrations. The mock must never contact an external payment service or be
+enabled accidentally in a production environment.
 
 ## Current repository findings
 
@@ -57,7 +60,8 @@ public enum PaymentProvider
 {
     PayPalV1,
     PayPalV2,
-    Stripe
+    Stripe,
+    Demo
 }
 
 public enum PaymentStatus
@@ -104,10 +108,25 @@ Add separate adapters:
 - Keep IPayPalService and its current signatures as the v1 adapter.
 - Add IPayPalV2Service for Orders v2 create/capture.
 - Add IStripePaymentService for hosted Checkout Sessions and webhook/session mapping.
+- Add IDemoPaymentService as an explicit development/test adapter. It should return a
+  deterministic local result, display an unmistakable "no payment was taken" message,
+  reject production hosting environments, and require an opt-in configuration flag.
 - Add IOrderPaymentService to build an immutable, server-priced payment request and delegate to the selected adapter.
 - Add IOrderFulfillmentService to perform completion side effects exactly once.
 
 Keep CheckoutService.Pay and CheckoutService.Complete as compatibility methods initially. They can delegate to the new layer while preserving v1 response types and routes.
+
+### Demo provider safety rules
+
+- The adapter is for the public example, local development, and automated tests only.
+- Registration must fail closed outside Development/Test, even if configuration is
+  copied accidentally.
+- It must not accept or render card, PayPal, bank, or other payment credentials.
+- It may exercise server-side basket recalculation and create a clearly marked demo
+  order, but must not send customer/admin email or allocate production download codes.
+- Its completion page must state that the order is fictional and no payment or
+  fulfilment occurred.
+- Production applications must not reference or ship the demo adapter package.
 
 ### Stable order and payment-attempt IDs
 

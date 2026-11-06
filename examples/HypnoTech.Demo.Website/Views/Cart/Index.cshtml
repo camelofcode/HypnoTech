@@ -1,0 +1,8 @@
+@{
+    ViewData["Title"] = "Basket";
+}
+<header class="page-header"><span class="eyebrow">Demo ecommerce</span><h1>Your basket</h1><p>Prices and postage are recalculated by the engine from MongoDB; browser values are never authoritative.</p></header>
+<section class="section cart-layout" data-testid="cart-page">
+    <div><h2>Items</h2><div data-cart-items data-testid="cart-items"><p>Your basket is empty.</p></div><button class="text-button" type="button" data-clear-cart>Clear basket</button></div>
+    <aside class="order-summary"><h2>Summary</h2><label for="checkout-country">Delivery country</label><select id="checkout-country"><option value="GB">United Kingdom</option><option value="FR">France</option><option value="US">United States</option></select><label class="checkbox-label"><input id="special-delivery" type="checkbox" /> Tracked delivery</label><dl><div><dt>Items</dt><dd data-cart-subtotal>£0.00</dd></div><div><dt>Postage</dt><dd data-cart-postage>£0.00</dd></div><div><dt>Tracked delivery</dt><dd data-cart-tracked>£0.00</dd></div><div class="total"><dt>Demo total</dt><dd data-cart-total>£0.00</dd></div></dl><button class="button button-primary" type="button" data-demo-checkout>End demo checkout</button><div class="checkout-safety" data-checkout-safety data-testid="demo-checkout-safety"><strong>No payment provider is connected.</strong><p>No order, email, download code or payment will be created.</p></div></aside>
+</section>

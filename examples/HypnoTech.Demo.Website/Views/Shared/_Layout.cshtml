@@ -1,0 +1,46 @@
+@using HypnoTech.Frontend.Caching
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Lantern House is the fictional public example for the HypnoTech CMS, media and ecommerce engine." />
+    <title>@ViewData["Title"] · Lantern House</title>
+    <link rel="icon" href="~/images/brand-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+        <a class="brand" asp-controller="Home" asp-action="Index" data-testid="brand-link">
+            <img src="~/images/brand-mark.svg" alt="" width="42" height="42" />
+            <span>Lantern House</span>
+        </a>
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-navigation">Menu</button>
+        <nav id="site-navigation" aria-label="Primary" data-testid="primary-navigation">
+            @foreach (var link in NavBarCache.CachedLinks)
+            {
+                <a href="@link.Url" data-navigation-key="@link.Key">@link.Text</a>
+            }
+            <a class="cart-link" asp-controller="Cart" asp-action="Index">Basket <span data-cart-count>0</span></a>
+        </nav>
+    </header>
+
+    <main id="main">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div>
+            <strong>Lantern House</strong>
+            <p>A fictional arts venue created to demonstrate HypnoTech. No events, products or orders are real.</p>
+        </div>
+        <div>
+            <span>CMS</span><span>Media</span><span>Ecommerce</span><span>MongoDB</span>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

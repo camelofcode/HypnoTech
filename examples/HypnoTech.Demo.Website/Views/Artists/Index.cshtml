@@ -1,0 +1,11 @@
+@model IReadOnlyCollection<Artist>
+@{
+    ViewData["Title"] = "Artists";
+}
+<header class="page-header"><span class="eyebrow">People</span><h1>Artists</h1><p>Ordered profiles combining text, image, URL, role and visibility fields.</p></header>
+<section class="section artist-list" data-testid="artists-list">
+    @foreach (var artist in Model)
+    {
+        <article><img src="@artist.ImagePath" alt="" /><div><span class="eyebrow">@artist.Discipline</span><h2>@artist.Name</h2><p>@artist.Biography</p><a href="@artist.Website">Fictional artist profile →</a></div></article>
+    }
+</section>

@@ -18,9 +18,10 @@ The engine currently provides:
 ## Status
 
 This is pre-release software under active public-readiness work. It is not yet a
-standalone application: the repository currently builds reusable projects, while a
-neutral example admin and website are planned. Existing production users remain pinned
-to the preserved baseline and MongoDB Server 4.0.3 compatibility remains a hard gate.
+public release: the reusable projects now include an original runnable example, while
+browser coverage, async I/O modernisation, and CI remain roadmap work. Existing
+production users remain pinned to the preserved baseline and MongoDB Server 4.0.3
+compatibility remains a hard gate.
 
 See [PUBLIC_READINESS_PLAN.md](PUBLIC_READINESS_PLAN.md) for the phased roadmap and
 work record, [docs/architecture.md](docs/architecture.md) for the design, and
@@ -53,8 +54,9 @@ npm run check:frontend
 The unit, architecture, and MongoDB characterisation suites are under `tests/`. The
 MongoDB suite runs the same repository contracts against production MongoDB 4.0.3 and
 pinned MongoDB 8.0 and 9.0 releases. Podman setup, focused commands, and coverage
-instructions are in [`tests/README.md`](tests/README.md). A runnable public example and
-browser tests remain later roadmap phases.
+instructions are in [`tests/README.md`](tests/README.md). The runnable original
+[`Lantern House example`](examples/README.md) demonstrates the CMS, Media, Ecommerce,
+Frontend, and MongoDB modules; browser tests remain a later roadmap phase.
 
 ## Repository layout
 
@@ -67,6 +69,7 @@ Source projects are grouped physically by functional area:
 - `src/Frontend/` — general website helpers and shared frontend source;
 - `src/Persistence/` — shared MongoDB infrastructure;
 - `tests/` — xUnit v3 unit, architecture, and Testcontainers integration tests;
+- `examples/` — the fictional Lantern House admin, public website, and safe seed data;
 - `tools/` — deterministic frontend build tooling.
 
 `*.Frontend` runtime projects contain committed `wwwroot` output. Similarly named

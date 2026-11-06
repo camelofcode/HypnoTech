@@ -1,0 +1,73 @@
+[
+  {
+    "Id": "64b200000000000000000001",
+    "Title": "Signals in the Glass",
+    "StartsAt": "2026-11-21T19:30:00Z",
+    "Type": "Concert",
+    "ArtistId": "64b000000000000000000001",
+    "Venue": "The Listening Room",
+    "Summary": "Prepared piano, tape loops and tiny sounds gathered around the city.",
+    "Description": "<p>Mara Vale presents a new fictional performance made from resonant piano, field recordings and gently shifting light.</p>",
+    "TicketPrice": "12.00",
+    "ImagePath": "/images/artwork-amber.svg",
+    "ProgrammePath": "/documents/signals-programme.txt",
+    "Featured": true,
+    "Reference": "LH-20261121-signals-in-the-glass",
+    "Slug": "signals-in-the-glass",
+    "Schedule": [
+      {
+        "Id": "64b210000000000000000001",
+        "Time": "19:00",
+        "Title": "Doors and welcome",
+        "Format": "Discussion",
+        "Order": 0
+      },
+      {
+        "Id": "64b210000000000000000002",
+        "Time": "19:30",
+        "Title": "Signals in the Glass",
+        "Format": "Performance",
+        "Order": 1
+      }
+    ]
+  },
+  {
+    "Id": "64b200000000000000000002",
+    "Title": "Make a Moving Shadow",
+    "StartsAt": "2026-12-05T14:00:00Z",
+    "Type": "Workshop",
+    "ArtistId": "64b000000000000000000002",
+    "Venue": "Studio Two",
+    "Summary": "An accessible afternoon workshop exploring movement, paper and projected light.",
+    "Description": "<p>Jon Bell leads a relaxed workshop for adults of all movement experience. Materials are supplied and the room is step-free.</p>",
+    "TicketPrice": "8.50",
+    "ImagePath": "/images/artwork-mint.svg",
+    "ProgrammePath": "/documents/shadow-workshop.txt",
+    "Featured": false,
+    "Reference": "LH-20261205-make-a-moving-shadow",
+    "Slug": "make-a-moving-shadow",
+    "Schedule": [
+      {
+        "Id": "64b210000000000000000003",
+        "Time": "14:00",
+        "Title": "Introductions and warm-up",
+        "Format": "Discussion",
+        "Order": 0
+      },
+      {
+        "Id": "64b210000000000000000004",
+        "Time": "14:30",
+        "Title": "Moving shadow exercises",
+        "Format": "Performance",
+        "Order": 1
+      },
+      {
+        "Id": "64b210000000000000000005",
+        "Time": "15:20",
+        "Title": "Tea break",
+        "Format": "Interval",
+        "Order": 2
+      }
+    ]
+  }
+]
