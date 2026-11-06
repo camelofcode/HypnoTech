@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using HypnoTech.Cms.Contracts.Dtos.Request;
 using HypnoTech.Cms.FormMemberImplementations;
 using HypnoTech.Cms.MongoDb.Repositories;
@@ -55,6 +56,49 @@ public sealed class CmsRepositoryContractTests : IClassFixture<MongoCompatibilit
             Assert.True(ObjectId.TryParse(article.Id, out _));
             Assert.Equal("Edited heading", edited.Heading);
             Assert.Empty(repository.GetAll<SyntheticArticle>());
+        });
+    }
+
+    [Fact]
+    public async Task Async_crud_paging_and_ordering_match_synchronous_contract_on_all_supported_targets()
+    {
+        await ForEachTargetAsync(async (repository, options) =>
+        {
+            var article = new SyntheticArticle
+            {
+                Heading = "Async original",
+                Summary = "Synthetic async content",
+                Published = new DateTime(2026, 5, 6, 12, 0, 0, DateTimeKind.Utc)
+            };
+
+            await repository.AddAsync(article);
+            var added = await repository.GetByIdAsync(article.Id);
+            added.Heading = "Async edited";
+            await repository.EditAsync(added);
+
+            var all = await repository.GetAllAsync<SyntheticArticle>();
+            var page = await repository.GetPagedAsync<SyntheticArticle>(new CmsListRequest
+            {
+                Page = 1,
+                PageSize = 10
+            });
+
+            Assert.Equal("Async edited", Assert.Single(all).Heading);
+            Assert.Equal("Async edited", Assert.Single(page.Items).Heading);
+            Assert.Equal(1, page.TotalPages);
+
+            var orderedRepository = new CmsRepository<OrderedDocument>(options);
+            var first = new OrderedDocument { Name = "Async first", Order = 1 };
+            var second = new OrderedDocument { Name = "Async second", Order = 2 };
+            await orderedRepository.AddAsync(first);
+            await orderedRepository.AddAsync(second);
+            await orderedRepository.MoveDownAsync(first.Id);
+
+            Assert.Equal(2, (await orderedRepository.GetByIdAsync(first.Id)).Order);
+            Assert.Equal(1, (await orderedRepository.GetByIdAsync(second.Id)).Order);
+
+            await repository.RemoveAsync(article.Id);
+            Assert.Empty(await repository.GetAllAsync<SyntheticArticle>());
         });
     }
 
@@ -197,6 +241,31 @@ public sealed class CmsRepositoryContractTests : IClassFixture<MongoCompatibilit
     }
 
     [Fact]
+    public async Task GetByIdAsync_populates_registered_child_from_legacy_reference()
+    {
+        FormClassMapping.GetMapping<SyntheticArticle>()
+            .RegisterChild(article => article.Child, article => article.ChildId, "syntheticChildren");
+
+        await ForEachTargetAsync(async (repository, options) =>
+        {
+            var childId = ObjectId.GenerateNewId();
+            await Database(options).GetCollection<BsonDocument>("syntheticChildren").InsertOneAsync(
+                new BsonDocument
+                {
+                    { "_id", childId },
+                    { "name", "Async referenced child" }
+                });
+            var article = new SyntheticArticle { Heading = "Async child", ChildId = childId.ToString() };
+            await repository.AddAsync(article);
+
+            var loaded = await repository.GetByIdAsync(article.Id);
+
+            Assert.NotNull(loaded.Child);
+            Assert.Equal("Async referenced child", loaded.Child.Name);
+        });
+    }
+
+    [Fact]
     public void Registered_child_with_null_reference_leaves_child_unset()
     {
         FormClassMapping.GetMapping<SyntheticArticle>()
@@ -234,21 +303,25 @@ public sealed class CmsRepositoryContractTests : IClassFixture<MongoCompatibilit
     }
 
     [Fact]
-    public void Select_list_repository_uses_registered_collection_and_deserialises_items()
+    public async Task Select_list_repository_uses_registered_collection_and_deserialises_items()
     {
         ModelRegistry.Register(typeof(SyntheticChoice), "syntheticChoices", "Synthetic Choices");
 
-        ForEachTarget((_, options) =>
+        await ForEachTargetAsync(async (_, options) =>
         {
-            Database(options).GetCollection<BsonDocument>("syntheticChoices").InsertOne(new BsonDocument
-            {
-                { "_id", ObjectId.GenerateNewId() },
-                { "name", "Choice A" }
-            });
+            await Database(options).GetCollection<BsonDocument>("syntheticChoices").InsertOneAsync(
+                new BsonDocument
+                {
+                    { "_id", ObjectId.GenerateNewId() },
+                    { "name", "Choice A" }
+                });
 
-            var choices = new SelectListRepository(options).GetSelectListItems(typeof(SyntheticChoice));
+            var repository = new SelectListRepository(options);
+            var choices = repository.GetSelectListItems(typeof(SyntheticChoice));
+            var asyncChoices = await repository.GetSelectListItemsAsync(typeof(SyntheticChoice));
 
             Assert.Equal("Choice A", Assert.IsType<SyntheticChoice>(Assert.Single(choices)).Name);
+            Assert.Equal("Choice A", Assert.IsType<SyntheticChoice>(Assert.Single(asyncChoices)).Name);
         });
     }
 
@@ -283,6 +356,48 @@ public sealed class CmsRepositoryContractTests : IClassFixture<MongoCompatibilit
         }
     }
 
+    [Fact]
+    public async Task SeedAsync_inserts_only_when_collection_is_empty()
+    {
+        var seedDirectory = Path.Combine(Directory.GetCurrentDirectory(), "SeedData");
+        var seedName = $"async-characterisation-{Guid.NewGuid():N}";
+        var seedPath = Path.Combine(seedDirectory, $"{seedName}.json");
+        Directory.CreateDirectory(seedDirectory);
+        await File.WriteAllTextAsync(
+            seedPath,
+            "[{\"heading\":\"Async seeded synthetic article\"}]",
+            TestContext.Current.CancellationToken);
+
+        try
+        {
+            await ForEachTargetAsync(async (_, options) =>
+            {
+                var repository = new SeedRepository(options);
+
+                await repository.SeedAsync<SyntheticArticle>(
+                    "asyncSeededSyntheticArticles",
+                    seedName,
+                    TestContext.Current.CancellationToken);
+                await repository.SeedAsync<SyntheticArticle>(
+                    "asyncSeededSyntheticArticles",
+                    seedName,
+                    TestContext.Current.CancellationToken);
+
+                var documents = await Database(options)
+                    .GetCollection<BsonDocument>("asyncSeededSyntheticArticles")
+                    .Find(new BsonDocument())
+                    .ToListAsync(TestContext.Current.CancellationToken);
+                Assert.Equal(
+                    "Async seeded synthetic article",
+                    Assert.Single(documents)["heading"].AsString);
+            });
+        }
+        finally
+        {
+            File.Delete(seedPath);
+        }
+    }
+
     private void ForEachTarget(Action<CmsRepository<SyntheticArticle>, IOptions<MongoOptions>> assertion)
     {
         foreach (var target in _fixture.Targets)
@@ -305,6 +420,34 @@ public sealed class CmsRepositoryContractTests : IClassFixture<MongoCompatibilit
             finally
             {
                 new MongoClient(options.Value.ConnectionString).DropDatabase(options.Value.Database);
+            }
+        }
+    }
+
+    private async Task ForEachTargetAsync(
+        Func<CmsRepository<SyntheticArticle>, IOptions<MongoOptions>, Task> assertion)
+    {
+        foreach (var target in _fixture.Targets)
+        {
+            var options = Options.Create(new MongoOptions
+            {
+                Server = target.Host,
+                Port = target.Port,
+                Database = $"hypnotech_{target.Name.Replace('-', '_').Replace('.', '_')}_{Guid.NewGuid():N}"
+            });
+
+            try
+            {
+                await assertion(new CmsRepository<SyntheticArticle>(options), options);
+            }
+            catch (Exception exception)
+            {
+                throw new Xunit.Sdk.XunitException($"MongoDB target '{target.Name}' failed: {exception}");
+            }
+            finally
+            {
+                await new MongoClient(options.Value.ConnectionString)
+                    .DropDatabaseAsync(options.Value.Database);
             }
         }
     }

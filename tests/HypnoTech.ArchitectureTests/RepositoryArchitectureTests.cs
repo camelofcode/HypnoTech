@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
 using Xunit;
 
 namespace HypnoTech.ArchitectureTests;
@@ -49,6 +50,35 @@ public sealed class RepositoryArchitectureTests
 
             violations.AddRange(implementationReferences.Select(reference => $"{relativePath}: {reference}"));
         }
+
+        Assert.Empty(violations);
+    }
+
+    [Fact]
+    public void Cms_common_and_persistence_source_does_not_block_on_tasks()
+    {
+        var root = FindRepositoryRoot();
+        var scopedDirectories = new[]
+        {
+            "src/Cms",
+            "src/Common",
+            "src/Persistence"
+        };
+        var blockingPattern = new Regex(
+            @"\.Wait\s*\(|\.GetAwaiter\s*\(\s*\)\s*\.GetResult\s*\(\s*\)|\.Result\b(?!\s*=)",
+            RegexOptions.Compiled);
+
+        var violations = scopedDirectories
+            .SelectMany(directory => Directory.GetFiles(
+                Path.Combine(root, directory),
+                "*.cs",
+                SearchOption.AllDirectories))
+            .SelectMany(path => File.ReadLines(path)
+                .Select((line, index) => new { path, line, number = index + 1 }))
+            .Where(candidate => blockingPattern.IsMatch(candidate.line))
+            .Select(candidate =>
+                $"{Path.GetRelativePath(root, candidate.path)}:{candidate.number}: {candidate.line.Trim()}")
+            .ToList();
 
         Assert.Empty(violations);
     }

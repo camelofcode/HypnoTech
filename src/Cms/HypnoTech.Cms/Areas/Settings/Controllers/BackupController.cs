@@ -5,6 +5,7 @@ using HypnoTech.Cms.Services.Interfaces;
 using HypnoTech.Common.Security;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Cms.Areas.Settings.Controllers
 {
@@ -24,17 +25,21 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
             return View();
         }
 
-        public IActionResult Data(List<string> includedTypes)
+        public async Task<IActionResult> Data(List<string> includedTypes)
         {
-            var backup = _backupService.GetAllData(includedTypes);
+            var backup = await _backupService.GetAllDataAsync(
+                includedTypes,
+                HttpContext.RequestAborted);
             var json = JsonConvert.SerializeObject(backup);
             var filename = $"Backup-{DateTime.Now:ddMMyyyy-hhmmss}-{string.Join('-', includedTypes)}.json";
             return File(Encoding.UTF8.GetBytes(json), "application/json", filename);
         }
 
-        public IActionResult Files(List<string> includedTypes)
+        public async Task<IActionResult> Files(List<string> includedTypes)
         {
-            var backup = _backupService.GetAllFiles(includedTypes);
+            var backup = await _backupService.GetAllFilesAsync(
+                includedTypes,
+                HttpContext.RequestAborted);
             var filename = $"Backup-{DateTime.Now:ddMMyyyy-hhmmss}-{string.Join('-', includedTypes)}.zip";
             return File(backup, "application/zip", filename);
         }

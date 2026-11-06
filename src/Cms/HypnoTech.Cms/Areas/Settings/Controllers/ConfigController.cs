@@ -2,6 +2,7 @@ using HypnoTech.Common.Dal.Repositories;
 using HypnoTech.Common.Models.Settings;
 using HypnoTech.Common.Security;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Cms.Areas.Settings.Controllers
 {
@@ -16,16 +17,16 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
             _configAdminRepository = configAdminRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(_configAdminRepository.GetConfig());
+            return View(await _configAdminRepository.GetConfigAsync(HttpContext.RequestAborted));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Save(Config config)
+        public async Task<IActionResult> Save(Config config)
         {
-            _configAdminRepository.SetConfig(config);
+            await _configAdminRepository.SetConfigAsync(config, HttpContext.RequestAborted);
             return Ok();
         }
     }

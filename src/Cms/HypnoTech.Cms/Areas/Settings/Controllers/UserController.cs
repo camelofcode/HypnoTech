@@ -4,6 +4,7 @@ using HypnoTech.Common.Dal.Repositories;
 using HypnoTech.Common.Security;
 using Microsoft.AspNetCore.Mvc;
 using Vereyon.Web;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Cms.Areas.Settings.Controllers
 {
@@ -20,19 +21,20 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
             _flashMessage = flashMessage;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var model = new UsersViewModel
             {
-                Users = _userRepository.GetAllUsers()
+                Users = await _userRepository.GetAllUsersAsync(HttpContext.RequestAborted)
             };
 
             return View(model);
         }
 
-        public IActionResult Edit(string id)
+        public async Task<IActionResult> Edit(string id)
         {
-            var model = new EditUserViewModel(_userRepository.GetUserForEdit(id))
+            var model = new EditUserViewModel(
+                await _userRepository.GetUserForEditAsync(id, HttpContext.RequestAborted))
             {
                 AvailableRoles = RoleStore.GetAllRoles()
             };
@@ -50,7 +52,7 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Add(AddUserViewModel model)
+        public async Task<IActionResult> Add(AddUserViewModel model)
         {
             var message = model.Validate();
             if (!string.IsNullOrEmpty(message))
@@ -59,7 +61,9 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
                 return RedirectToAction("Add");
             }
 
-            message = _userRepository.AddUser(model.ToAdminUser());
+            message = await _userRepository.AddUserAsync(
+                model.ToAdminUser(),
+                HttpContext.RequestAborted);
             if (!string.IsNullOrEmpty(message))
             {
                 _flashMessage.Danger(message);
@@ -72,7 +76,7 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(EditUserViewModel model)
+        public async Task<IActionResult> Edit(EditUserViewModel model)
         {
             var message = model.Validate();
             if (!string.IsNullOrEmpty(message))
@@ -81,7 +85,9 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
                 return RedirectToAction("Edit");
             }
 
-            message = _userRepository.UpdateUser(model.ToAdminUser());
+            message = await _userRepository.UpdateUserAsync(
+                model.ToAdminUser(),
+                HttpContext.RequestAborted);
             if (!string.IsNullOrEmpty(message))
             {
                 _flashMessage.Danger(message);
@@ -94,7 +100,7 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ChangePassword(ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             var message = model.Validate();
             if (!string.IsNullOrEmpty(message))
@@ -103,7 +109,10 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
                 return RedirectToAction("Edit", new { id = model.Id });
             }
 
-            var user = _userRepository.ChangePassword(model.Id, PasswordHelper.HashPassword(model.Password));
+            var user = await _userRepository.ChangePasswordAsync(
+                model.Id,
+                PasswordHelper.HashPassword(model.Password),
+                HttpContext.RequestAborted);
 
             _flashMessage.Confirmation($"Password changed for user '{user.Username}'");
             return RedirectToAction("Index");
@@ -111,10 +120,10 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Remove(string id)
+        public async Task<IActionResult> Remove(string id)
         {
-            var user = _userRepository.GetUserForEdit(id);
-            _userRepository.RemoveUser(id);
+            var user = await _userRepository.GetUserForEditAsync(id, HttpContext.RequestAborted);
+            await _userRepository.RemoveUserAsync(id, HttpContext.RequestAborted);
 
             _flashMessage.Confirmation($"Removed user '{user.Username}'");
             return RedirectToAction("Index");

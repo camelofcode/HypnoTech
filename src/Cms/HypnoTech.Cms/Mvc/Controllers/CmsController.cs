@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using HypnoTech.Cms.Contracts.Dtos.Request;
 using HypnoTech.Cms.Forms;
 using HypnoTech.Cms.Models;
@@ -26,16 +27,17 @@ namespace HypnoTech.Cms.Mvc.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(CmsListRequest request)
+        public async Task<IActionResult> Index(CmsListRequest request)
         {
-            var model = new CmsListViewModel<TClass>(_service.GetPaged<TClass>(request), HttpContext);
+            var response = await _service.GetPagedAsync<TClass>(request, HttpContext.RequestAborted);
+            var model = new CmsListViewModel<TClass>(response, HttpContext);
             ViewBag.Controller = _controller;
             return View("Cms/Index", model);
         }
 
         [Route("MoveUp/{id}")]
         [HttpGet]
-        public IActionResult MoveUp(string id)
+        public async Task<IActionResult> MoveUp(string id)
         {
             ViewBag.Controller = _controller;
             var mapping = FormClassMapping.GetMapping<TClass>();
@@ -44,13 +46,13 @@ namespace HypnoTech.Cms.Mvc.Controllers
                 throw new NotSupportedException($"Ordering is not supported for {mapping.DisplayName}");
             }
 
-            _service.MoveUp(id);
+            await _service.MoveUpAsync(id, HttpContext.RequestAborted);
             return RedirectToIndex();
         }
 
         [Route("MoveDown/{id}")]
         [HttpGet]
-        public IActionResult MoveDown(string id)
+        public async Task<IActionResult> MoveDown(string id)
         {
             ViewBag.Controller = _controller;
             var mapping = FormClassMapping.GetMapping<TClass>();
@@ -59,13 +61,13 @@ namespace HypnoTech.Cms.Mvc.Controllers
                 throw new NotSupportedException($"Ordering is not supported for {mapping.DisplayName}");
             }
 
-            _service.MoveDown(id);
+            await _service.MoveDownAsync(id, HttpContext.RequestAborted);
             return RedirectToIndex();
         }
 
         [Route("Add")]
         [HttpGet]
-        public IActionResult Add()
+        public async Task<IActionResult> Add()
         {
             ViewBag.Controller = _controller;
             var mapping = FormClassMapping.GetMapping<TClass>();
@@ -74,7 +76,7 @@ namespace HypnoTech.Cms.Mvc.Controllers
                 throw new NotSupportedException($"Add is not supported for {mapping.DisplayName}" );
             }
 
-            var model = _service.BuildAddForm();
+            var model = await _service.BuildAddFormAsync(HttpContext.RequestAborted);
 
             return View("Cms/Add", model);
         }
@@ -82,11 +84,16 @@ namespace HypnoTech.Cms.Mvc.Controllers
         [Route("Add")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Add(TClass model, List<IFormFile> files, List<string> addedFiles)
+        public async Task<IActionResult> Add(TClass model, List<IFormFile> files, List<string> addedFiles)
         {
-            if (!_service.Validate(model, false, addedFiles, out Form form))
+            var validation = await _service.ValidateAsync(
+                model,
+                false,
+                addedFiles,
+                HttpContext.RequestAborted);
+            if (!validation.IsValid)
             {
-                return View("Cms/Add", form);
+                return View("Cms/Add", validation.Form);
             }
 
             var mapping = FormClassMapping.GetMapping<TClass>();
@@ -96,7 +103,7 @@ namespace HypnoTech.Cms.Mvc.Controllers
                 throw new NotSupportedException($"Add is not supported for {mapping.DisplayName}");
             }
 
-            _service.Add(model, files, addedFiles);
+            await _service.AddAsync(model, files, addedFiles, HttpContext.RequestAborted);
 
             _flashMessage.Confirmation($"Added '{mapping.GetTitle(model)}'");
 
@@ -105,7 +112,7 @@ namespace HypnoTech.Cms.Mvc.Controllers
 
         [Route("Duplicate/{id}")]
         [HttpGet]
-        public IActionResult Duplicate(string id)
+        public async Task<IActionResult> Duplicate(string id)
         {
             ViewBag.Controller = _controller;
             var mapping = FormClassMapping.GetMapping<TClass>();
@@ -114,7 +121,7 @@ namespace HypnoTech.Cms.Mvc.Controllers
                 throw new NotSupportedException($"Duplicate is not supported for {mapping.DisplayName}");
             }
 
-            var model = _service.BuildDuplicateForm(id);
+            var model = await _service.BuildDuplicateFormAsync(id, HttpContext.RequestAborted);
 
             return View("Cms/Duplicate", model);
         }
@@ -122,11 +129,16 @@ namespace HypnoTech.Cms.Mvc.Controllers
         [Route("Duplicate")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Duplicate(TClass model, List<IFormFile> files, List<string> addedFiles)
+        public async Task<IActionResult> Duplicate(TClass model, List<IFormFile> files, List<string> addedFiles)
         {
-            if (!_service.Validate(model, false, addedFiles, out Form form))
+            var validation = await _service.ValidateAsync(
+                model,
+                false,
+                addedFiles,
+                HttpContext.RequestAborted);
+            if (!validation.IsValid)
             {
-                return View("Cms/Duplicate", form);
+                return View("Cms/Duplicate", validation.Form);
             }
 
             var mapping = FormClassMapping.GetMapping<TClass>();
@@ -136,7 +148,7 @@ namespace HypnoTech.Cms.Mvc.Controllers
                 throw new NotSupportedException($"Duplicate is not supported for {mapping.DisplayName}");
             }
 
-            _service.Duplicate(model, files, addedFiles);
+            await _service.DuplicateAsync(model, files, addedFiles, HttpContext.RequestAborted);
 
             _flashMessage.Confirmation($"Added '{mapping.GetTitle(model)}'");
 
@@ -145,7 +157,7 @@ namespace HypnoTech.Cms.Mvc.Controllers
 
         [Route("Edit/{id}")]
         [HttpGet]
-        public IActionResult Edit(string id)
+        public async Task<IActionResult> Edit(string id)
         {
             ViewBag.Controller = _controller;
             var mapping = FormClassMapping.GetMapping<TClass>();
@@ -154,18 +166,23 @@ namespace HypnoTech.Cms.Mvc.Controllers
                 throw new NotSupportedException($"Edit is not supported for {mapping.DisplayName}");
             }
 
-            var model = _service.BuildEditForm(id);
+            var model = await _service.BuildEditFormAsync(id, HttpContext.RequestAborted);
             return View("Cms/Edit", model);
         }
 
         [Route("Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(TClass model, List<IFormFile> files, List<string> addedFiles, List<string> removedFiles)
+        public async Task<IActionResult> Edit(TClass model, List<IFormFile> files, List<string> addedFiles, List<string> removedFiles)
         {
-            if (!_service.Validate(model, true, addedFiles, out Form form))
+            var validation = await _service.ValidateAsync(
+                model,
+                true,
+                addedFiles,
+                HttpContext.RequestAborted);
+            if (!validation.IsValid)
             {
-                return View("Cms/Edit", form);
+                return View("Cms/Edit", validation.Form);
             }
 
             var mapping = FormClassMapping.GetMapping<TClass>();
@@ -174,7 +191,12 @@ namespace HypnoTech.Cms.Mvc.Controllers
                 throw new NotSupportedException($"Edit is not supported for {mapping.DisplayName}");
             }
 
-            _service.Edit(model, files, addedFiles, removedFiles);
+            await _service.EditAsync(
+                model,
+                files,
+                addedFiles,
+                removedFiles,
+                HttpContext.RequestAborted);
 
             _flashMessage.Confirmation($"Updated '{mapping.GetTitle(model)}'");
 
@@ -184,7 +206,7 @@ namespace HypnoTech.Cms.Mvc.Controllers
         [Route("Remove/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Remove(string id)
+        public async Task<IActionResult> Remove(string id)
         {
             var mapping = FormClassMapping.GetMapping<TClass>();
             if (!mapping.CanRemove)
@@ -192,9 +214,9 @@ namespace HypnoTech.Cms.Mvc.Controllers
                 throw new NotSupportedException($"Remove is not supported for {mapping.DisplayName}");
             }
 
-            TClass model = _service.GetById(id);
+            TClass model = await _service.GetByIdAsync(id, HttpContext.RequestAborted);
 
-            _service.Remove(id);
+            await _service.RemoveAsync(id, HttpContext.RequestAborted);
 
             _flashMessage.Confirmation($"Removed '{mapping.GetTitle(model)}'");
 

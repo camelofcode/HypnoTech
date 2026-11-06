@@ -5,6 +5,7 @@ using HypnoTech.Common.Models;
 using HypnoTech.Common.Security;
 using Microsoft.AspNetCore.Mvc;
 using Vereyon.Web;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Cms.Areas.Settings.Controllers
 {
@@ -21,19 +22,20 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
             _flashMessage = flashMessage;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(new EmailTemplatesViewModel(_repository.GetTemplates()));
+            return View(new EmailTemplatesViewModel(
+                await _repository.GetTemplatesAsync(HttpContext.RequestAborted)));
         }
 
-        public IActionResult Edit(string id)
+        public async Task<IActionResult> Edit(string id)
         {
-            return View(_repository.GetTemplateForEdit(id));
+            return View(await _repository.GetTemplateForEditAsync(id, HttpContext.RequestAborted));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(EmailTemplate template)
+        public async Task<IActionResult> Edit(EmailTemplate template)
         {
             var message = template.Validate();
             if (!string.IsNullOrEmpty(message))
@@ -42,7 +44,7 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
                 return RedirectToAction("Edit", new { id = template.Id });
             }
 
-            _repository.UpdateTemplate(template);
+            await _repository.UpdateTemplateAsync(template, HttpContext.RequestAborted);
             _flashMessage.Confirmation($"Updated {template.EmailType}");
 
             return RedirectToAction("Index");

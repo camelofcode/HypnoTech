@@ -54,6 +54,16 @@ Linux is the required development/CI and production platform for the first publi
 release. Windows previously worked as a development platform but is not a release gate.
 A future Windows smoke job may be informative and non-blocking.
 
+## Async API transition
+
+The Phase 6 CMS and Common-backed admin request paths use native async MongoDB, file,
+stream, SMTP, and HTTP APIs and propagate the request cancellation token. Existing
+synchronous repository and service members remain available through v0.1 for source
+compatibility. They retain native synchronous implementations; they do not block on
+async methods with `.Wait()`, `.Result`, or `GetAwaiter().GetResult()`. Async members
+are the primary API used by engine controllers. Removal or obsolescence of the sync
+surface is deferred to a separately documented breaking release.
+
 ## Example application verification
 
 The Lantern House public example has been exercised on Linux against the pinned

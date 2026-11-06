@@ -1,4 +1,6 @@
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Common.Dal.Repositories;
 using HypnoTech.Common.Models.Settings;
 using HypnoTech.MongoDb;
@@ -18,9 +20,22 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
             return GetAll<Config>().FirstOrDefault();
         }
 
+        public async Task<Config> GetConfigAsync(CancellationToken cancellationToken = default)
+        {
+            return (await GetAllAsync<Config>(cancellationToken: cancellationToken)).FirstOrDefault();
+        }
+
         public void SetConfig(Config config)
         {
             Collection.ReplaceOne(new BsonDocument(), config.ToBsonDocument());
+        }
+
+        public async Task SetConfigAsync(Config config, CancellationToken cancellationToken = default)
+        {
+            await Collection.ReplaceOneAsync(
+                new BsonDocument(),
+                config.ToBsonDocument(),
+                cancellationToken: cancellationToken);
         }
     }
 }

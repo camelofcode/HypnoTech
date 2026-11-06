@@ -6,9 +6,9 @@
 >
 > **Last updated:** 2026-11-06
 >
-> **Current phase:** Phase 5 complete; remaining Phase 1 publication gates stay open
+> **Current phase:** Phase 6 in progress; CMS and Common-backed admin I/O paths converted
 >
-> **Next action:** Review and merge the example and browser-suite branch, then begin Phase 6 async I/O modernisation.
+> **Next action:** Review the CMS async slice, then convert Ecommerce and Media in bounded module slices.
 
 ## How to maintain this document
 
@@ -133,7 +133,7 @@ date.
 | 3 | Projects physically organised without semantic changes | Complete | v0.1 |
 | 4 | Original public example admin and website | Complete | v0.1 |
 | 5 | Focused Playwright portfolio smoke suite | Complete | v0.1 |
-| 6 | Async I/O modernisation | Not started | v0.1 |
+| 6 | Async I/O modernisation | In progress | v0.1 |
 | 7 | CI, documentation, `main`, and public release | Not started | v0.1 |
 | 8 | Persistence contracts hardened | Not started | v0.2 |
 | 9 | EF Core implementations and provider packaging | Not started | v0.2 |
@@ -612,29 +612,29 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 
 ### Repository and service work
 
-- [ ] Add async CMS repository operations for list, page, get, add, edit, remove, and
+- [x] Add async CMS repository operations for list, page, get, add, edit, remove, and
       ordered movement.
-- [ ] Use MongoDB `FirstOrDefaultAsync`, `ToListAsync`, `InsertOneAsync`,
+- [x] Use MongoDB `FirstOrDefaultAsync`, `ToListAsync`, `InsertOneAsync`,
       `ReplaceOneAsync`, `DeleteOneAsync`, and `CountDocumentsAsync` as appropriate.
 - [ ] Add async methods across Common, Ecommerce, and Media repositories in bounded
       module-sized changes.
 - [ ] Update CMS and module services to await repository I/O.
-- [ ] Propagate cancellation tokens without replacing them with `CancellationToken.None`.
-- [ ] Convert select-list, seed, and child-population database access to async flows.
-- [ ] Decide whether multi-document ordered movement needs a transaction or documented
+- [x] Propagate cancellation tokens without replacing them with `CancellationToken.None`.
+- [x] Convert select-list, seed, and child-population database access to async flows.
+- [x] Decide whether multi-document ordered movement needs a transaction or documented
       best-effort semantics; async conversion must not hide the existing atomicity issue.
 
 ### Controller and infrastructure work
 
-- [ ] Convert `CmsController<T>` I/O actions to `async Task<IActionResult>`.
+- [x] Convert `CmsController<T>` I/O actions to `async Task<IActionResult>`.
 - [ ] Convert settings, ecommerce, media, and other I/O-bound controllers in small
       reviewed groups.
-- [ ] Preserve synchronous actions that perform only validation or in-memory work.
-- [ ] Replace blocking `ApiService` HTTP calls with awaited `HttpClient` calls.
+- [x] Preserve synchronous actions that perform only validation or in-memory work.
+- [x] Replace blocking `ApiService` HTTP calls with awaited `HttpClient` calls.
 - [ ] Replace PayPal v1 `.Result` calls with awaited SDK calls while preserving the
       existing provider and routes.
-- [ ] Use async SMTP sending and async template/file reads where supported.
-- [ ] Use `IFormFile.CopyToAsync`, async streams, and async file writes for uploads.
+- [x] Use async SMTP sending and async template/file reads where supported.
+- [x] Use `IFormFile.CopyToAsync`, async streams, and async file writes for uploads.
 - [ ] Review custom MVC result execution and remove the synchronous-I/O server option if
       the complete response path no longer needs it.
 - [ ] Treat synchronous-only framework contracts, such as a Serilog sink `Emit` method,
@@ -644,21 +644,22 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 
 - [ ] Extend unit tests to cover async success, validation, exception, and cancellation
       paths.
-- [ ] Run MongoDB contract and integration tests through the async APIs.
-- [ ] Run Playwright journeys against the async controller paths.
-- [ ] Add a repository check that rejects new blocking task waits in request-path code,
+- [x] Run MongoDB contract and integration tests through the async APIs.
+- [x] Run Playwright journeys against the async controller paths.
+- [x] Add a repository check that rejects new blocking task waits in request-path code,
       with documented exceptions if any remain.
-- [ ] Compare routes and representative HTTP responses before and after conversion.
+- [x] Compare routes and representative HTTP responses before and after conversion.
 - [ ] Record retained synchronous APIs and their planned lifetime.
 
 ### Exit gate
 
-- [ ] Dynamic CMS controller-to-MongoDB request paths are async end to end.
+- [x] Dynamic CMS controller-to-MongoDB request paths are async end to end.
 - [ ] Other high-value database and network request paths are async end to end.
-- [ ] Cancellation reaches the underlying I/O provider.
+- [ ] Cancellation reaches the underlying I/O provider across every module; complete for
+      CMS and converted Common paths.
 - [ ] No unapproved `.Result`, `.Wait()`, or `GetAwaiter().GetResult()` remains in
       request-path code.
-- [ ] CPU-only code has not been wrapped in fake async.
+- [x] CPU-only code has not been wrapped in fake async.
 - [ ] All unit, integration, and browser tests pass without route or behaviour changes.
 
 ## Phase 7 — CI, documentation, and the v0.1 public release
@@ -953,9 +954,12 @@ stating that work was done.
 | 2026-11-06 | Phase 5 | Used the new browser-error gate to find and correct unconditional TinyMCE startup on the CMS login layout. | Authenticated CMS pages still initialise TinyMCE; layouts without the TinyMCE core now safely skip its initialiser and plugins. All five generated frontend outputs are current, and the login/logout journey records no console or page errors. | This change |
 | 2026-11-06 | Phase 5 | Completed aggregate verification and marked the browser phase complete. | The 30-project Release build has no compiler errors or warnings (NuGet's unavailable vulnerability feed emitted only `NU1900`); all five frontend outputs are current; `git diff --check` passes; and the complete concurrent rootless-Podman solution passes 61/61, including MongoDB 4.0.3, 8.0.32, 9.0.4, and the five Chromium journeys. | This change |
 | 2026-11-06 | Phase 5 | Generalised the Playwright runner and artifacts across Chromium, Firefox, and WebKit, and made the eventual CI matrix explicit. | Firefox passes 5/5 natively; WebKit passes 5/5 in Playwright's supported Ubuntu image. The WebKit run exposed that its stricter localhost handling rejected the CMS `Secure` cookie over HTTP, so the harness now serves Admin over test-only ephemeral HTTPS without changing production cookie policy. Phase 7 now requires all three engines on Ubuntu and plans non-blocking Windows/macOS portability coverage where hosted-runner container support permits it. | This change |
+| 2026-11-06 | Phase 6 | Converted the complete CMS request surface and its Common-backed admin dependencies to native async I/O while retaining the existing synchronous repository/service API for compatibility. | Dynamic CRUD, ordering, children, select lists, seeding, uploads, settings, users, authentication, accounts, password reset, backups, email/SMTP, uploaded-file reads, and navbar-cache HTTP calls now propagate `RequestAborted` to MongoDB, streams, files, SMTP, and HTTP. Pure mapping, validation, hashing, image transformation, metadata, and render-only actions remain synchronous. Sync members keep native sync implementations rather than blocking on async. | This change |
+| 2026-11-06 | Phase 6 | Added async characterisation coverage and a blocking-wait architecture guard for the converted layers. | Release build passes with zero warnings/errors; CMS unit tests pass 25/25; MongoDB contracts pass async CRUD/paging/ordering/children/select-list/seed behavior on 4.0.3, 8.0.32, and 9.0.4; the complete Chromium/Podman solution passes 68/68 including the final architecture guard. | This change |
 
 ## Immediate next actions
 
-1. Review and merge the Phase 4/5 example and Playwright branch into `main`.
-2. Begin Phase 6 async I/O modernisation behind the unit, integration, and browser characterisation coverage.
-3. Re-scan the exact final commit immediately before changing repository visibility.
+1. Review the Phase 6 CMS/Common async slice.
+2. Convert Ecommerce, including the isolated PayPal v1 sync-over-async calls, without changing payment-provider scope or routes.
+3. Convert Media and remaining Common-backed public request paths, then complete aggregate/browser verification.
+4. Re-scan the exact final commit immediately before changing repository visibility.
