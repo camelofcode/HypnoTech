@@ -19086,11 +19086,16 @@ a+" })()) }}"};this.addTemplate=function(a,b){w.write("<script type='text/html' 
 
 })(jQuery, ko);
 (function () {
+    if (typeof tinymce === 'undefined') {
+        return;
+    }
+
     tinymce.init({
         selector: 'textarea.tinymce',
         plugins: ['paste', 'link']
     });
 })();
+
 // Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
@@ -20625,7 +20630,7 @@ function YouTubeViewModel(id) {
     });
 }
 // ReSharper disable InconsistentNaming
-tinymce.PluginManager.add('imageUpload', function (editor) {
+typeof tinymce !== 'undefined' && tinymce.PluginManager.add('imageUpload', function (editor) {
     var uploading = false;
 
     function showUploadingUI() {
@@ -20692,8 +20697,9 @@ tinymce.PluginManager.add('imageUpload', function (editor) {
         }
     });
 });
+
 // ReSharper disable InconsistentNaming
-tinymce.PluginManager.add('youtube', function (editor) {
+typeof tinymce !== 'undefined' && tinymce.PluginManager.add('youtube', function (editor) {
     var uploading = false;
 
     function openDialog() {

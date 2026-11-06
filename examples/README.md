@@ -18,8 +18,8 @@ repository. Nothing was copied or adapted from a production client site.
   platform basket and calculation-only checkout.
 - Database-backed navigation that the admin Features screen can enable, rename, and
   reorder, plus editable site and email configuration.
-- A responsive original website with stable `data-testid` hooks for the later
-  Playwright phase.
+- A responsive original website exercised by focused Playwright desktop and mobile
+  journeys.
 - Progressive partial-page navigation with full-document fallback, persistent audio
   player and basket drawers, page-level track launch events, and a deliberately
   separate checkout flow.
@@ -59,6 +59,29 @@ pins the admin and website to the same absolute `.demo/uploads` path, so files u
 through the CMS are visible from either host. Press Ctrl+C to stop the admin and
 website. The named MongoDB container and volume remain in place for the next run; use
 the reset commands below when you want fresh data.
+
+## Automated browser journeys
+
+From the repository root, this command starts an isolated MongoDB container and both
+example hosts, then runs the focused Chromium suite:
+
+```bash
+./tests/run-end-to-end.sh
+```
+
+Run the same journeys across Chromium, Firefox, and WebKit with:
+
+```bash
+./tests/run-end-to-end.sh --all-browsers
+```
+
+The complete three-engine command is intended for a Playwright-supported
+Ubuntu/Debian host and the future GitHub Actions matrix. On Fedora, use the Chromium
+or Firefox selector for local checks; WebKit is covered by the supported Ubuntu run.
+
+The browser suite uses a unique disposable database and upload directory. It does not
+use the persistent manual-demo database and deliberately stops before any payment or
+order submission.
 
 ## Start MongoDB
 

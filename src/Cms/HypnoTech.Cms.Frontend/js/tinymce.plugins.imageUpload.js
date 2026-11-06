@@ -1,5 +1,5 @@
 // ReSharper disable InconsistentNaming
-tinymce.PluginManager.add('imageUpload', function (editor) {
+typeof tinymce !== 'undefined' && tinymce.PluginManager.add('imageUpload', function (editor) {
     var uploading = false;
 
     function showUploadingUI() {

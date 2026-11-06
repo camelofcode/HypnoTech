@@ -6,9 +6,9 @@
 >
 > **Last updated:** 2026-11-06
 >
-> **Current phase:** Phase 4 complete; remaining Phase 1 publication gates stay open
+> **Current phase:** Phase 5 complete; remaining Phase 1 publication gates stay open
 >
-> **Next action:** Review and merge Phase 4, then build the focused Playwright journeys against the stable example hosts.
+> **Next action:** Review and merge the example and browser-suite branch, then begin Phase 6 async I/O modernisation.
 
 ## How to maintain this document
 
@@ -132,7 +132,7 @@ date.
 | 2 | CMS and MongoDB behaviour characterised by tests | Complete | v0.1 |
 | 3 | Projects physically organised without semantic changes | Complete | v0.1 |
 | 4 | Original public example admin and website | Complete | v0.1 |
-| 5 | Focused Playwright portfolio smoke suite | Not started | v0.1 |
+| 5 | Focused Playwright portfolio smoke suite | Complete | v0.1 |
 | 6 | Async I/O modernisation | Not started | v0.1 |
 | 7 | CI, documentation, `main`, and public release | Not started | v0.1 |
 | 8 | Persistence contracts hardened | Not started | v0.2 |
@@ -532,30 +532,33 @@ example applications are the browser-test system under test.
 
 ### Initial journeys
 
-- [ ] Admin login and logout.
-- [ ] Create, edit, search, reorder, duplicate, and remove a dynamic CMS item.
-- [ ] Validation errors preserve the submitted form and display useful feedback.
-- [ ] Upload an image and verify it appears on the public website.
-- [ ] Add merchandise to the basket and verify server-calculated totals.
-- [ ] View representative audio, video, and gallery content.
-- [ ] Verify unauthorised access is rejected or redirected.
-- [ ] Run a basic mobile viewport smoke test.
+- [x] Admin login and logout.
+- [x] Create, edit, search, reorder, duplicate, and remove a dynamic CMS item.
+- [x] Validation errors preserve the submitted form and display useful feedback.
+- [x] Upload an image and verify it appears on the public website.
+- [x] Add merchandise to the basket and verify server-calculated totals.
+- [x] View representative audio, video, and gallery content.
+- [x] Verify unauthorised access is rejected or redirected.
+- [x] Run a basic mobile viewport smoke test.
 
 ### Harness
 
-- [ ] Start MongoDB with Testcontainers.
-- [ ] Start example applications on dynamically allocated ports.
-- [ ] Use isolated browser contexts.
-- [ ] Run Chromium on Linux initially.
-- [ ] Capture traces, screenshots, console errors, and application logs on failure.
-- [ ] Keep the suite deliberately focused rather than exhaustive.
+- [x] Start MongoDB with Testcontainers.
+- [x] Start example applications on dynamically allocated ports.
+- [x] Use isolated browser contexts.
+- [x] Run Chromium, Firefox, and WebKit on Linux; use a supported Ubuntu environment
+      as the WebKit source of truth.
+- [x] Serve the admin test host through ephemeral HTTPS so its secure authentication
+      cookie is covered consistently by every engine.
+- [x] Capture traces, screenshots, console errors, and application logs on failure.
+- [x] Keep the suite deliberately focused rather than exhaustive.
 
 ### Exit gate
 
-- [ ] One command runs the suite locally.
-- [ ] Repeated runs are reliable.
-- [ ] Failures retain enough evidence to diagnose them.
-- [ ] The suite is suitable as a required CI check.
+- [x] One command runs the suite locally.
+- [x] Repeated runs are reliable.
+- [x] Failures retain enough evidence to diagnose them.
+- [x] The suite is suitable as a required CI check.
 
 ## Phase 6 — Async I/O modernisation
 
@@ -666,7 +669,12 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [ ] `build`: SDK from `global.json`, restore, and Release build.
 - [ ] `unit-tests`: xUnit tests and coverage artifact.
 - [ ] `mongo-integration`: production and supported-current MongoDB images.
-- [ ] `end-to-end`: Playwright Chromium with failure artifacts.
+- [ ] `end-to-end`: required Ubuntu matrix for Playwright Chromium, Firefox, and
+      WebKit, with engine-specific failure artifacts.
+- [ ] `platform-smoke`: build and container-free tests on Ubuntu, Windows, and macOS.
+- [ ] Add scheduled Windows browser and macOS WebKit journeys if Phase 7 confirms a
+      reliable MongoDB/container strategy on GitHub-hosted runners; keep them
+      informative until repeatably green.
 
 ### Workflow controls
 
@@ -675,8 +683,10 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [ ] Cancel superseded pull-request runs.
 - [ ] Pin action versions.
 - [ ] Keep deployment and production credentials out of test workflows.
-- [ ] Use Linux runners only at first.
-- [ ] Add Windows only as a non-blocking scheduled smoke test if it remains useful.
+- [ ] Keep Linux as the required release platform while exercising Windows and macOS
+      through non-blocking portability jobs.
+- [ ] Do not claim a browser/OS combination until it has a repeatable CI environment;
+      prefer the full cross-platform matrix where runner/container support permits it.
 
 ### Public presentation
 
@@ -860,7 +870,7 @@ These apply throughout all phases:
 | Physical moves break private site references | Consumer builds fail | Pin production to support branch; temporary smoke builds; optional shims | Open |
 | Static registries make tests order-dependent | Flaky test suite | Serial collections and explicit reset of mutable public registries; make BSON and model registration idempotent | Resolved for current registrations; tests remain serial where global mappings are intentionally mutated |
 | Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Resolved; Lantern House is wholly original and the example tree contains no private-site references |
-| Playwright suite becomes slow or brittle | CI friction | Keep a small journey-based Chromium suite; retain traces on failure | Open |
+| Playwright suite becomes slow or brittle | CI friction | Keep five journey-based tests, parallelise CI by browser, and retain engine-specific traces on failure | Open |
 | Async conversion changes routes or behaviour | Public regression | Characterisation tests first; preserve action names/routes; convert in bounded slices | Open |
 | Async APIs are wrappers over blocking work | Misleading API and thread-pool pressure | Require native provider async APIs; prohibit `Task.Run` and blocking waits in request paths | Open |
 | EF providers support different EF major versions | Package conflicts or delayed providers | Recheck matrix; align EF major; add providers incrementally | Open |
@@ -939,9 +949,13 @@ stating that work was done.
 | 2026-11-06 | Phase 4 | Added the platform's progressive partial-page navigation to Lantern House, kept the audio player and basket counter outside the replaceable content region, exposed CMS tracks through the shared `player:playTrack` event, and retained checkout as an intentional full-document boundary. | Integration coverage proves normal Articles and Checkout requests return full HTML while opted-in Articles and Cart requests return the JSON fragment/metadata contract. Live browser checks started a CMS track, navigated Media → Stories → Shop → product → Cart with playback remaining in its Pause state, populated the cart after partial insertion, then crossed the separate Checkout document boundary. | This change |
 | 2026-11-06 | Phase 4 | Added public guides for fluent CMS model/admin setup and frontend integration, and moved Lantern House's authored host JS/SCSS into its own frontend workspace with committed development/minified output. | `npm run check:frontend` reports all five asset projects current; `git diff --check` passes; the 29-project Release build succeeds with no compile errors (NuGet's temporarily unreachable vulnerability feed emits only `NU1900`); and the complete Podman-backed Release suite passes 55/55 against MongoDB 4.0.3, 8.0.32, and 9.0.4. | This change |
 | 2026-11-06 | Phase 4 | Replaced Lantern House's cart-page-first interaction with a persistent slide-out basket, retained `/Cart` as a progressive-enhancement fallback, and corrected the example's application boundary so only Admin owns fluent edit mappings and the CMS MongoDB repository. Website now uses focused public read repositories over `HypnoTech.MongoDb` and has no CMS/admin project dependency. | Compiled-reference and rendered-page integration coverage prove the public Models/Website projects do not reference CMS web assemblies and the public host retains the core frontend bundle while omitting the CMS bundle. All five frontend outputs are current; the Release build succeeds; and the complete Podman-backed Release suite passes 56/56. Live browser checks confirmed in-place basket opening, add/remove state shared with direct `/Cart`, player/basket mutual exclusion, a full-document checkout boundary, and no CMS script or TinyMCE console error. | This change |
+| 2026-11-06 | Phase 5 | Added a focused Playwright for .NET/xUnit suite with a shared Testcontainers MongoDB 8.0 fixture, real Admin and Website processes on dynamic ports, isolated browser contexts, and a one-command rootless-Podman runner. | Five Chromium journeys cover authentication/authorization, dynamic CMS validation and CRUD/search/order/duplicate/remove behaviour, rich text, an uploaded image reaching the public site, Media/player/gallery content, server-calculated basket/postage totals, the checkout safety boundary, and mobile navigation. Repeated focused runs pass 5/5 without browser errors. | This change |
+| 2026-11-06 | Phase 5 | Used the new browser-error gate to find and correct unconditional TinyMCE startup on the CMS login layout. | Authenticated CMS pages still initialise TinyMCE; layouts without the TinyMCE core now safely skip its initialiser and plugins. All five generated frontend outputs are current, and the login/logout journey records no console or page errors. | This change |
+| 2026-11-06 | Phase 5 | Completed aggregate verification and marked the browser phase complete. | The 30-project Release build has no compiler errors or warnings (NuGet's unavailable vulnerability feed emitted only `NU1900`); all five frontend outputs are current; `git diff --check` passes; and the complete concurrent rootless-Podman solution passes 61/61, including MongoDB 4.0.3, 8.0.32, 9.0.4, and the five Chromium journeys. | This change |
+| 2026-11-06 | Phase 5 | Generalised the Playwright runner and artifacts across Chromium, Firefox, and WebKit, and made the eventual CI matrix explicit. | Firefox passes 5/5 natively; WebKit passes 5/5 in Playwright's supported Ubuntu image. The WebKit run exposed that its stricter localhost handling rejected the CMS `Secure` cookie over HTTP, so the harness now serves Admin over test-only ephemeral HTTPS without changing production cookie policy. Phase 7 now requires all three engines on Ubuntu and plans non-blocking Windows/macOS portability coverage where hosted-runner container support permits it. | This change |
 
 ## Immediate next actions
 
-1. Review and merge Phase 4 into `main`.
-2. Build Phase 5's focused Playwright suite against the example applications.
+1. Review and merge the Phase 4/5 example and Playwright branch into `main`.
+2. Begin Phase 6 async I/O modernisation behind the unit, integration, and browser characterisation coverage.
 3. Re-scan the exact final commit immediately before changing repository visibility.
