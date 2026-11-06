@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Cms.FormMemberImplementations;
 using HypnoTech.Common;
 using Microsoft.Extensions.Options;
@@ -34,9 +36,19 @@ namespace HypnoTech.Cms.MongoDb.Repositories
             Move(id, -1);
         }
 
+        public Task MoveUpAsync(string id, CancellationToken cancellationToken = default)
+        {
+            return MoveAsync(id, -1, cancellationToken);
+        }
+
         public void MoveDown(string id)
         {
             Move(id, 1);
+        }
+
+        public Task MoveDownAsync(string id, CancellationToken cancellationToken = default)
+        {
+            return MoveAsync(id, 1, cancellationToken);
         }
 
         private void Move(string id, int newPosition)
@@ -73,12 +85,64 @@ namespace HypnoTech.Cms.MongoDb.Repositories
             _collection.ReplaceOne(filter, itemToSwap.ToBsonDocument());
         }
 
+        private async Task MoveAsync(string id, int newPosition, CancellationToken cancellationToken)
+        {
+            var current = await GetByIdAsync(id, cancellationToken);
+
+            var mapping = FormClassMapping.GetMapping<TClass>();
+            var currentOrder = (int?)typeof(TClass).GetProperty(mapping.OrderProperty)?.GetValue(current);
+
+            if (!currentOrder.HasValue)
+            {
+                throw new Exception("Order property could not be evaluated as an integer!");
+            }
+
+            var newOrder = currentOrder + newPosition;
+
+            var itemToSwapDocument = await _collection
+                .Find(new BsonDocument(GetOrderColumnMongoName<TClass>(), new BsonInt32(newOrder.Value)))
+                .FirstOrDefaultAsync(cancellationToken);
+            if (itemToSwapDocument == null)
+            {
+                return;
+            }
+
+            var itemToSwap = BsonSerializer.Deserialize<TClass>(itemToSwapDocument);
+
+            typeof(TClass).GetProperty(mapping.OrderProperty)?.SetValue(current, newOrder);
+            typeof(TClass).GetProperty(mapping.OrderProperty)?.SetValue(itemToSwap, currentOrder);
+
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(mapping.GetId(current)));
+            await _collection.ReplaceOneAsync(
+                filter,
+                current.ToBsonDocument(),
+                cancellationToken: cancellationToken);
+
+            filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(mapping.GetId(itemToSwap)));
+            await _collection.ReplaceOneAsync(
+                filter,
+                itemToSwap.ToBsonDocument(),
+                cancellationToken: cancellationToken);
+        }
+
         public TClass GetById(string id)
         {
             var mapping = FormClassMapping.GetMapping<TClass>();
             var item = GetOne(new BsonDocument("_id", new BsonObjectId(new ObjectId(id))));
 
             PopulateChildren(mapping, item);
+
+            return item;
+        }
+
+        public async Task<TClass> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var mapping = FormClassMapping.GetMapping<TClass>();
+            var item = await GetOneAsync(
+                new BsonDocument("_id", new BsonObjectId(new ObjectId(id))),
+                cancellationToken);
+
+            await PopulateChildrenAsync(mapping, item, cancellationToken);
 
             return item;
         }
@@ -93,6 +157,18 @@ namespace HypnoTech.Cms.MongoDb.Repositories
             _collection.InsertOne(model.ToBsonDocument());
         }
 
+        public async Task AddAsync(TClass model, CancellationToken cancellationToken = default)
+        {
+            var mapping = FormClassMapping.GetMapping<TClass>();
+            mapping.SetId(model, ObjectId.GenerateNewId().ToString());
+
+            SetListItemIds(model, mapping);
+
+            await _collection.InsertOneAsync(
+                model.ToBsonDocument(),
+                cancellationToken: cancellationToken);
+        }
+
         public void Edit(TClass model)
         {
             var mapping = FormClassMapping.GetMapping<TClass>();
@@ -104,10 +180,30 @@ namespace HypnoTech.Cms.MongoDb.Repositories
             _collection.ReplaceOne(filter, model.ToBsonDocument());
         }
 
+        public async Task EditAsync(TClass model, CancellationToken cancellationToken = default)
+        {
+            var mapping = FormClassMapping.GetMapping<TClass>();
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(mapping.GetId(model)));
+
+            await GetByIdAsync(mapping.GetId(model), cancellationToken);
+            SetListItemIds(model, mapping);
+
+            await _collection.ReplaceOneAsync(
+                filter,
+                model.ToBsonDocument(),
+                cancellationToken: cancellationToken);
+        }
+
         public void Remove(string id)
         {
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id));
             _collection.DeleteOne(filter);
+        }
+
+        public async Task RemoveAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id));
+            await _collection.DeleteOneAsync(filter, cancellationToken);
         }
 
         public ICollection<TClass> GetAll<T>(string orderBy = null, bool descending = false)
@@ -121,6 +217,26 @@ namespace HypnoTech.Cms.MongoDb.Repositories
             foreach (var item in items)
             {
                 PopulateChildren(mapping, item);
+            }
+
+            return items;
+        }
+
+        public async Task<ICollection<TClass>> GetAllAsync<T>(
+            string orderBy = null,
+            bool descending = false,
+            CancellationToken cancellationToken = default)
+        {
+            var mapping = FormClassMapping.GetMapping<TClass>();
+
+            var collection = _collection.Find(new BsonDocument());
+            collection = Order(collection, orderBy, descending);
+            var documents = await collection.ToListAsync(cancellationToken);
+            var items = documents.Select(p => BsonSerializer.Deserialize<TClass>(p)).ToList();
+
+            foreach (var item in items)
+            {
+                await PopulateChildrenAsync(mapping, item, cancellationToken);
             }
 
             return items;
@@ -168,6 +284,58 @@ namespace HypnoTech.Cms.MongoDb.Repositories
             };
         }
 
+        public async Task<CmsListReponse<TClass>> GetPagedAsync<T>(
+            CmsListRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var mapping = FormClassMapping.GetMapping<TClass>();
+            var search = BuildSearch(request);
+            List<TClass> items;
+
+            ApplyDefaultSortIfUnset(request, mapping);
+
+            if (mapping.Ordered)
+            {
+                var collection = Order(_collection.Find(search), GetOrderColumnMongoName<TClass>())
+                    .Skip(request.Skip)
+                    .Limit(request.PageSize);
+
+                var documents = await collection.ToListAsync(cancellationToken);
+                items = documents.Select(p => BsonSerializer.Deserialize<TClass>(p)).ToList();
+            }
+            else
+            {
+                var collection = Order(
+                        _collection.Find(search),
+                        GetMongoColumnName<TClass>(request),
+                        request.IsDescending)
+                    .Skip(request.Skip)
+                    .Limit(request.PageSize);
+
+                var documents = await collection.ToListAsync(cancellationToken);
+                items = documents.Select(p => BsonSerializer.Deserialize<TClass>(p)).ToList();
+            }
+
+            foreach (var item in items)
+            {
+                await PopulateChildrenAsync(mapping, item, cancellationToken);
+            }
+
+            var count = await _collection.CountDocumentsAsync(
+                search,
+                cancellationToken: cancellationToken);
+
+            return new CmsListReponse<TClass>
+            {
+                SortColumn = request.SortColumn ?? 0,
+                Direction = request.Direction,
+                Search = request.Search,
+                CurrentPage = request.Page,
+                Items = items,
+                TotalPages = (int)Math.Ceiling(count / (decimal)request.PageSize)
+            };
+        }
+
         private static void ApplyDefaultSortIfUnset(CmsListRequest request, FormClassMapping<TClass> mapping)
         {
             if (!request.SortColumn.HasValue)
@@ -199,6 +367,15 @@ namespace HypnoTech.Cms.MongoDb.Repositories
         private TClass GetOne(FilterDefinition<BsonDocument> filter)
         {
             var document = _collection.Find(filter).FirstOrDefault();
+
+            return BsonSerializer.Deserialize<TClass>(document);
+        }
+
+        private async Task<TClass> GetOneAsync(
+            FilterDefinition<BsonDocument> filter,
+            CancellationToken cancellationToken)
+        {
+            var document = await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken);
 
             return BsonSerializer.Deserialize<TClass>(document);
         }
@@ -275,6 +452,28 @@ namespace HypnoTech.Cms.MongoDb.Repositories
                     var childObject = childCollection.Find(new BsonDocument("_id", new BsonObjectId(new ObjectId(id)))).FirstOrDefault();
                     MethodInfo deserialize = GetGenericDeserializer(child.Type);
                     typeof(TClass).GetProperty(child.TypeInfo.Name)?.SetValue(item, deserialize?.Invoke(null, new object[] { childObject, null }));
+                }
+            }
+        }
+
+        private async Task PopulateChildrenAsync(
+            FormClassMapping<TClass> mapping,
+            TClass item,
+            CancellationToken cancellationToken)
+        {
+            foreach (var child in mapping.Children)
+            {
+                var id = typeof(TClass).GetProperty(child.IdInfo.Name)?.GetValue(item)?.ToString();
+                if (!string.IsNullOrEmpty(id))
+                {
+                    var childCollection = _database.GetCollection<BsonDocument>(child.DataStore);
+                    var childObject = await childCollection
+                        .Find(new BsonDocument("_id", new BsonObjectId(new ObjectId(id))))
+                        .FirstOrDefaultAsync(cancellationToken);
+                    MethodInfo deserialize = GetGenericDeserializer(child.Type);
+                    typeof(TClass).GetProperty(child.TypeInfo.Name)?.SetValue(
+                        item,
+                        deserialize?.Invoke(null, new object[] { childObject, null }));
                 }
             }
         }

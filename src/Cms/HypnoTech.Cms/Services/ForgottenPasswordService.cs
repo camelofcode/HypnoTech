@@ -6,6 +6,8 @@ using HypnoTech.Common.Emails;
 using HypnoTech.Common.Models.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Cms.Services
 {
@@ -39,9 +41,40 @@ namespace HypnoTech.Cms.Services
             return true;
         }
 
+        public async Task<bool> CreatePasswordResetIfUserExistsAsync(
+            string nameOrEmail,
+            CancellationToken cancellationToken = default)
+        {
+            AdminUser user = await _userRepository.GetUserByUsernameOrEmailAsync(
+                nameOrEmail,
+                cancellationToken);
+            if (user == null)
+            {
+                return false;
+            }
+
+            var code = await _passwordResetRepository.CreateResetPasswordCodeAsync(
+                user,
+                cancellationToken);
+            await _emailService.SendEmailAsync(
+                user.Email,
+                "PasswordReset",
+                "PasswordReset",
+                new PasswordResetEmailViewModel($"{_options.AdminUrl}/Home/ChangePassword/{code}", user.Username),
+                cancellationToken);
+
+            return true;
+        }
+
         public bool CheckCode(string code)
         {
             var reset = _passwordResetRepository.GetCode(code);
+            return reset != null && reset.Valid;
+        }
+
+        public async Task<bool> CheckCodeAsync(string code, CancellationToken cancellationToken = default)
+        {
+            var reset = await _passwordResetRepository.GetCodeAsync(code, cancellationToken);
             return reset != null && reset.Valid;
         }
 
@@ -50,6 +83,16 @@ namespace HypnoTech.Cms.Services
             var email = _passwordResetRepository.GetCode(code).Email;
             _userRepository.ChangePasswordByEmail(email, PasswordHelper.HashPassword(password));
             _passwordResetRepository.RemoveCode(code);
+        }
+
+        public async Task ResetPasswordAsync(string code, string password, CancellationToken cancellationToken = default)
+        {
+            var reset = await _passwordResetRepository.GetCodeAsync(code, cancellationToken);
+            await _userRepository.ChangePasswordByEmailAsync(
+                reset.Email,
+                PasswordHelper.HashPassword(password),
+                cancellationToken);
+            await _passwordResetRepository.RemoveCodeAsync(code, cancellationToken);
         }
     }
 }

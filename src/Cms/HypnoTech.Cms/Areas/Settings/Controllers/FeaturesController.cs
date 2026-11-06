@@ -6,6 +6,7 @@ using HypnoTech.Common.Models.Settings;
 using HypnoTech.Common.Security;
 using Microsoft.AspNetCore.Mvc;
 using Vereyon.Web;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Cms.Areas.Settings.Controllers
 {
@@ -24,20 +25,20 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
             _apiService = apiService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             return View(new FeaturesViewModel
             {
-                Links = _navBarRepository.GetNavBarLinks()
+                Links = await _navBarRepository.GetNavBarLinksAsync(HttpContext.RequestAborted)
             });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update([FromForm]List<NavBarLink> links)
+        public async Task<IActionResult> Update([FromForm]List<NavBarLink> links)
         {
-            _navBarRepository.UpdateNavBarLinks(links);
-            _apiService.ClearSiteNavbarCache();
+            await _navBarRepository.UpdateNavBarLinksAsync(links, HttpContext.RequestAborted);
+            await _apiService.ClearSiteNavbarCacheAsync(HttpContext.RequestAborted);
             _flashMessage.Confirmation("Features Updated");
             return Ok();
         }

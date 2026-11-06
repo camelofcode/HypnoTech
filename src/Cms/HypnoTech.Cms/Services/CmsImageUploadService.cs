@@ -1,5 +1,7 @@
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Cms.Extensions;
 using HypnoTech.Cms.Helpers;
 using HypnoTech.Cms.Services.Interfaces;
@@ -32,6 +34,32 @@ namespace HypnoTech.Cms.Services
 
                     File.WriteAllBytes(filePath, fileBytes.Scale(maxWidth, maxHeight));
                 }
+            }
+
+            return $"/Images/{subdirectory}/{file.FileName.Replace("\\", "/")}";
+        }
+
+        public async Task<string> AddImageAsync(
+            IFormFile file,
+            string subdirectory,
+            int maxHeight,
+            int maxWidth,
+            CancellationToken cancellationToken = default)
+        {
+            var directory = Path.Combine(_basePath, "Images", subdirectory);
+            Directory.CreateDirectory(directory);
+            var filePath = FileHelper.GetDeduplicatedPath(Path.Combine(directory, file.FileName));
+
+            if (file.Length > 0)
+            {
+                await using var stream = new MemoryStream();
+                await file.CopyToAsync(stream, cancellationToken);
+                var fileBytes = stream.ToArray();
+
+                await File.WriteAllBytesAsync(
+                    filePath,
+                    fileBytes.Scale(maxWidth, maxHeight),
+                    cancellationToken);
             }
 
             return $"/Images/{subdirectory}/{file.FileName.Replace("\\", "/")}";

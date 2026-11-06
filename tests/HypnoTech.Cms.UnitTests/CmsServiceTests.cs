@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Cms.Contracts.Dtos.Request;
 using HypnoTech.Cms.Contracts.Dtos.Response;
 using HypnoTech.Cms.Contracts.Interfaces;
@@ -152,6 +154,58 @@ public sealed class CmsServiceTests : IDisposable
         Assert.Equal("Covers", _imageService.LastSubdirectory);
     }
 
+    [Fact]
+    public async Task AddAsync_applies_transformations_uploads_files_and_propagates_cancellation()
+    {
+        var audioBytes = Encoding.UTF8.GetBytes("synthetic async audio payload");
+        var audio = new FormFile(new MemoryStream(audioBytes), 0, audioBytes.Length, "file", "async.mp3")
+        {
+            Headers = new HeaderDictionary(),
+            ContentType = "audio/mpeg"
+        };
+        var model = new ServiceDocument
+        {
+            Title = "Async Document",
+            Date = new DateTime(2026, 4, 5),
+            Enabled = false,
+            RelatedValue = "must be cleared"
+        };
+        using var cancellation = new CancellationTokenSource();
+
+        await _service.AddAsync(
+            model,
+            [audio],
+            [nameof(ServiceDocument.Attachment)],
+            cancellation.Token);
+
+        Assert.Same(model, _repository.Added);
+        Assert.Equal(cancellation.Token, _repository.LastCancellationToken);
+        Assert.Equal("async-document", model.Slug);
+        Assert.Equal(12, model.Date?.Hour);
+        Assert.Null(model.RelatedValue);
+        Assert.Equal(audioBytes, await File.ReadAllBytesAsync(
+            Path.Combine(_uploadPath, "Files", "Documents", "async.mp3"),
+            TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public async Task Async_form_building_and_validation_preserve_form_contract()
+    {
+        var addForm = await _service.BuildAddFormAsync(TestContext.Current.CancellationToken);
+        var validation = await _service.ValidateAsync(
+            new ServiceDocument(),
+            isEdit: false,
+            [],
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal("/Cms/ServiceDocuments", addForm.BackUrl);
+        Assert.Equal("/Cms/ServiceDocuments/Add", addForm.PostUrl);
+        Assert.False(validation.IsValid);
+        Assert.True(validation.Form.HasBeenValidated);
+        Assert.Contains(validation.Form.Controls, control =>
+            control.Name == nameof(ServiceDocument.Title) && !control.IsValid);
+    }
+
     public sealed class ServiceDocument
     {
         public string Id { get; set; }
@@ -170,19 +224,64 @@ public sealed class CmsServiceTests : IDisposable
         public ServiceDocument Edited { get; private set; }
         public string RemovedId { get; private set; }
         public int GetByIdCalls { get; private set; }
+        public CancellationToken LastCancellationToken { get; private set; }
 
         public ICollection<ServiceDocument> GetAll<T>(string orderBy = null, bool descending = false) => [];
+        public Task<ICollection<ServiceDocument>> GetAllAsync<T>(string orderBy = null, bool descending = false, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            return Task.FromResult<ICollection<ServiceDocument>>([]);
+        }
         public CmsListReponse<ServiceDocument> GetPaged<T>(CmsListRequest request) => new() { Items = [] };
+        public Task<CmsListReponse<ServiceDocument>> GetPagedAsync<T>(CmsListRequest request, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            return Task.FromResult(new CmsListReponse<ServiceDocument> { Items = [] });
+        }
         public void MoveUp(string id) { }
+        public Task MoveUpAsync(string id, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            return Task.CompletedTask;
+        }
         public void MoveDown(string id) { }
+        public Task MoveDownAsync(string id, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            return Task.CompletedTask;
+        }
         public ServiceDocument GetById(string id)
         {
             GetByIdCalls++;
             return Added;
         }
+        public Task<ServiceDocument> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            GetByIdCalls++;
+            return Task.FromResult(Added);
+        }
         public void Add(ServiceDocument model) => Added = model;
+        public Task AddAsync(ServiceDocument model, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            Added = model;
+            return Task.CompletedTask;
+        }
         public void Edit(ServiceDocument model) => Edited = model;
+        public Task EditAsync(ServiceDocument model, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            Edited = model;
+            return Task.CompletedTask;
+        }
         public void Remove(string id) => RemovedId = id;
+        public Task RemoveAsync(string id, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            RemovedId = id;
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class RecordingImageUploadService : ICmsImageUploadService
@@ -195,11 +294,19 @@ public sealed class CmsServiceTests : IDisposable
             return $"/Images/{subdirectory}/synthetic.png";
         }
 
+        public Task<string> AddImageAsync(IFormFile file, string subdirectory, int maxHeight, int maxWidth, CancellationToken cancellationToken = default)
+        {
+            LastSubdirectory = subdirectory;
+            return Task.FromResult($"/Images/{subdirectory}/synthetic.png");
+        }
+
         public string RemoveImage(string name, string subdirectory) => null;
     }
 
     private sealed class EmptySelectListRepository : ISelectListRepository
     {
         public List<object> GetSelectListItems(Type type) => [];
+        public Task<List<object>> GetSelectListItemsAsync(Type type, CancellationToken cancellationToken = default) =>
+            Task.FromResult(new List<object>());
     }
 }

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Cms.Contracts.Dtos.Request;
 using HypnoTech.Cms.Contracts.Dtos.Response;
 using HypnoTech.Cms.Forms;
@@ -31,12 +33,12 @@ public sealed class CmsControllerTests : IDisposable
     }
 
     [Fact]
-    public void Add_post_calls_service_flashes_confirmation_and_redirects_to_mapping_index()
+    public async Task Add_post_calls_service_flashes_confirmation_and_redirects_to_mapping_index()
     {
-        var controller = CreateController();
+        var controller = CreateControllerWithTestCancellation();
         var model = new ControllerDocument { Title = "Synthetic page" };
 
-        var result = controller.Add(model, [], []);
+        var result = await controller.Add(model, [], []);
 
         Assert.Same(model, _service.Added);
         Assert.Equal("Added 'Synthetic page'", _flash.LastConfirmation);
@@ -44,12 +46,12 @@ public sealed class CmsControllerTests : IDisposable
     }
 
     [Fact]
-    public void Add_post_returns_form_without_writing_when_validation_fails()
+    public async Task Add_post_returns_form_without_writing_when_validation_fails()
     {
         _service.IsValid = false;
-        var controller = CreateController();
+        var controller = CreateControllerWithTestCancellation();
 
-        var result = controller.Add(new ControllerDocument { Title = "Invalid" }, [], []);
+        var result = await controller.Add(new ControllerDocument { Title = "Invalid" }, [], []);
 
         var view = Assert.IsType<ViewResult>(result);
         Assert.Equal("Cms/Add", view.ViewName);
@@ -59,17 +61,17 @@ public sealed class CmsControllerTests : IDisposable
     }
 
     [Fact]
-    public void Edit_duplicate_remove_and_order_actions_delegate_and_preserve_redirects()
+    public async Task Edit_duplicate_remove_and_order_actions_delegate_and_preserve_redirects()
     {
         var existing = new ControllerDocument { Id = "existing", Title = "Existing page" };
         _service.ById = existing;
-        var controller = CreateController();
+        var controller = CreateControllerWithTestCancellation();
 
-        var edit = controller.Edit(existing, [], [], []);
-        var duplicate = controller.Duplicate(existing, [], []);
-        var remove = controller.Remove(existing.Id);
-        var moveUp = controller.MoveUp(existing.Id);
-        var moveDown = controller.MoveDown(existing.Id);
+        var edit = await controller.Edit(existing, [], [], []);
+        var duplicate = await controller.Duplicate(existing, [], []);
+        var remove = await controller.Remove(existing.Id);
+        var moveUp = await controller.MoveUp(existing.Id);
+        var moveDown = await controller.MoveDown(existing.Id);
 
         Assert.Same(existing, _service.Edited);
         Assert.Same(existing, _service.Duplicated);
@@ -85,14 +87,14 @@ public sealed class CmsControllerTests : IDisposable
     [InlineData(nameof(FormClassMapping.DisableAdd), nameof(CmsController<ControllerDocument>.Add))]
     [InlineData(nameof(FormClassMapping.DisableEdit), nameof(CmsController<ControllerDocument>.Edit))]
     [InlineData(nameof(FormClassMapping.DisableRemove), nameof(CmsController<ControllerDocument>.Remove))]
-    public void Disabled_capability_throws_not_supported(string disableMethod, string action)
+    public async Task Disabled_capability_throws_not_supported(string disableMethod, string action)
     {
         var mapping = FormClassMapping.GetMapping<ControllerDocument>();
         typeof(FormClassMapping).GetMethod(disableMethod)?.Invoke(mapping, null);
         _service.ById = new ControllerDocument { Id = "existing", Title = "Existing" };
-        var controller = CreateController();
+        var controller = CreateControllerWithTestCancellation();
 
-        Assert.Throws<NotSupportedException>(() => action switch
+        await Assert.ThrowsAsync<NotSupportedException>(() => action switch
         {
             nameof(CmsController<ControllerDocument>.Add) => controller.Add(),
             nameof(CmsController<ControllerDocument>.Edit) => controller.Edit("existing"),
@@ -102,7 +104,7 @@ public sealed class CmsControllerTests : IDisposable
     }
 
     [Fact]
-    public void Duplicate_and_ordering_require_explicit_mapping_capabilities()
+    public async Task Duplicate_and_ordering_require_explicit_mapping_capabilities()
     {
         FormClassMapping.Maps.Clear();
         FormClassMapping.RegisterClassMapping<ControllerDocument>(map =>
@@ -111,10 +113,10 @@ public sealed class CmsControllerTests : IDisposable
             map.SetDisplayName("Synthetic Page");
             map.EnableDuplicate();
         });
-        var controller = CreateController();
+        var controller = CreateControllerWithTestCancellation();
 
-        Assert.Throws<NotSupportedException>(() => controller.MoveUp("id"));
-        Assert.Throws<NotSupportedException>(() => controller.MoveDown("id"));
+        await Assert.ThrowsAsync<NotSupportedException>(() => controller.MoveUp("id"));
+        await Assert.ThrowsAsync<NotSupportedException>(() => controller.MoveDown("id"));
 
         FormClassMapping.Maps.Clear();
         FormClassMapping.RegisterClassMapping<ControllerDocument>(map =>
@@ -122,8 +124,19 @@ public sealed class CmsControllerTests : IDisposable
             map.SetControllerName("SyntheticPages");
             map.SetDisplayName("Synthetic Page");
         });
-        controller = CreateController();
-        Assert.Throws<NotSupportedException>(() => controller.Duplicate("id"));
+        controller = CreateControllerWithTestCancellation();
+        await Assert.ThrowsAsync<NotSupportedException>(() => controller.Duplicate("id"));
+    }
+
+    [Fact]
+    public async Task Index_passes_request_cancellation_to_async_service()
+    {
+        using var cancellation = new CancellationTokenSource();
+        var controller = CreateController(cancellation.Token);
+
+        await controller.Index(new CmsListRequest());
+
+        Assert.Equal(cancellation.Token, _service.LastCancellationToken);
     }
 
     [Fact]
@@ -148,11 +161,27 @@ public sealed class CmsControllerTests : IDisposable
         }
     }
 
-    private CmsController<ControllerDocument> CreateController()
+    private CmsController<ControllerDocument> CreateControllerWithTestCancellation()
     {
+        return CreateController(TestContext.Current.CancellationToken);
+    }
+
+    private CmsController<ControllerDocument> CreateController(CancellationToken cancellationToken)
+    {
+        var context = new DefaultHttpContext
+        {
+            RequestAborted = cancellationToken
+        };
+        context.Request.Scheme = "https";
+        context.Request.Host = new HostString("localhost");
+        context.Request.Path = "/Cms/SyntheticPages";
+
         return new CmsController<ControllerDocument>(_service, _flash)
         {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() }
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = context
+            }
         };
     }
 
@@ -187,19 +216,86 @@ public sealed class CmsControllerTests : IDisposable
         public string MovedUpId { get; private set; }
         public string MovedDownId { get; private set; }
         public Form ValidationForm { get; private set; }
+        public CancellationToken LastCancellationToken { get; private set; }
 
         public ICollection<ControllerDocument> GetAll<T>(string orderBy = null, bool descending = false) => [];
+        public Task<ICollection<ControllerDocument>> GetAllAsync<T>(string orderBy = null, bool descending = false, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            return Task.FromResult<ICollection<ControllerDocument>>([]);
+        }
         public void MoveUp(string id) => MovedUpId = id;
+        public Task MoveUpAsync(string id, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            MovedUpId = id;
+            return Task.CompletedTask;
+        }
         public void MoveDown(string id) => MovedDownId = id;
+        public Task MoveDownAsync(string id, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            MovedDownId = id;
+            return Task.CompletedTask;
+        }
         public CmsListReponse<ControllerDocument> GetPaged<T>(CmsListRequest request) => new() { Items = [] };
+        public Task<CmsListReponse<ControllerDocument>> GetPagedAsync<T>(CmsListRequest request, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            return Task.FromResult(new CmsListReponse<ControllerDocument> { Items = [] });
+        }
         public ControllerDocument GetById(string id) => ById;
+        public Task<ControllerDocument> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            return Task.FromResult(ById);
+        }
         public void Add(ControllerDocument model, List<IFormFile> files, List<string> addedFiles) => Added = model;
+        public Task AddAsync(ControllerDocument model, List<IFormFile> files, List<string> addedFiles, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            Added = model;
+            return Task.CompletedTask;
+        }
         public void Duplicate(ControllerDocument model, List<IFormFile> files, List<string> addedFiles) => Duplicated = model;
+        public Task DuplicateAsync(ControllerDocument model, List<IFormFile> files, List<string> addedFiles, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            Duplicated = model;
+            return Task.CompletedTask;
+        }
         public void Edit(ControllerDocument model, List<IFormFile> files, List<string> addedFiles, List<string> removedFiles) => Edited = model;
+        public Task EditAsync(ControllerDocument model, List<IFormFile> files, List<string> addedFiles, List<string> removedFiles, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            Edited = model;
+            return Task.CompletedTask;
+        }
         public void Remove(string id) => RemovedId = id;
+        public Task RemoveAsync(string id, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            RemovedId = id;
+            return Task.CompletedTask;
+        }
         public AddForm BuildAddForm() => new(FormClassMapping.GetMapping<ControllerDocument>());
+        public Task<AddForm> BuildAddFormAsync(CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            return Task.FromResult(BuildAddForm());
+        }
         public EditForm BuildEditForm(string id) => new(FormClassMapping.GetMapping<ControllerDocument>(), ById);
+        public Task<EditForm> BuildEditFormAsync(string id, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            return Task.FromResult(BuildEditForm(id));
+        }
         public DuplicateForm BuildDuplicateForm(string id) => new(FormClassMapping.GetMapping<ControllerDocument>(), ById);
+        public Task<DuplicateForm> BuildDuplicateFormAsync(string id, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            return Task.FromResult(BuildDuplicateForm(id));
+        }
 
         public bool Validate(ControllerDocument model, bool isEdit, List<string> addedFiles, out Form form)
         {
@@ -208,6 +304,13 @@ public sealed class CmsControllerTests : IDisposable
                 : new AddForm(FormClassMapping.GetMapping<ControllerDocument>(), model);
             form = ValidationForm;
             return IsValid;
+        }
+
+        public Task<(bool IsValid, Form Form)> ValidateAsync(ControllerDocument model, bool isEdit, List<string> addedFiles, CancellationToken cancellationToken = default)
+        {
+            LastCancellationToken = cancellationToken;
+            var isValid = Validate(model, isEdit, addedFiles, out var form);
+            return Task.FromResult((isValid, form));
         }
     }
 

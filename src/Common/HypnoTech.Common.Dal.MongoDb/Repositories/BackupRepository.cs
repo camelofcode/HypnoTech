@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Common.Dal.Repositories;
 using HypnoTech.Common.Models;
 using HypnoTech.MongoDb;
@@ -40,6 +42,28 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
             return expando;
         }
 
+        public async Task<dynamic> GetAllDataAsync(
+            List<string> includedTypes,
+            CancellationToken cancellationToken = default)
+        {
+            var expando = new ExpandoObject();
+            MethodInfo method = typeof(BackupRepository).GetMethod(nameof(GetAllAsObjectAsync));
+
+            foreach (var type in ModelRegistry.Registrations)
+            {
+                if (method != null && includedTypes.Contains(type.DataName))
+                {
+                    MethodInfo generic = method.MakeGenericMethod(type.Type);
+                    var task = (Task<object>)generic.Invoke(
+                        null,
+                        new object[] { _database, type.DataName, cancellationToken });
+                    AddProperty(expando, type.DataName, await task);
+                }
+            }
+
+            return expando;
+        }
+
         public static List<T> GetAll<T>(IMongoDatabase database, string table)
         {
             IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(table);
@@ -47,6 +71,16 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
             var items = collection.Find(new BsonDocument());
 
             return items.ToList().Select(p => BsonSerializer.Deserialize<T>(p)).ToList();
+        }
+
+        public static async Task<object> GetAllAsObjectAsync<T>(
+            IMongoDatabase database,
+            string table,
+            CancellationToken cancellationToken)
+        {
+            IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(table);
+            var documents = await collection.Find(new BsonDocument()).ToListAsync(cancellationToken);
+            return documents.Select(p => BsonSerializer.Deserialize<T>(p)).ToList();
         }
 
         private static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)

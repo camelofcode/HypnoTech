@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Common.Dal.Repositories;
 using HypnoTech.Common.Models.Settings;
 using HypnoTech.MongoDb;
@@ -19,10 +21,25 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
             return GetAll<NavBarLink>().OrderBy(p => p.Order).ToList();
         }
 
+        public async Task<List<NavBarLink>> GetNavBarLinksAsync(CancellationToken cancellationToken = default)
+        {
+            return (await GetAllAsync<NavBarLink>(cancellationToken: cancellationToken))
+                .OrderBy(p => p.Order)
+                .ToList();
+        }
+
         public void UpdateNavBarLinks(List<NavBarLink> links)
         {
             Collection.DeleteMany(new BsonDocument());
             Collection.InsertMany(links.Select(p => p.ToBsonDocument()));
+        }
+
+        public async Task UpdateNavBarLinksAsync(List<NavBarLink> links, CancellationToken cancellationToken = default)
+        {
+            await Collection.DeleteManyAsync(new BsonDocument(), cancellationToken);
+            await Collection.InsertManyAsync(
+                links.Select(p => p.ToBsonDocument()),
+                cancellationToken: cancellationToken);
         }
     }
 }

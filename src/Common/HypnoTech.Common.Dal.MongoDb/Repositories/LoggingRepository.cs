@@ -4,6 +4,8 @@ using HypnoTech.Common.Dtos.Responses;
 using HypnoTech.Common.Models.Settings;
 using HypnoTech.MongoDb;
 using Microsoft.Extensions.Options;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Common.Dal.MongoDb.Repositories
 {
@@ -18,9 +20,19 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
             return GetPaged<SerilogEntry>(request, "Timestamp", true);
         }
 
+        public Task<PagedListResponse<SerilogEntry>> GetLogsAsync(PagedRequest request, CancellationToken cancellationToken = default)
+        {
+            return GetPagedAsync<SerilogEntry>(request, "Timestamp", true, cancellationToken);
+        }
+
         public SerilogEntry GetLog(string id)
         {
             return GetByObjectId<SerilogEntry>(id);
+        }
+
+        public Task<SerilogEntry> GetLogAsync(string id, CancellationToken cancellationToken = default)
+        {
+            return GetByObjectIdAsync<SerilogEntry>(id, cancellationToken);
         }
     }
 }

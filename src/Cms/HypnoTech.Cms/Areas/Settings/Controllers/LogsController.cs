@@ -3,6 +3,7 @@ using HypnoTech.Common.Dal.Repositories;
 using HypnoTech.Common.Dtos.Requests;
 using HypnoTech.Common.Security;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HypnoTech.Cms.Areas.Settings.Controllers
 {
@@ -17,18 +18,19 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
             _repository = repository;
         }
 
-        public IActionResult Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1)
         {
-            return View(new LoggingViewModel(_repository.GetLogs(new PagedRequest
+            var logs = await _repository.GetLogsAsync(new PagedRequest
             {
                 Page = page,
                 PageSize = 25
-            }), HttpContext));
+            }, HttpContext.RequestAborted);
+            return View(new LoggingViewModel(logs, HttpContext));
         }
 
-        public IActionResult Details(string id)
+        public async Task<IActionResult> Details(string id)
         {
-            return View(_repository.GetLog(id));
+            return View(await _repository.GetLogAsync(id, HttpContext.RequestAborted));
         }
     }
 }

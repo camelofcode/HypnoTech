@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Common.Models;
 using HypnoTech.Cms.Contracts.Interfaces;
 using HypnoTech.MongoDb;
@@ -32,6 +34,18 @@ namespace HypnoTech.Cms.MongoDb.Repositories
             return (List<object>)result;
         }
 
+        public Task<List<object>> GetSelectListItemsAsync(
+            Type type,
+            CancellationToken cancellationToken = default)
+        {
+            var collection = ModelRegistry.Registrations.FirstOrDefault(p => p.Type == type)?.DataName;
+
+            MethodInfo method = typeof(SelectListRepository).GetMethod(nameof(GetAllAsync));
+            MethodInfo generic = method?.MakeGenericMethod(type);
+            var result = generic?.Invoke(null, new object[] { _database, collection, cancellationToken });
+            return (Task<List<object>>)result;
+        }
+
         public static List<object> GetAll<T>(IMongoDatabase database, string table)
         {
             IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(table);
@@ -45,6 +59,18 @@ namespace HypnoTech.Cms.MongoDb.Repositories
             }
 
             return objects;
+        }
+
+        public static async Task<List<object>> GetAllAsync<T>(
+            IMongoDatabase database,
+            string table,
+            CancellationToken cancellationToken)
+        {
+            IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(table);
+            var documents = await collection.Find(new BsonDocument()).ToListAsync(cancellationToken);
+            var items = documents.Select(p => BsonSerializer.Deserialize<T>(p));
+
+            return items.Cast<object>().ToList();
         }
     }
 }

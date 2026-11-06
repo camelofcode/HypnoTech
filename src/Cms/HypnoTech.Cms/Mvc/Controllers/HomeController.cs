@@ -45,10 +45,12 @@ namespace HypnoTech.Cms.Mvc.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ForgotPassword(string nameOrEmail)
+        public async Task<IActionResult> ForgotPassword(string nameOrEmail)
         {
 
-            if (_forgottenPasswordService.CreatePasswordResetIfUserExists(nameOrEmail))
+            if (await _forgottenPasswordService.CreatePasswordResetIfUserExistsAsync(
+                    nameOrEmail,
+                    HttpContext.RequestAborted))
             {
                 return RedirectToAction("ForgotPasswordEmailSent");
             }
@@ -64,9 +66,9 @@ namespace HypnoTech.Cms.Mvc.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult ChangePassword(string id)
+        public async Task<IActionResult> ChangePassword(string id)
         {
-            if (!_forgottenPasswordService.CheckCode(id))
+            if (!await _forgottenPasswordService.CheckCodeAsync(id, HttpContext.RequestAborted))
             {
                 return RedirectToAction("InvalidOrExpiredCode");
             }
@@ -77,9 +79,11 @@ namespace HypnoTech.Cms.Mvc.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ResetPassword(ForgottenPasswordViewModel model)
+        public async Task<IActionResult> ResetPassword(ForgottenPasswordViewModel model)
         {
-            if (!_forgottenPasswordService.CheckCode(model.Code))
+            if (!await _forgottenPasswordService.CheckCodeAsync(
+                    model.Code,
+                    HttpContext.RequestAborted))
             {
                 return RedirectToAction("InvalidOrExpiredCode");
             }
@@ -91,7 +95,10 @@ namespace HypnoTech.Cms.Mvc.Controllers
                 return RedirectToAction("ChangePassword", new { id = model.Code });
             }
 
-            _forgottenPasswordService.ResetPassword(model.Code, model.Password);
+            await _forgottenPasswordService.ResetPasswordAsync(
+                model.Code,
+                model.Password,
+                HttpContext.RequestAborted);
 
             _flashMessage.Confirmation("Password Changed", "Your password has been changed. Please log in.");
 
@@ -115,14 +122,19 @@ namespace HypnoTech.Cms.Mvc.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(string username, string password)
         {
-            if (_loginService.VerifyUser(username, password))
+            if (await _loginService.VerifyUserAsync(
+                    username,
+                    password,
+                    HttpContext.RequestAborted))
             {
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, username),
                 };
 
-                foreach (var role in _loginService.GetRoles(username))
+                foreach (var role in await _loginService.GetRolesAsync(
+                             username,
+                             HttpContext.RequestAborted))
                 {
                     claims.Add(new Claim(ClaimTypes.Role, role));
                 }
@@ -161,18 +173,25 @@ namespace HypnoTech.Cms.Mvc.Controllers
         }
 
 
-        public IActionResult Account()
+        public async Task<IActionResult> Account()
         {
-            return View(_accountRepository.GetUserByName(HttpContext.User.Identity.Name));
+            return View(await _accountRepository.GetUserByNameAsync(
+                HttpContext.User.Identity.Name,
+                HttpContext.RequestAborted));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<RedirectToActionResult> UpdateAccount(ChangeAccountDetailsViewModel model)
         {
-            if (!string.IsNullOrEmpty(model.Password) && _loginService.VerifyUser(HttpContext.User.Identity.Name, model.Password))
+            if (!string.IsNullOrEmpty(model.Password) && await _loginService.VerifyUserAsync(
+                    HttpContext.User.Identity.Name,
+                    model.Password,
+                    HttpContext.RequestAborted))
             {
-                var existingUser = _userRepository.GetUserForEdit(model.Id);
+                var existingUser = await _userRepository.GetUserForEditAsync(
+                    model.Id,
+                    HttpContext.RequestAborted);
 
                 var message = model.Validate();
                 if (!string.IsNullOrEmpty(message))
@@ -181,7 +200,9 @@ namespace HypnoTech.Cms.Mvc.Controllers
                     return RedirectToAction("Account");
                 }
 
-                message = _accountRepository.UpdateAccount(model.ToAdminUser());
+                message = await _accountRepository.UpdateAccountAsync(
+                    model.ToAdminUser(),
+                    HttpContext.RequestAborted);
                 if (!string.IsNullOrEmpty(message))
                 {
                     _flashMessage.Danger(message);
@@ -210,7 +231,10 @@ namespace HypnoTech.Cms.Mvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<RedirectToActionResult> ChangePassword(ChangeAccountPasswordViewModel model)
         {
-            if (!string.IsNullOrEmpty(model.Password) && _loginService.VerifyUser(HttpContext.User.Identity.Name, model.Password))
+            if (!string.IsNullOrEmpty(model.Password) && await _loginService.VerifyUserAsync(
+                    HttpContext.User.Identity.Name,
+                    model.Password,
+                    HttpContext.RequestAborted))
             {
                 var message = model.Validate();
                 if (!string.IsNullOrEmpty(message))
@@ -219,7 +243,10 @@ namespace HypnoTech.Cms.Mvc.Controllers
                     return RedirectToAction("Account");
                 }
 
-                _accountRepository.ChangePassword(model.Id, PasswordHelper.HashPassword(model.NewPassword));
+                await _accountRepository.ChangePasswordAsync(
+                    model.Id,
+                    PasswordHelper.HashPassword(model.NewPassword),
+                    HttpContext.RequestAborted);
 
                 await HttpContext.SignOutAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme);
