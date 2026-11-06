@@ -2,9 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Authors>Kris Clayton</Authors>
-    <Company>HypnoTech</Company>
-    <Copyright>2020 HypnoTech</Copyright>
     <Description>Contracts for HypnoTech.Cms</Description>
   </PropertyGroup>
 

@@ -1,0 +1,28 @@
+# Keep GitHub's language statistics focused on authored source. These files remain
+# tracked because the engine deliberately ships self-contained frontend assets.
+src/**/lib/** linguist-vendored
+src/**/wwwroot/** linguist-generated
+
+# Normalise text files without changing binary assets.
+* text=auto
+*.slnx text eol=lf
+*.cs text eol=lf
+*.csproj text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.mjs text eol=lf
+*.scss text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+*.eot binary
+*.gif binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.otf binary
+*.png binary
+*.ttf binary
+*.woff binary
+*.woff2 binary

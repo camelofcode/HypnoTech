@@ -2,10 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Company>HypnoTech</Company>
-    <Authors>Kris Clayton, Anamaria Miehs</Authors>
     <Description>Ecommerce for HypnoTech CMS</Description>
-    <Copyright>2020 HypnoTech</Copyright>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
