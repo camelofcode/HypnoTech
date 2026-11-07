@@ -10840,9 +10840,12 @@ return jQuery;
 }(this, function () {
     'use strict';
 
-    //function getAntiForgeryToken() {
-    //    return document.getElementsByName("__RequestVerificationToken")[0].value;
-    //}
+    function addAntiForgeryToken(data) {
+        var token = document.getElementsByName("__RequestVerificationToken")[0];
+        if (token) {
+            data.__RequestVerificationToken = token.value;
+        }
+    }
 
     function doneHandler(response) {
         if (response != undefined) {
@@ -10881,7 +10884,7 @@ return jQuery;
             url = addTimestampToUrl(url);
             data = data || {};
 
-            //data.__RequestVerificationToken = getAntiForgeryToken();
+            addAntiForgeryToken(data);
             var xhr = $.post(url, data);
 
             xhr.done(doneHandler).fail(failHander);
@@ -10895,7 +10898,11 @@ return jQuery;
                 formData.append("files", files[i]);
             }
             formData.append("data", JSON.stringify(data));
-            //formData.append("__RequestVerificationToken", getAntiForgeryToken());
+            var antiForgeryData = {};
+            addAntiForgeryToken(antiForgeryData);
+            if (antiForgeryData.__RequestVerificationToken) {
+                formData.append("__RequestVerificationToken", antiForgeryData.__RequestVerificationToken);
+            }
 
             var options = {
                 url: url,
@@ -10912,6 +10919,7 @@ return jQuery;
         }
     };
 }));
+
 //site.js
 (function () {
     function getRoot() {

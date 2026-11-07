@@ -90,12 +90,12 @@ reports those drops. Normal host disposal flushes the queue during shutdown.
 The Lantern House public example has been exercised on Linux against the pinned
 MongoDB 8.0.32 development target. The Playwright for .NET suite runs the real admin
 and public hosts with a unique database and upload store, fresh browser contexts, and
-headless Chromium, Firefox, and WebKit. The admin host uses test-only ephemeral HTTPS
-so its secure authentication cookie is exercised consistently rather than relaxed for
-automation. The five journeys cover authentication and authorization, dynamic CMS
-validation/CRUD/search/ordering/duplication, a real image upload reaching the public
-website, representative Media, server-calculated basket and postage totals, the
-fail-closed checkout boundary, and a 390 px mobile navigation smoke test. Failures
+headless Chromium, Firefox, and WebKit. Both hosts use test-only ephemeral HTTPS so
+their secure authentication and antiforgery cookies are exercised consistently rather
+than relaxed for automation. The five journeys cover authentication and authorization,
+dynamic CMS validation/CRUD/search/ordering/duplication, a real image upload reaching
+the public website, representative Media, server-calculated basket and postage totals,
+the fail-closed checkout boundary, and a 390 px mobile navigation smoke test. Failures
 retain a trace, screenshot, browser errors, and both application logs. Ubuntu is the
 authoritative three-engine host; Fedora's native WebKit library ABIs are not supported
 by Playwright.

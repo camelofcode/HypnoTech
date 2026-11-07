@@ -19675,20 +19675,18 @@ function CmsListViewModel() {
     
 
     function navigate(sortColumn, direction, search) {
-        var query = "?";
+        var query = new URLSearchParams();
         if (search) {
-            query += "search=" + search + "&";
+            query.set("search", search);
         }
         if (sortColumn) {
-            query += "sortColumn=" + sortColumn + "&";
+            query.set("sortColumn", sortColumn);
         }
-        if (sortColumn) {
-            query += "direction=" + direction + "&";
+        if (direction) {
+            query.set("direction", direction);
         }
-        query = query.slice(0, -1);
 
-        var newUrl = window.location.href.split('?')[0] + query;
-        window.location = newUrl;
+        window.location.search = query.toString();
     }
     function doSearch() {
         var sortElement = document.querySelector("[data-column-sort='Ascending']") ||
@@ -19714,8 +19712,7 @@ function CmsListViewModel() {
 
                 document.getElementById("item-title").innerText = title;
 
-                var removeForm = document.getElementById("remove-form");
-                removeForm.action = removeForm.getAttribute("data-action") + id;
+                document.getElementById("remove-id").value = id;
             }
             //Sort order hookup
             else if (event.target.matches('[data-sort]')) {
@@ -19738,6 +19735,7 @@ function CmsListViewModel() {
         },
         false);
 }
+
 function NavBarLinkViewModel(data) {
     "use strict";
     var self = this;

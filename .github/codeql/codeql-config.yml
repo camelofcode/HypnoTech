@@ -1,0 +1,5 @@
+name: HypnoTech CodeQL configuration
+
+paths-ignore:
+  - "**/lib/**"
+  - "**/wwwroot/js/**"

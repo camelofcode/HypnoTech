@@ -4,11 +4,11 @@
 >
 > **Repository:** `camelofcode/HypnoTech`
 >
-> **Last updated:** 2026-11-06
+> **Last updated:** 2026-11-07
 >
-> **Current phase:** Phase 6 in progress; CMS, Common, Ecommerce, and Media I/O paths converted
+> **Current phase:** Phase 7 in progress; final release candidate under hosted verification
 >
-> **Next action:** Review custom MVC result execution and complete the Phase 6 exit-gate review.
+> **Next action:** Merge PR #19 after its final hosted checks pass, then tag and publish v1.0.0.
 
 ## How to maintain this document
 
@@ -128,7 +128,7 @@ date.
 | --- | --- | --- | --- |
 | Planning | Evidence-based roadmap and tracking system | Complete | Pre-work |
 | 0 | Stable baseline preserved | Complete | Pre-work |
-| 1 | Repository safe and understandable for public release | In progress | v1.0 |
+| 1 | Repository safe and understandable for public release | Complete | v1.0 |
 | 2 | CMS and MongoDB behaviour characterised by tests | Complete | v1.0 |
 | 3 | Projects physically organised without semantic changes | Complete | v1.0 |
 | 4 | Original public example admin and website | Complete | v1.0 |
@@ -260,7 +260,8 @@ tested migration decision.
 - [x] Do not mark authored JavaScript as C# or otherwise misclassify it.
 - [x] Verify attributes locally with `git check-attr`; a full local GitHub Linguist
       installation was not introduced solely for this check.
-- [ ] Push to a branch and confirm the GitHub language bar after its cache refreshes.
+- [x] Push to a branch and confirm the GitHub language bar after its cache refreshes;
+      GitHub reports C# as the clear primary language.
 - [x] Keep runtime assets self-hosted and checked in.
 - [x] Keep exact npm build-tool versions and the root lockfile.
 - [x] Require `npm ci` in documented verification and future automation.
@@ -326,7 +327,7 @@ Repeated implementation work has since justified these workflow-backed additions
 - [x] The exact publication history has passed the final pre-publication secret scan.
 - [x] Source and third-party licensing are explicit, including dependencies whose
       restored metadata does not declare a licence.
-- [ ] GitHub language classification represents authored code honestly after the remote
+- [x] GitHub language classification represents authored code honestly after the remote
       cache refreshes; local attribute and byte checks pass.
 - [x] A new contributor can understand and build the engine from repository docs.
 - [x] Agent instructions are concise, accurate, and repository skills pass the skill
@@ -747,16 +748,16 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [x] Enable private vulnerability reporting so the channel documented in
       `SECURITY.md` is available.
 - [x] Configure Dependabot only after its update policy is documented.
-- [ ] Complete hosted verification of the candidate that replaces CMS jQuery 3.3.1
+- [x] Complete hosted verification of the candidate that replaces CMS jQuery 3.3.1
       and public jQuery 3.5.1 with exact jQuery 3.7.1, and Knockout 3.5.1 with exact
       Knockout 3.5.3.
-- [ ] Enable CodeQL with its default query suite, review the initial C#/JavaScript
+- [x] Enable CodeQL with its default query suite, review the initial C#/JavaScript
       baseline without making it a required check, and decide whether vendored and
       generated paths need an explicit exclusion after seeing the real results.
 
 ### Exit gate
 
-- [ ] A fresh Linux clone passes every documented command.
+- [x] A fresh Linux clone passes every documented command.
 - [x] Required CI is green.
 - [x] No unresolved secret, copyright, or licensing blocker remains.
 - [x] `main` is the public default branch.
@@ -916,7 +917,7 @@ These apply throughout all phases:
 | Third-party assets lack clear notices | Copyright/licensing problem | Inventory files and dependencies; preserve licences; add notices | Resolved for publication; unknown legacy package metadata is stated explicitly |
 | Tracked Montserrat fonts are corrupted | Broken fonts or an unreviewed visual change | Remove only after confirming no authored/generated CSS reference and retain recovery through the baseline refs/bundle | Resolved; owner approved removal of all 18 unreferenced files |
 | Legacy PayPal packages declare no licence metadata | Unclear provenance and public maintenance risk | Do not misstate the licence; document that packages are restored, then resolve provenance during later existing-PayPal work | Accepted known risk; binaries are not committed and provider replacement remains out of scope |
-| Vendored CMS jQuery 3.3.1 predates jQuery 3.5.0 DOM-manipulation XSS fixes and is invisible to the npm lockfile | Public security alerts or exploitable DOM handling | Deliberately upgrade the self-hosted CMS copy to a tested supported release; retain exact version provenance and full browser coverage | Candidate resolved with exact jQuery 3.7.1 and Knockout 3.5.3 dependencies; npm audit, Release build, 77-test Chromium solution, and Firefox journeys are green; hosted WebKit remains the merge gate |
+| Vendored CMS jQuery 3.3.1 predates jQuery 3.5.0 DOM-manipulation XSS fixes and is invisible to the npm lockfile | Public security alerts or exploitable DOM handling | Deliberately upgrade the self-hosted CMS copy to a tested supported release; retain exact version provenance and full browser coverage | Resolved with exact jQuery 3.7.1 and Knockout 3.5.3 dependencies; npm audit and all 11 hosted release checks, including Chromium, Firefox, and WebKit, are green on PR #15 and merged `main` |
 | Physical moves break private site references | Consumer builds fail | Pin production to support branch; temporary smoke builds; optional shims | Open |
 | Static registries make tests order-dependent | Flaky test suite | Serial collections and explicit reset of mutable public registries; make BSON and model registration idempotent | Resolved for current registrations; tests remain serial where global mappings are intentionally mutated |
 | Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Resolved; Lantern House is wholly original and the example tree contains no private-site references |
@@ -960,6 +961,8 @@ These apply throughout all phases:
 | 2026-11-07 | D-028 | Implement EF Core for PostgreSQL and SQL Server first; defer MySQL and NHibernate. | Accepted | One shared EF repository layer plus thin drivers demonstrates portability without doubling ORM mappings, repositories, transactions, and tests before a consumer needs them. |
 | 2026-11-07 | D-029 | Keep Admin/CMS and public Website persistence mappings independent. | Accepted | The public host must remain free to use focused read models and a different DAL or ORM rather than inheriting edit-oriented Admin mappings. |
 | 2026-11-07 | D-030 | Defer public NuGet publication until a dedicated package audit and local-feed consumer rehearsal pass. | Accepted | nuget.org versions are immutable; the GitHub v1 source release should not force premature package IDs or dependency boundaries. |
+| 2026-11-07 | D-031 | Use Dependabot for security fixes only across NuGet, npm, and GitHub Actions. | Accepted | The pinned repository is maintained by one developer; routine version PRs create review and CI churn without a concrete upgrade need, while automated vulnerability updates remain valuable and are never auto-merged. |
+| 2026-11-07 | D-032 | Keep CodeQL non-blocking and scan authored C#, JavaScript, and Actions through a pinned advanced workflow. | Accepted | Default setup produced 104 mostly duplicated alerts from third-party and generated JavaScript and cannot apply a repository-local exclusion file in this personal repository. The advanced workflow retains the default query suite while excluding only `lib` trees and generated `wwwroot/js` outputs. |
 
 ## Work log
 
@@ -1030,18 +1033,21 @@ stating that work was done.
 | 2026-11-07 | Phase 7 | Completed the first successful hosted release-candidate run on standard free public runners. | Run `42321468198` passed all 11 jobs: frontend freshness, Release build, 40 unit/architecture tests with coverage, 19 MongoDB contracts across 4.0.3/8.0/9.0, 15 example integration tests, five journeys in each of Chromium/Firefox/WebKit, and informative Ubuntu/Windows/macOS builds. Container-backed jobs use Ubuntu 22.04 because Ubuntu 24.04's hosted kernel is incompatible with the pinned MongoDB images; WebKit's cold dependency install made its successful job approximately 20 minutes. | This change |
 | 2026-11-07 | Phase 7 | Established the v1 formatting and analyzer baseline. | A dedicated mechanical commit normalised 59 C# files with no non-whitespace source change beyond removing five UTF-8 BOMs; `dotnet format --verify-no-changes` is clean and takes roughly nine seconds. Minimum/Recommended analysis identified 18/233 legacy advisories; the clean .NET 10 Default warning set is enforced as errors while the wider backlog remains documented. | This change |
 | 2026-11-07 | Phase 7 | Added the public architecture/presentation and release documentation. | README feature/audience text and authentic local-demo screenshots show the Website and authenticated generated CMS; the architecture diagram records the Admin/Website boundary; limitations, code-quality, NuGet packaging, and v1.0.0 release notes are explicit. | This change |
-| 2026-11-07 | Phase 7 | Hardened public repository governance. | Eight Linux release checks are required on `main` for administrators; force-push/deletion are disabled; secret scanning, push protection, Dependabot security updates, monthly reviewed NuGet/GitHub Actions version updates, private vulnerability reporting, accurate topics, and a portfolio description are enabled. npm receives security-fix pull requests only. | GitHub repository settings plus this change |
+| 2026-11-07 | Phase 7 | Hardened public repository governance. | Eight Linux release checks are required on `main` for administrators; force-push/deletion are disabled; secret scanning, push protection, Dependabot security updates, private vulnerability reporting, accurate topics, and a portfolio description are enabled. Routine version-update PRs are disabled across all ecosystems; security updates are never auto-merged. | GitHub repository settings plus this change |
 | 2026-11-07 | Phase 7 | Audited the CodeQL and vendored-browser-library boundary before enabling code scanning. | CodeQL is available but not configured or merge-blocking. The actual bundles use CMS jQuery 3.3.1, public jQuery 3.5.1, and Knockout 3.5.1; upstream evidence shows Knockout remains maintained at 3.5.3, while the CMS jQuery snapshot predates the 3.5.0 XSS fixes and must be resolved before v1.0. | This change |
 | 2026-11-07 | Phase 7 | Replaced the obsolete vendored jQuery and Knockout core snapshots with exact, integrity-locked npm development dependencies while preserving committed self-hosted bundles. | Clean `npm ci` reports zero vulnerabilities and enforces the fail-closed install-script allowlist; all five frontend bundles are current; the 30-project Release build has zero warnings/errors; formatting is clean; the complete Podman/Chromium solution passes 77/77 and Firefox passes 5/5. Hosted WebKit is the remaining authoritative browser gate. | This change |
 | 2026-11-07 | Phase 7 | Corrected a WebKit-only CMS browser-test race exposed by two post-merge `main` runs. | Traces showed the public Articles request starting before the edit POST completed. The journey now waits for the exact server-rendered Added/Updated success alert after each save; the complete stateful Chromium suite passes repeatedly and again after the dependency upgrades. | This change |
+| 2026-11-07 | Phase 7 | Merged the release candidate after full hosted verification. | PR #15 and the resulting `main` push both passed all 11 CI jobs, including exact frontend dependency installation, Release build/formatting, the layered unit/integration suites, the MongoDB 4.0/8.0/9.0 matrix, Chromium/Firefox/WebKit journeys, and Ubuntu/Windows/macOS portability builds. GitHub now reports C# as the primary repository language. | PR #15 |
+| 2026-11-07 | Phase 7 | Triaged the first non-blocking CodeQL default-setup scan and hardened authored request paths. | The initial scan correctly exposed third-party/generated JavaScript noise plus authored findings: uploaded-file traversal/logging, missing antiforgery validation, and unsafe CMS list URL construction. The implementation now confines upload reads, avoids logging request-derived paths, validates login/basket/checkout posts, supplies tokens through the public Ajax contract, and encodes CMS navigation values. Focused Common tests pass 12/12, Chromium journeys pass 5/5, and the runtime-aware Podman wrapper passes the complete 79-test solution. | This change |
+| 2026-11-07 | Phase 7 | Passed the complete documented release sequence from a fresh Linux clone of the final PR commit. | Restore and exact `npm ci` succeed with zero npm vulnerabilities; Release build has zero warnings/errors; formatting and all five generated bundles are current; the Chromium journey passes 5/5; and the runtime-aware rootless-Podman wrapper passes all 79 solution tests. | PR #19 |
+| 2026-11-07 | Phase 7 | Established a clean authored-source CodeQL baseline. | The pinned advanced workflow runs the default query suite across C#, JavaScript/TypeScript, and Actions while excluding only third-party `lib` trees and committed `wwwroot/js` build outputs. All three hosted analyses pass and PR #19 has zero open code-scanning alerts after the authored findings were fixed. CodeQL remains informative rather than merge-required for v1.0. | PR #19 |
+| 2026-11-07 | Phase 7 | Corrected the end-to-end public host to use test-only HTTPS after antiforgery hardening exposed WebKit's strict secure-cookie handling. | Chromium and Firefox permit `Secure` cookies on plain localhost, but WebKit correctly withheld the public antiforgery cookie over HTTP. The fixture now serves both Admin and Website with the same ephemeral certificate, preserving production cookie policy and testing the intended HTTPS deployment boundary. | PR #19 |
 
 ## Immediate next actions
 
-1. Push the release-closeout branch and require the complete hosted CI matrix, including
-   the WebKit save-race regression.
-2. Verify the release-closeout branch from a fresh Linux clone and merge it through the
-   protected `main` checks.
-3. Enable CodeQL default setup on the merged release candidate and triage its initial
-   non-blocking C#/JavaScript scan.
-4. Tag that exact `main` commit as annotated `v1.0.0`, publish the GitHub Release, then
-   begin Phase 8 by extracting provider-independent persistence contracts.
+1. Merge the final release-governance and CodeQL-baseline pull request after its hosted
+   CI and authored-source scan pass.
+2. Verify that exact candidate from a fresh Linux clone using the corrected
+   Docker/Podman-aware commands.
+3. Tag the resulting `main` commit as annotated `v1.0.0` and publish the GitHub Release.
+4. Begin Phase 8 by extracting provider-independent persistence contracts.

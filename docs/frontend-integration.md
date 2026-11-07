@@ -49,6 +49,16 @@ uses platform globals such as `events`, `ko`, `CartViewModel` or `PlayerViewMode
 <script src="~/js/site.js" asp-append-version="true"></script>
 ```
 
+Render one antiforgery token in the full-document layout so the platform Ajax helper
+can protect Ecommerce calculation posts and any host POST endpoints that use it:
+
+```razor
+@Html.AntiForgeryToken()
+```
+
+The helper adds the token automatically when it is present. Keep the token outside
+`#content` so it remains available across partial-page navigation.
+
 The engine serves pinned, self-hosted browser assets from its static-web-asset
 projects. A consuming application does not need a CDN, npm install or Node.js runtime.
 

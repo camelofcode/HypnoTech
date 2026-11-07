@@ -77,9 +77,9 @@ revision pinned by Playwright when needed, and runs the suite:
 
 Chromium is the quick default. Use `--browser firefox`, `--browser webkit`, or
 `--all-browsers` to select another engine or run all three. The explicit browser form
-is suitable for a later GitHub Actions matrix. The admin test host uses ephemeral
-HTTPS so the engine's secure authentication-cookie policy is tested without being
-weakened for local automation.
+is suitable for a later GitHub Actions matrix. Both test hosts use ephemeral HTTPS so
+the engine's secure authentication- and antiforgery-cookie policies are tested without
+being weakened for local automation.
 
 Use a Playwright-supported Ubuntu/Debian host for the complete native three-engine
 run. Fedora can run the Chromium and Firefox checks, but its WebKit dependencies have
@@ -91,11 +91,17 @@ Failures retain a screenshot, trace, browser errors, and application logs under
 
 ## Full suite and coverage
 
-Once the container API is configured, run the solution:
+Once the container API is available, run the solution through the runtime-aware
+wrapper:
 
 ```bash
-dotnet test HypnoTech.slnx -c Release
+./tests/run-solution-tests.sh
 ```
+
+The wrapper uses `DOCKER_HOST` when it is already configured. Otherwise it selects a
+running rootless Podman socket when present and leaves the normal Docker default
+unchanged on Docker hosts. Extra `dotnet test` arguments are forwarded unchanged, so
+`./tests/run-solution-tests.sh --no-build` is suitable after a Release build.
 
 On a fresh machine, run `./tests/run-end-to-end.sh` once first so the pinned Chromium
 binary is available to the end-to-end project included in the solution.

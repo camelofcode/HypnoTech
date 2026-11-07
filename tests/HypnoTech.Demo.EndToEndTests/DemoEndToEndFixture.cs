@@ -62,7 +62,7 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
 
     public string AdminUrl => $"https://localhost:{AdminPort}";
 
-    public string WebsiteUrl => $"http://localhost:{WebsitePort}";
+    public string WebsiteUrl => $"https://localhost:{WebsitePort}";
 
     public string BrowserName { get; }
 
@@ -163,14 +163,9 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
         startInfo.ArgumentList.Add("--no-launch-profile");
 
         startInfo.Environment["ASPNETCORE_ENVIRONMENT"] = "Development";
-        startInfo.Environment["ASPNETCORE_URLS"] = name == "admin"
-            ? $"https://127.0.0.1:{port}"
-            : $"http://127.0.0.1:{port}";
-        if (name == "admin")
-        {
-            startInfo.Environment["ASPNETCORE_Kestrel__Certificates__Default__Path"] = _certificatePath;
-            startInfo.Environment["ASPNETCORE_Kestrel__Certificates__Default__Password"] = _certificatePassword;
-        }
+        startInfo.Environment["ASPNETCORE_URLS"] = $"https://127.0.0.1:{port}";
+        startInfo.Environment["ASPNETCORE_Kestrel__Certificates__Default__Path"] = _certificatePath;
+        startInfo.Environment["ASPNETCORE_Kestrel__Certificates__Default__Password"] = _certificatePassword;
         startInfo.Environment["Mongo__Server"] = _mongo.Hostname;
         startInfo.Environment["Mongo__Port"] = _mongo.GetMappedPublicPort(MongoPort).ToString();
         startInfo.Environment["Mongo__Database"] = _databaseName;

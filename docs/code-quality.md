@@ -39,19 +39,31 @@ on intended files during normal development.
 
 ## Dependency updates
 
-Dependabot checks NuGet and GitHub Actions monthly. Compatible minor and patch updates
-are grouped by ecosystem; major updates remain separate so their migration and
-compatibility impact is visible. npm does not receive routine version-update pull
-requests: its exact direct versions and lockfile remain fixed until a maintainer chooses
-to review an upgrade. Dependabot security updates remain enabled independently for all
-supported ecosystems and should be handled promptly.
+Dependabot security updates are enabled for every supported ecosystem, but scheduled
+version-update pull requests are deliberately disabled. NuGet, npm, and GitHub Actions
+remain pinned until a maintainer chooses to review an upgrade; this keeps a stable
+single-maintainer repository from producing routine bot churn while still surfacing
+known vulnerabilities promptly.
 
-Updates are never auto-merged. They must pass the same required CI checks as authored
-changes, retain pinned frontend output, and preserve the MongoDB 4.0.3 production
-contract unless a separately reviewed migration changes that baseline.
+Security updates are never auto-merged. They must pass the same required CI checks as
+authored changes, retain pinned frontend output, and preserve the MongoDB 4.0.3
+production contract unless a separately reviewed migration changes that baseline.
 
 The npm 11 install-script allowlist is fail-closed. The only current dependency with an
 install script, `@parcel/watcher`, is explicitly denied because HypnoTech does not need
 its native watcher installation during reproducible builds. If a later dependency adds
 an install script, `npm ci` fails until that exact package is reviewed and explicitly
 allowed or denied in `package.json`.
+
+## Code scanning
+
+The non-blocking `CodeQL` workflow runs the default query suite for C#, authored
+JavaScript/TypeScript, and GitHub Actions on pull requests, `main`, a weekly schedule,
+and manual dispatches. Its configuration excludes third-party `lib` trees and committed
+`wwwroot/js` build outputs; their exact dependencies and generated-source freshness are
+covered by the dependency audit and frontend build instead. Authored frontend sources
+remain in scope so an exclusion cannot hide application JavaScript.
+
+CodeQL is deliberately separate from the required CI gate for the v1.0 baseline. New
+authored-code alerts must still be triaged before a release; do not dismiss a finding
+solely to obtain a green status.

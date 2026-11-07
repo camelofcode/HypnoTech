@@ -60,7 +60,7 @@ dotnet format HypnoTech.slnx --no-restore --verify-no-changes --verbosity minima
 npm ci
 npm run check:frontend
 ./tests/run-end-to-end.sh
-dotnet test HypnoTech.slnx -c Release --no-build
+./tests/run-solution-tests.sh --no-build
 ```
 
 Generated frontend assets are committed, so normal .NET consumers do not need npm.
