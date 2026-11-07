@@ -11,6 +11,7 @@
     <site-styles></site-styles>
 </head>
 <body>
+    @Html.AntiForgeryToken()
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
         <a class="brand" asp-controller="Home" asp-action="Index" data-testid="brand-link" data-navigo>

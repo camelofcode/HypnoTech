@@ -15,6 +15,7 @@ namespace HypnoTech.Ecommerce.Frontend.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetDetails(BasketSummary summary)
         {
             return Ok(await _basketService.GetDetailsAsync(

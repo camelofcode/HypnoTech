@@ -91,11 +91,17 @@ Failures retain a screenshot, trace, browser errors, and application logs under
 
 ## Full suite and coverage
 
-Once the container API is configured, run the solution:
+Once the container API is available, run the solution through the runtime-aware
+wrapper:
 
 ```bash
-dotnet test HypnoTech.slnx -c Release
+./tests/run-solution-tests.sh
 ```
+
+The wrapper uses `DOCKER_HOST` when it is already configured. Otherwise it selects a
+running rootless Podman socket when present and leaves the normal Docker default
+unchanged on Docker hosts. Extra `dotnet test` arguments are forwarded unchanged, so
+`./tests/run-solution-tests.sh --no-build` is suitable after a Release build.
 
 On a fresh machine, run `./tests/run-end-to-end.sh` once first so the pinned Chromium
 binary is available to the end-to-end project included in the solution.

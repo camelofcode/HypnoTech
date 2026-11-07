@@ -38,7 +38,21 @@ namespace HypnoTech.Common.Services
             bool enableRangeProcessing,
             CancellationToken cancellationToken)
         {
-            var path = Path.GetFullPath(Path.Combine(_basePath, category, section, filename));
+            var categoryPath = Path.TrimEndingDirectorySeparator(
+                Path.GetFullPath(Path.Combine(_basePath, category)));
+            var path = Path.GetFullPath(Path.Combine(categoryPath, section, filename));
+            var categoryPrefix = categoryPath + Path.DirectorySeparatorChar;
+            var pathComparison = OperatingSystem.IsWindows()
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+
+            if (!path.StartsWith(categoryPrefix, pathComparison))
+            {
+                _logger.LogWarning(
+                    "Rejected uploaded {Category} file request outside its configured directory.",
+                    category);
+                return null;
+            }
 
             try
             {
@@ -58,8 +72,8 @@ namespace HypnoTech.Common.Services
             catch (Exception exception)
             {
                 _logger.LogWarning(exception,
-                    "Could not serve uploaded {Category} file from {Path}. UploadPath resolved to {UploadPath}.",
-                    category, path, _basePath);
+                    "Could not serve uploaded {Category} file.",
+                    category);
                 return null;
             }
         }

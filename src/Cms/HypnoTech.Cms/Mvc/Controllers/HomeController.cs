@@ -120,6 +120,7 @@ namespace HypnoTech.Cms.Mvc.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string username, string password)
         {
             if (await _loginService.VerifyUserAsync(
