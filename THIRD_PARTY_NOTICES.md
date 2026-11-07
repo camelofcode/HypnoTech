@@ -110,6 +110,10 @@ the solution, not only explicit `PackageReference` entries.
 | Microsoft.ApplicationInsights | 2.23.0 | MIT |
 | Microsoft.Bcl.AsyncInterfaces | 6.0.0 | MIT |
 | Microsoft.DiaSymReader | 2.2.10 | MIT |
+| Microsoft.EntityFrameworkCore / Abstractions / Relational / Analyzers | 10.0.14 | MIT |
+| Microsoft.EntityFrameworkCore.SqlServer | 10.0.14 | MIT |
+| Microsoft.Data.SqlClient | 6.1.7 | MIT |
+| Microsoft.Data.SqlClient.SNI.runtime | 6.0.3 | MIT |
 | Microsoft.Playwright | 1.64.1 | MIT |
 | Microsoft.Testing.Extensions.CodeCoverage | 18.11.2 | Microsoft .NET Library licence (licence file in package) |
 | Microsoft.Testing.Extensions.Telemetry | 2.5.1 | MIT |
@@ -119,6 +123,7 @@ the solution, not only explicit `PackageReference` entries.
 | MongoDB.Bson | 3.4.3 | Apache-2.0 |
 | MongoDB.Driver | 3.4.3 | Apache-2.0 |
 | Newtonsoft.Json | 13.0.4 | MIT |
+| Npgsql / Npgsql.EntityFrameworkCore.PostgreSQL | 10.0.3 | PostgreSQL licence |
 | PayPal | 2.0.0-rc2 | Not declared in package metadata |
 | Serilog | 4.3.0 | Apache-2.0 |
 | Serilog.AspNetCore | 10.0.0 | Apache-2.0 |
@@ -137,7 +142,8 @@ the solution, not only explicit `PackageReference` entries.
 | SkiaSharp.NativeAssets.Win32 | 4.152.1 | MIT |
 | Snappier | 1.3.1 | BSD-3-Clause |
 | System.Security.AccessControl | 6.0.1 | MIT |
-| Testcontainers / Testcontainers.MongoDb | 4.16.0 | MIT |
+| System.Security.Cryptography.Pkcs | 9.0.22 | MIT |
+| Testcontainers / Testcontainers.MongoDb / Testcontainers.PostgreSql / Testcontainers.MsSql | 4.16.0 | MIT |
 | BouncyCastle.Cryptography | 2.7.0 | MIT |
 | Docker.DotNet.Enhanced and transport packages | 4.3.3 | MIT |
 | SharpZipLib | 1.4.2 | MIT |

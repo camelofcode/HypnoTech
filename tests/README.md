@@ -59,6 +59,25 @@ TESTCONTAINERS_RYUK_DISABLED=true \
 dotnet test tests/HypnoTech.Demo.IntegrationTests -c Release
 ```
 
+## EF Core relational integration suite
+
+The EF suite applies the inherited CMS, Common, Ecommerce, and Media contracts to real
+PostgreSQL 18.1 and SQL Server 2022 CU22 GDR1 databases. It also proves that startup
+migrates before seeding by default and that controlled deployments can disable both.
+
+With rootless Podman:
+
+```bash
+DOCKER_HOST="unix://${XDG_RUNTIME_DIR}/podman/podman.sock" \
+TESTCONTAINERS_RYUK_DISABLED=true \
+dotnet test \
+  tests/HypnoTech.Cms.EntityFrameworkCore.PostgreSql.IntegrationTests \
+  -c Release
+```
+
+The project name records that PostgreSQL was implemented first; its fixture now runs
+the identical contracts against both supported relational providers.
+
 ## Focused browser suite
 
 The Playwright suite starts one pinned MongoDB 8.0 container and the real Lantern

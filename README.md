@@ -3,8 +3,8 @@
 [![CI](https://github.com/camelofcode/HypnoTech/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/camelofcode/HypnoTech/actions/workflows/ci.yml)
 
 HypnoTech is a modular ASP.NET Core engine for content-managed websites. It combines
-a convention-driven CMS with reusable Common, Ecommerce, Media, Frontend, and MongoDB
-components. It is aimed at developers building bespoke, content-heavy sites that need
+a convention-driven CMS with reusable Common, Ecommerce, Media, Frontend, and swappable
+persistence components. It is aimed at developers building bespoke, content-heavy sites that need
 an editable admin application without surrendering control of the public website's
 models, rendering, or data-access design.
 
@@ -14,7 +14,8 @@ The engine currently provides:
 - account, authentication, email, configuration, navigation, and logging components;
 - ecommerce models, administration, cart/checkout support, and the legacy PayPal path;
 - media models, administration, and frontend player support;
-- swappable repository contracts with MongoDB implementations;
+- swappable repository contracts with MongoDB and driver-free EF Core implementations;
+- thin PostgreSQL and SQL Server adapters that do not pull in the unselected driver;
 - self-hosted frontend assets with reproducible npm-based bundle generation.
 
 ## Status
@@ -25,11 +26,17 @@ unit/integration/architecture coverage, and a focused Chromium/Firefox/WebKit br
 suite. Existing production consumers remain pinned to the preserved legacy branch,
 and MongoDB Server 4.0.3 compatibility remains a required CI gate.
 
+The v1.1 work in progress adds EF Core 10 implementations for PostgreSQL and SQL Server.
+Both real databases pass the inherited CMS, Common, Ecommerce, Media, and startup
+lifecycle contracts; the public demo provider switch remains before the v1.1 release.
+
 See [PUBLIC_READINESS_PLAN.md](PUBLIC_READINESS_PLAN.md) for the phased roadmap and
 work record, [docs/architecture.md](docs/architecture.md) for the design,
 [docs/compatibility.md](docs/compatibility.md) for tested versions,
 [docs/persistence-contracts.md](docs/persistence-contracts.md) for interchangeable
-database-provider behaviour, and
+database-provider behaviour,
+[docs/entity-framework-core.md](docs/entity-framework-core.md) for relational setup,
+migrations, and provider packaging, and
 [docs/limitations.md](docs/limitations.md) for intentionally unsupported or deferred
 areas. The automated gates are described in [docs/ci.md](docs/ci.md) and
 [docs/code-quality.md](docs/code-quality.md).
@@ -53,7 +60,7 @@ Prerequisites:
 
 - a .NET 10 SDK compatible with `global.json`;
 - Node.js 22 or newer and npm 11.16.0 for rebuilding frontend assets.
-- Docker or Podman with its Docker-compatible API socket for MongoDB integration tests.
+- Docker or Podman with its Docker-compatible API socket for database integration tests.
 
 ```bash
 dotnet restore HypnoTech.slnx
@@ -73,7 +80,7 @@ npm run build:frontend
 npm run check:frontend
 ```
 
-The unit, architecture, and MongoDB characterisation suites are under `tests/`. The
+The unit, architecture, MongoDB, PostgreSQL, and SQL Server suites are under `tests/`. The
 MongoDB suite runs the same repository contracts against production MongoDB 4.0.3 and
 pinned MongoDB 8.0 and 9.0 releases. Podman setup, focused commands, and coverage
 instructions are in [`tests/README.md`](tests/README.md). The runnable original
@@ -94,12 +101,12 @@ nuget.org Trusted Publishing setup, and future consumer migration are defined in
 
 Source projects are grouped physically by functional area:
 
-- `src/Cms/` — dynamic CMS, contracts, MongoDB implementation, and frontend source;
+- `src/Cms/` — dynamic CMS, contracts, MongoDB/EF implementations, and frontend source;
 - `src/Common/` — shared services, models, security, email, and DAL contracts;
 - `src/Ecommerce/` — ecommerce domain, admin/frontend support, DAL, and frontend source;
 - `src/Media/` — media domain, frontend support, DAL, and frontend source;
 - `src/Frontend/` — general website helpers and shared frontend source;
-- `src/Persistence/` — shared MongoDB infrastructure;
+- `src/Persistence/` — shared MongoDB/EF infrastructure and thin database adapters;
 - `tests/` — xUnit v3 unit, architecture, Testcontainers integration, and Playwright tests;
 - `examples/` — the fictional Lantern House admin, public website, and safe seed data;
 - `tools/` — deterministic frontend build tooling.

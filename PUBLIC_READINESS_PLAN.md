@@ -6,9 +6,9 @@
 >
 > **Last updated:** 2026-11-07
 >
-> **Current phase:** Phase 8 complete; interchangeable persistence behaviour is executable
+> **Current phase:** Phase 9 in progress; shared EF repositories pass on PostgreSQL and SQL Server
 >
-> **Next action:** Begin Phase 9 with the driver-free EF Core context and mapping architecture.
+> **Next action:** Add provider-specific Lantern House Admin contexts/migrations and a documented demo provider switch.
 
 ## How to maintain this document
 
@@ -136,7 +136,7 @@ date.
 | 6 | Async I/O modernisation | Complete | v1.0 |
 | 7 | CI, documentation, `main`, and public release | Complete | v1.0 |
 | 8 | Persistence contracts hardened | Complete | v1.1 |
-| 9 | EF Core implementations and provider packaging | Not started | v1.1 |
+| 9 | EF Core implementations and provider packaging | In progress | v1.1 |
 
 ### Ordering constraints
 
@@ -819,65 +819,64 @@ src/Media/
 
 ### Architecture
 
-- [ ] Shared EF project contains context abstractions, conventions, model contributors,
+- [x] Shared EF project contains context abstractions, conventions, model contributors,
       transactions, and no concrete database driver.
-- [ ] Module EF projects implement the existing repository interfaces without taking a
+- [x] Module EF projects implement the existing repository interfaces without taking a
       dependency on SQL Server, PostgreSQL, or MySQL provider packages.
-- [ ] Thin provider projects contain only the selected driver and provider-specific
+- [x] Thin provider projects contain only the selected driver and provider-specific
       registration/configuration.
-- [ ] A host installs exactly one provider unless it intentionally uses multiple
+- [x] A host installs exactly one provider unless it intentionally uses multiple
       contexts.
-- [ ] Admin/CMS and public Website contexts and mappings remain independent. Admin owns
+- [x] Admin/CMS and public Website contexts and mappings remain independent. Admin owns
       write mappings and migrations; Website owns focused read repositories and may
       use different models, mappings, DAL, or ORM entirely.
 - [ ] Site-specific migrations live in the Admin host/provider example because
       consumer CMS model types contribute to the EF model.
-- [ ] Normal EF startup applies pending migrations before any seed operation and fails
+- [x] Normal EF startup applies pending migrations before any seed operation and fails
       startup if either step fails; no manual migration command is required by default.
-- [ ] Provide an explicit automatic-migration opt-out for controlled deployment
+- [x] Provide an explicit automatic-migration opt-out for controlled deployment
       pipelines without changing the migrate-then-seed default used by the examples.
-- [ ] Generic CMS repositories use `DbContext.Set<T>()` only after model registration,
+- [x] Generic CMS repositories use `DbContext.Set<T>()` only after model registration,
       key, naming, search, ordering, relationship, and conversion requirements are
       defined.
 
 Illustrative registration target:
 
 ```csharp
-services.AddHypnoTechEntityFrameworkCore<DemoAdminDbContext>(
-    options => options.UseNpgsql(connectionString));
+services.AddHypnoTechPostgreSql<DemoAdminDbContext>(connectionString);
 
-services.UseEntityFrameworkCoreForCms<DemoAdminDbContext>();
-services.UseEntityFrameworkCoreForCommon<DemoAdminDbContext>();
-services.UseEntityFrameworkCoreForEcommerce<DemoAdminDbContext>();
-services.UseEntityFrameworkCoreForMedia<DemoAdminDbContext>();
+services.UseEntityFrameworkCoreForCms();
+services.UseEntityFrameworkCoreForCommon();
+services.UseEntityFrameworkCoreForEcommerce();
+services.UseEntityFrameworkCoreForMedia(configuration);
 ```
 
-Exact public APIs should be decided through tests and an implementation review rather
-than copied blindly from this illustration.
+`AddHypnoTechSqlServer<DemoAdminDbContext>` is the equivalent SQL Server selection; the
+module registrations and repositories do not change.
 
 ### Provider sequence
 
-- [ ] Re-check the current EF Core provider compatibility matrix at implementation time.
-- [ ] Build the provider-neutral relational layer first.
-- [ ] Prefer PostgreSQL as the first Linux-friendly target if an aligned provider exists
+- [x] Re-check the current EF Core provider compatibility matrix at implementation time.
+- [x] Build the provider-neutral relational layer first.
+- [x] Prefer PostgreSQL as the first Linux-friendly target if an aligned provider exists
       for the chosen EF Core major version.
-- [ ] Add SQL Server with the same contract suite.
+- [x] Add SQL Server with the same contract suite.
 - [x] Defer MySQL/MariaDB from v1.1; evaluate Oracle versus Pomelo licensing, support,
       and EF-major compatibility only when a concrete consumer justifies it.
 - [x] Defer NHibernate from v1.1. Keep repository contracts and provider suites capable
       of accepting a later NHibernate implementation without creating an ORM-neutral
       query abstraction or coupling Website mappings to Admin.
-- [ ] Run contract tests against real containerised databases, not only EF's in-memory
+- [x] Run contract tests against real containerised databases, not only EF's in-memory
       provider.
 
 ### Exit gate
 
 - [ ] The demo applications can select MongoDB or a supported EF provider through
       startup registration.
-- [ ] Each host brings in only its selected database driver.
-- [ ] All supported providers pass the common contract suite.
-- [ ] MongoDB remains supported and its existing persisted schema is unchanged.
-- [ ] Provider limitations and migration ownership are documented.
+- [x] Each host brings in only its selected database driver.
+- [x] All supported providers pass the common contract suite.
+- [x] MongoDB remains supported and its existing persisted schema is unchanged.
+- [x] Provider limitations and migration ownership are documented.
 
 ## Cross-cutting release rules
 
@@ -910,7 +909,7 @@ These apply throughout all phases:
 | Q-005 | Must unchanged private sites ever consume reorganised public `main`, or may they remain pinned to the support branch? | Phase 3 | Answered: remain pinned |
 | Q-006 | What neutral theme should the public demo use? | Phase 4 | Answered: Lantern House, a fictional independent arts venue |
 | Q-007 | Should external contributions be accepted before a contributor-licensing process exists? | Phase 7 | Answered: no external contributions will be accepted |
-| Q-008 | Which relational provider should be implemented first once the provider matrix is rechecked? | Phase 9 | Proposed: PostgreSQL if compatible |
+| Q-008 | Which relational provider should be implemented first once the provider matrix is rechecked? | Phase 9 | Answered: PostgreSQL first, followed by SQL Server |
 | Q-009 | How long should synchronous compatibility methods remain after public controllers move to async APIs? | Phase 6 | Answered: remove before v1.0; production remains pinned to `support/legacy-production` |
 | Q-010 | Which verified Montserrat release should replace the 18 corrupted baseline font files, or should Montserrat be removed? | Phase 1 | Answered: remove them; all 18 were corrupted and unreferenced |
 | Q-011 | Is the legacy PayPal/Braintree NuGet provenance gap acceptable until the deferred payment work, given that binaries are restored rather than vendored? | Phase 1 | Answered: accept as a documented risk until existing-PayPal work; no package binaries are committed |
@@ -931,7 +930,7 @@ These apply throughout all phases:
 | Playwright suite becomes slow or brittle | CI friction | Keep five journey-based tests, parallelise CI by browser, and retain engine-specific traces on failure | Mitigated; Chromium, Firefox, and WebKit are green in required hosted CI, with WebKit's approximately 20-minute cold job given a 40-minute hard ceiling for download variance |
 | Async conversion changes routes or behaviour | Public regression | Characterisation tests first; preserve action names/routes; convert in bounded slices | Resolved for Phase 6; the full 77-test suite passes after sync removal |
 | Async APIs are wrappers over blocking work | Misleading API and thread-pool pressure | Require native provider async APIs; prohibit `Task.Run` and blocking waits in request paths | Resolved; architecture guards reject blocking waits and synchronous public I/O contracts |
-| EF providers support different EF major versions | Package conflicts or delayed providers | Recheck matrix; align EF major; add providers incrementally | Open |
+| EF providers support different EF major versions | Package conflicts or delayed providers | EF/Relational/SQL Server 10.0.14 and Npgsql EF 10.0.3 are pinned; both pass the same real-database contracts | Resolved for current PostgreSQL/SQL Server targets |
 | Repository skills become decorative or stale | Misleading AI story | Start with two workflow-backed skills; test commands; evolve from use | Open |
 
 ## Decision log
@@ -972,6 +971,8 @@ These apply throughout all phases:
 | 2026-11-07 | D-032 | Keep CodeQL non-blocking and scan authored C#, JavaScript, and Actions through a pinned advanced workflow. | Accepted | Default setup produced 104 mostly duplicated alerts from third-party and generated JavaScript and cannot apply a repository-local exclusion file in this personal repository. The advanced workflow retains the default query suite while excluding only `lib` trees and generated `wwwroot/js` outputs. |
 | 2026-11-07 | D-033 | Define persistence behaviour once in inherited provider-neutral suites while retaining storage-format compatibility in provider-specific tests. | Accepted | Plain contract models and public async interfaces prevent BSON or EF accidents becoming universal requirements; the Mongo adapter proves the same facts on 4.0.3, 8.0.32, and 9.0.4. |
 | 2026-11-07 | D-034 | Make EF Core startup apply migrations before seeding by default, with an explicit opt-out for controlled deployment pipelines. | Accepted | A newly configured HypnoTech host should become usable without a manual migration command, while operators who separate schema deployment retain a supported path. |
+| 2026-11-07 | D-035 | Pin EF Core/Relational/SQL Server at 10.0.14 and Npgsql EF/Npgsql at 10.0.3 for the first relational implementation. | Accepted | These stable .NET 10-compatible releases allow one driver-free repository layer; real PostgreSQL and SQL Server contracts prove the aligned graph rather than relying only on declared version ranges. |
+| 2026-11-07 | D-036 | Keep application-level `IHypnoTechStartupSeeder` distinct from the CMS `ISeedRepository`. | Accepted | The startup hook owns migrate-then-seed ordering, while the existing repository remains the lower-level operation for loading a named JSON seed into an empty mapped store. |
 
 ## Work log
 
@@ -1053,12 +1054,14 @@ stating that work was done.
 | 2026-11-07 | Phase 7 | Corrected the end-to-end public host to use test-only HTTPS after antiforgery hardening exposed WebKit's strict secure-cookie handling. | Chromium and Firefox permit `Secure` cookies on plain localhost, but WebKit correctly withheld the public antiforgery cookie over HTTP. The fixture now serves both Admin and Website with the same ephemeral certificate, preserving production cookie policy and testing the intended HTTPS deployment boundary. | PR #19 |
 | 2026-11-07 | Phase 7 | Published the first stable public release and closed the Phase 7 exit gate. | PR #19 merged as `ceec378`; the exact `main` commit passed all 11 CI jobs and the C#, JavaScript/TypeScript, and Actions CodeQL analyses. Obsolete default-setup analyses were removed, the one containment-guard false positive was dismissed with rationale, and the repository has zero open code-scanning alerts. Annotated tag `v1.0.0` and the GitHub Release were published with the prepared release notes. | [`v1.0.0`](https://github.com/camelofcode/HypnoTech/releases/tag/v1.0.0) |
 | 2026-11-07 | Phase 8 | Added inherited provider-neutral CMS, Common, Ecommerce, and Media repository contracts and removed their duplicated Mongo assertions. | Plain CMS models plus every current module repository interface exercise CRUD, generated/nested IDs, children, select lists, idempotent seeding, users/accounts, config, countries, email templates, logs, backups, navbar, catalogue, postage, orders, download codes, Media queries, search, paging, sorting, ordering, and cancellation. MongoDB passes 31/31 contract and storage checks on 4.0.3, 8.0.32, and 9.0.4; the 31-project Release build and formatting gate are clean, and the complete rootless-Podman/Chromium solution passes 93/93. | This change |
+| 2026-11-07 | Phase 9 | Added the driver-free EF Core foundation, CMS/Common/Ecommerce/Media repository implementations, and thin PostgreSQL and SQL Server provider packages. | The same 29 inherited contract/lifecycle facts pass against PostgreSQL 18.1 and SQL Server 2022 CU22 GDR1, including explicit ordered persistence for nested CMS lists and galleries. Startup migrates before ordered seeders on both providers and exposes an explicit opt-out. An architecture guard rejects concrete drivers in all five shared/module EF projects; SQL Server alone pins the patched Pkcs 9.0.22 transitive servicing release. The 39-project Release build and formatting gate are clean, and the aggregate rootless-Podman/Chromium suite passes 124/124, including unchanged MongoDB 4.0.3/8.0/9.0 behavior. | This change |
+| 2026-11-07 | Phase 9 | Corrected a relational contract-ordering failure exposed by the first hosted CI run. | The CMS relational fixture now composes Common, Ecommerce, and Media mappings before the dynamic CMS contributor, matching the documented Admin context and making CMS-visible module registrations valid regardless of test-class ordering. The 39-project Release build and formatting gate are clean, and two consecutive PostgreSQL/SQL Server runs pass 29/29. | PR #22 |
 
 ## Immediate next actions
 
-1. Re-check the .NET 10 EF Core provider matrix and pin compatible PostgreSQL and SQL
-   Server packages.
-2. Implement the driver-free EF Core context, mapping contributors, repository base,
-   transaction boundary, and migrate-before-seed startup lifecycle.
-3. Add the PostgreSQL thin provider first and make it pass the complete inherited
-   contract suite against a real container.
+1. Add provider-specific Lantern House Admin contexts and migrations; keep the public
+   Website context independent.
+2. Make the demo's persistence choice explicit and prove MongoDB, PostgreSQL, and SQL
+   Server startup paths without making one host bring in every driver.
+3. Complete aggregate MongoDB/relational/example/browser verification and close the
+   Phase 9 exit gate.

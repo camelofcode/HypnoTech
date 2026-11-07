@@ -6,8 +6,9 @@ the same pull request are cancelled.
 
 ## Required Linux checks
 
-The frontend, build, and container-free required jobs use the standard `ubuntu-24.04`
-GitHub-hosted runner. Container-backed jobs use the standard `ubuntu-22.04` runner:
+The frontend, build, container-free, and relational jobs use the standard
+`ubuntu-24.04` GitHub-hosted runner. MongoDB-backed jobs use the standard
+`ubuntu-22.04` runner:
 
 - `Frontend assets` installs the pinned Node.js/npm toolchain with `npm ci` and rejects
   stale committed browser bundles.
@@ -16,6 +17,9 @@ GitHub-hosted runner. Container-backed jobs use the standard `ubuntu-22.04` runn
   coverage for seven days.
 - `MongoDB compatibility` runs the repository contracts against the pinned production
   4.0.3, supported 8.0.32, and current 9.0.4 images.
+- `EF Core relational compatibility` runs the same provider-neutral contracts plus
+  migrate-before-seed lifecycle checks against PostgreSQL 18.1 and SQL Server 2022
+  CU22 GDR1.
 - `Example integration` starts MongoDB 8.0.32 and tests the real Lantern House admin
   host, seed data, public rendering boundaries, and payment safety boundary.
 - `Playwright (chromium|firefox|webkit)` runs the five browser journeys independently
@@ -63,6 +67,7 @@ dotnet test tests/HypnoTech.Cms.UnitTests -c Release
 dotnet test tests/HypnoTech.Common.UnitTests -c Release
 dotnet test tests/HypnoTech.ArchitectureTests -c Release
 dotnet test tests/HypnoTech.Cms.MongoDb.IntegrationTests -c Release
+dotnet test tests/HypnoTech.Cms.EntityFrameworkCore.PostgreSql.IntegrationTests -c Release
 dotnet test tests/HypnoTech.Demo.IntegrationTests -c Release
 ./tests/run-end-to-end.sh --all-browsers
 ```

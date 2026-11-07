@@ -6,6 +6,10 @@ namespace HypnoTech.Common.Models.Settings
 {
     public class PasswordReset
     {
+        private PasswordReset()
+        {
+        }
+
         public string Email { get; set; }
 
         public string Username { get; set; }

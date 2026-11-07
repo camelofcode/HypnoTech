@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../HypnoTech.Ecommerce.Dal/HypnoTech.Ecommerce.Dal.csproj" />
+    <ProjectReference Include="../HypnoTech.Ecommerce.Models/HypnoTech.Ecommerce.Models.csproj" />
+    <ProjectReference Include="../../Common/HypnoTech.Common.Dal/HypnoTech.Common.Dal.csproj" />
+    <ProjectReference Include="../../Common/HypnoTech.Common/HypnoTech.Common.csproj" />
+    <ProjectReference Include="../../Persistence/HypnoTech.EntityFrameworkCore/HypnoTech.EntityFrameworkCore.csproj" />
+  </ItemGroup>
+
+</Project>

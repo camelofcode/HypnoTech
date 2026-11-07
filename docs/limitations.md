@@ -5,12 +5,14 @@ platform, or payment integration is complete.
 
 ## Persistence
 
-- MongoDB is the only implemented persistence provider in 1.0.
+- MongoDB is the production-proven provider in 1.0. The in-development v1.1 relational
+  layer now implements PostgreSQL and SQL Server; the public demo provider switch and
+  host-owned migration examples remain before the v1.1 exit gate.
 - MongoDB Server 4.0.3 remains a tested production-compatibility constraint, while
   8.0.32 is the recommended supported target and 9.0.4 is exercised as the current
   compatibility target.
-- EF Core PostgreSQL and SQL Server implementations are planned only after the common
-  provider contract suite is complete. MySQL and NHibernate are explicitly deferred.
+- EF Core PostgreSQL and SQL Server pass the common provider contract suite against
+  real containers. MySQL and NHibernate are explicitly deferred.
 - Production database migration is operational work outside the engine release; see
   the [MongoDB migration plan](operations/mongodb-production-migration.md).
 

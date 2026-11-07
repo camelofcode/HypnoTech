@@ -4,10 +4,12 @@
   </Folder>
   <Folder Name="/src/Cms/">
     <Project Path="src/Cms/HypnoTech.Cms.Contracts/HypnoTech.Cms.Contracts.csproj" />
+    <Project Path="src/Cms/HypnoTech.Cms.EntityFrameworkCore/HypnoTech.Cms.EntityFrameworkCore.csproj" />
     <Project Path="src/Cms/HypnoTech.Cms.MongoDb/HypnoTech.Cms.MongoDb.csproj" />
     <Project Path="src/Cms/HypnoTech.Cms/HypnoTech.Cms.csproj" />
   </Folder>
   <Folder Name="/src/Common/">
+    <Project Path="src/Common/HypnoTech.Common.Dal.EntityFrameworkCore/HypnoTech.Common.Dal.EntityFrameworkCore.csproj" />
     <Project Path="src/Common/HypnoTech.Common.Dal.MongoDb/HypnoTech.Common.Dal.MongoDb.csproj" />
     <Project Path="src/Common/HypnoTech.Common.Dal/HypnoTech.Common.Dal.csproj" />
     <Project Path="src/Common/HypnoTech.Common.Emails/HypnoTech.Common.Emails.csproj" />
@@ -16,6 +18,7 @@
     <Project Path="src/Common/HypnoTech.Common/HypnoTech.Common.csproj" />
   </Folder>
   <Folder Name="/src/Ecommerce/">
+    <Project Path="src/Ecommerce/HypnoTech.Ecommerce.Dal.EntityFrameworkCore/HypnoTech.Ecommerce.Dal.EntityFrameworkCore.csproj" />
     <Project Path="src/Ecommerce/HypnoTech.Ecommerce.Dal.MongoDb/HypnoTech.Ecommerce.Dal.MongoDb.csproj" />
     <Project Path="src/Ecommerce/HypnoTech.Ecommerce.Dal/HypnoTech.Ecommerce.Dal.csproj" />
     <Project Path="src/Ecommerce/HypnoTech.Ecommerce.Frontend/HypnoTech.Ecommerce.Frontend.csproj" />
@@ -23,6 +26,7 @@
     <Project Path="src/Ecommerce/HypnoTech.Ecommerce/HypnoTech.Ecommerce.csproj" />
   </Folder>
   <Folder Name="/src/Media/">
+    <Project Path="src/Media/HypnoTech.Media.Dal.EntityFrameworkCore/HypnoTech.Media.Dal.EntityFrameworkCore.csproj" />
     <Project Path="src/Media/HypnoTech.Media.Dal.MongoDb/HypnoTech.Media.Dal.MongoDb.csproj" />
     <Project Path="src/Media/HypnoTech.Media.Dal/HypnoTech.Media.Dal.csproj" />
     <Project Path="src/Media/HypnoTech.Media.Frontend/HypnoTech.Media.Frontend.csproj" />
@@ -30,6 +34,9 @@
     <Project Path="src/Media/HypnoTech.Media/HypnoTech.Media.csproj" />
   </Folder>
   <Folder Name="/src/Persistence/">
+    <Project Path="src/Persistence/HypnoTech.EntityFrameworkCore.PostgreSql/HypnoTech.EntityFrameworkCore.PostgreSql.csproj" />
+    <Project Path="src/Persistence/HypnoTech.EntityFrameworkCore.SqlServer/HypnoTech.EntityFrameworkCore.SqlServer.csproj" />
+    <Project Path="src/Persistence/HypnoTech.EntityFrameworkCore/HypnoTech.EntityFrameworkCore.csproj" />
     <Project Path="src/Persistence/HypnoTech.MongoDb/HypnoTech.MongoDb.csproj" />
   </Folder>
   <Folder Name="/examples/">
@@ -41,6 +48,7 @@
     <Project Path="tests/HypnoTech.ArchitectureTests/HypnoTech.ArchitectureTests.csproj" />
   </Folder>
   <Folder Name="/tests/Cms/">
+    <Project Path="tests/HypnoTech.Cms.EntityFrameworkCore.PostgreSql.IntegrationTests/HypnoTech.Cms.EntityFrameworkCore.PostgreSql.IntegrationTests.csproj" />
     <Project Path="tests/HypnoTech.Cms.MongoDb.IntegrationTests/HypnoTech.Cms.MongoDb.IntegrationTests.csproj" />
     <Project Path="tests/HypnoTech.Cms.UnitTests/HypnoTech.Cms.UnitTests.csproj" />
   </Folder>

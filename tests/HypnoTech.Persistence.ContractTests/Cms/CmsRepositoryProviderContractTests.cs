@@ -246,6 +246,44 @@ public abstract class CmsRepositoryProviderContractTests : IDisposable
     }
 
     [Fact]
+    public async Task Edit_replaces_nested_list_and_gallery_values()
+    {
+        await ForEachContextAsync(async context =>
+        {
+            var repository = context.CreateRepository<CmsContractArticle>();
+            var article = new CmsContractArticle
+            {
+                Heading = "Nested edit",
+                Sections = [new CmsContractSection { Name = "Before" }],
+                Photos = [new CmsContractPhoto { Path = "/Images/before.png", Caption = "Before" }]
+            };
+            await repository.AddAsync(article, TestContext.Current.CancellationToken);
+
+            var loaded = await repository.GetByIdAsync(
+                article.Id,
+                TestContext.Current.CancellationToken);
+            loaded.Sections = [new CmsContractSection { Name = "After" }];
+            loaded.Photos =
+            [
+                new CmsContractPhoto { Path = "/Images/after.png", Caption = "After" },
+                new CmsContractPhoto { Path = "/Images/second.png", Caption = "Second" }
+            ];
+
+            await repository.EditAsync(loaded, TestContext.Current.CancellationToken);
+
+            var edited = await repository.GetByIdAsync(
+                article.Id,
+                TestContext.Current.CancellationToken);
+            Assert.Equal("After", Assert.Single(edited.Sections).Name);
+            Assert.Equal(["After", "Second"], edited.Photos.Select(photo => photo.Caption));
+            Assert.All(
+                edited.Sections.Select(section => section.Id)
+                    .Concat(edited.Photos.Select(photo => photo.Id)),
+                identifier => Assert.False(string.IsNullOrWhiteSpace(identifier)));
+        });
+    }
+
+    [Fact]
     public async Task Registered_child_is_populated_and_a_null_reference_remains_unset()
     {
         await ForEachContextAsync(async context =>
