@@ -77,9 +77,9 @@ revision pinned by Playwright when needed, and runs the suite:
 
 Chromium is the quick default. Use `--browser firefox`, `--browser webkit`, or
 `--all-browsers` to select another engine or run all three. The explicit browser form
-is suitable for a later GitHub Actions matrix. The admin test host uses ephemeral
-HTTPS so the engine's secure authentication-cookie policy is tested without being
-weakened for local automation.
+is suitable for a later GitHub Actions matrix. Both test hosts use ephemeral HTTPS so
+the engine's secure authentication- and antiforgery-cookie policies are tested without
+being weakened for local automation.
 
 Use a Playwright-supported Ubuntu/Debian host for the complete native three-engine
 run. Fedora can run the Chromium and Firefox checks, but its WebKit dependencies have

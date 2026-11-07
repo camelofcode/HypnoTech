@@ -4,11 +4,11 @@
 >
 > **Repository:** `camelofcode/HypnoTech`
 >
-> **Last updated:** 2026-11-06
+> **Last updated:** 2026-11-07
 >
-> **Current phase:** Phase 6 in progress; CMS, Common, Ecommerce, and Media I/O paths converted
+> **Current phase:** Phase 7 in progress; final release candidate under hosted verification
 >
-> **Next action:** Review custom MVC result execution and complete the Phase 6 exit-gate review.
+> **Next action:** Merge PR #19 after its final hosted checks pass, then tag and publish v1.0.0.
 
 ## How to maintain this document
 
@@ -1041,6 +1041,7 @@ stating that work was done.
 | 2026-11-07 | Phase 7 | Triaged the first non-blocking CodeQL default-setup scan and hardened authored request paths. | The initial scan correctly exposed third-party/generated JavaScript noise plus authored findings: uploaded-file traversal/logging, missing antiforgery validation, and unsafe CMS list URL construction. The implementation now confines upload reads, avoids logging request-derived paths, validates login/basket/checkout posts, supplies tokens through the public Ajax contract, and encodes CMS navigation values. Focused Common tests pass 12/12, Chromium journeys pass 5/5, and the runtime-aware Podman wrapper passes the complete 79-test solution. | This change |
 | 2026-11-07 | Phase 7 | Passed the complete documented release sequence from a fresh Linux clone of the final PR commit. | Restore and exact `npm ci` succeed with zero npm vulnerabilities; Release build has zero warnings/errors; formatting and all five generated bundles are current; the Chromium journey passes 5/5; and the runtime-aware rootless-Podman wrapper passes all 79 solution tests. | PR #19 |
 | 2026-11-07 | Phase 7 | Established a clean authored-source CodeQL baseline. | The pinned advanced workflow runs the default query suite across C#, JavaScript/TypeScript, and Actions while excluding only third-party `lib` trees and committed `wwwroot/js` build outputs. All three hosted analyses pass and PR #19 has zero open code-scanning alerts after the authored findings were fixed. CodeQL remains informative rather than merge-required for v1.0. | PR #19 |
+| 2026-11-07 | Phase 7 | Corrected the end-to-end public host to use test-only HTTPS after antiforgery hardening exposed WebKit's strict secure-cookie handling. | Chromium and Firefox permit `Secure` cookies on plain localhost, but WebKit correctly withheld the public antiforgery cookie over HTTP. The fixture now serves both Admin and Website with the same ephemeral certificate, preserving production cookie policy and testing the intended HTTPS deployment boundary. | PR #19 |
 
 ## Immediate next actions
 
