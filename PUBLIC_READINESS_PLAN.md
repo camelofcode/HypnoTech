@@ -6,9 +6,10 @@
 >
 > **Last updated:** 2026-11-07
 >
-> **Current phase:** Phase 9 complete; v1.1.0 release candidate
+> **Current phase:** v1.1.0 published; public-readiness programme complete
 >
-> **Next action:** Merge the release-preparation PR after CI, then tag and publish v1.1.0.
+> **Next action:** Maintain the published compatibility gates and open a new phase only
+> when its scope is explicitly prioritised.
 
 ## How to maintain this document
 
@@ -1062,10 +1063,10 @@ stating that work was done.
 | 2026-11-07 | Phase 9 | Corrected a relational contract-ordering failure exposed by the first hosted CI run. | The CMS relational fixture now composes Common, Ecommerce, and Media mappings before the dynamic CMS contributor, matching the documented Admin context and making CMS-visible module registrations valid regardless of test-class ordering. The 39-project Release build and formatting gate are clean, and two consecutive PostgreSQL/SQL Server runs pass 29/29. | PR #22 |
 | 2026-11-07 | Phase 9 | Added executable MongoDB, PostgreSQL, and SQL Server choices to Lantern House and closed the local implementation gate. | The readable Startup switches preserve the Admin/Website boundary; provider-specific Admin migrations run before seed; the Website owns an independent read model; and the manual Podman launcher accepts `--provider`. The 39-project Release build and formatting gate are clean; both provider migrations report no pending model changes; the complete MongoDB/relational/demo/Chromium suite passes 124/124; and the focused CMS create/upload/edit/public-read/duplicate/delete Chromium journey also passes against PostgreSQL and SQL Server. | This change |
 | 2026-11-07 | Phase 9 | Prepared the v1.1.0 release candidate, codified the exercised release workflow, and closed the Phase 9 exit gate. | PR #23 merged as `c5cb69e` after every hosted CI, CodeQL, relational-provider, browser, and platform check passed. Shared version metadata now resolves `Version`, `VersionPrefix`, and `PackageVersion` to `1.1.0`; the release-only 39-project build and formatting gate are clean; current documentation and release notes describe the completed provider support and compatibility boundaries; and the `release-engine` skill passes its validator. | This change |
+| 2026-11-07 | Phase 9 | Published the stable v1.1.0 source release and completed the public-readiness programme. | PR #24 merged as `1bdc0cd`; post-merge CI run `42344620176` and CodeQL run `42344620263` passed on that exact commit. Annotated tag `v1.1.0` peels to `1bdc0cd`, and the non-draft, non-prerelease GitHub Release is marked Latest with the tracked release notes. | [`v1.1.0`](https://github.com/camelofcode/HypnoTech/releases/tag/v1.1.0) |
 
 ## Immediate next actions
 
-1. Review and merge the v1.1.0 release-preparation pull request after required hosted
-   CI is green.
-2. Create annotated tag `v1.1.0` from the exact merged and verified `main` commit and
-   publish the GitHub Release using `docs/releases/v1.1.0.md`.
+1. Keep the `v1.0.0` and `v1.1.0` tags and GitHub Release artifacts immutable.
+2. Treat NuGet publication, additional database/ORM providers, payment providers, and
+   production MongoDB migration as separately authorised future work.
