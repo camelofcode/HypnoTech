@@ -30,7 +30,7 @@ const projects = {
     output: 'src/Frontend/HypnoTech.Frontend/wwwroot/js',
     bundle: 'hypnotech.frontend',
     scripts: [
-      'lib/jquery/dist/jquery.js',
+      { dependency: 'jquery/dist/jquery.js' },
       'lib/navigo/navigo.min.js',
       'js/utilities.js',
       'js/events.js',
@@ -43,7 +43,7 @@ const projects = {
     output: 'src/Media/HypnoTech.Media.Frontend/wwwroot/js',
     bundle: 'hypnotech.media',
     scripts: [
-      'lib/knockout/knockout.js',
+      { dependency: 'knockout/build/output/knockout-latest.js' },
       'lib/knockout/knockout.validation.js',
       'js/player.js'
     ]
@@ -54,7 +54,7 @@ const projects = {
     bundle: 'hypnotech.ecommerce',
     scripts: [
       'lib/cookie-js/Cookie.js',
-      'lib/knockout/knockout.js',
+      { dependency: 'knockout/build/output/knockout-latest.js' },
       'lib/knockout/knockout.validation.js',
       'js/cart.js',
       'js/checkout.js'
@@ -69,10 +69,10 @@ const projects = {
       output: 'src/Cms/HypnoTech.Cms/wwwroot/css/style'
     },
     scripts: [
-      'lib/jquery/dist/jquery.js',
+      { dependency: 'jquery/dist/jquery.js' },
       'lib/bootstrap/popper.min.js',
       'lib/bootstrap/dist/js/bootstrap.js',
-      'lib/knockout/knockout.js',
+      { dependency: 'knockout/build/output/knockout-latest.js' },
       'lib/lodash/lodash.js',
       'lib/cookie-js/Cookie.js',
       'lib/tinymce/wysiwyg.js',
@@ -144,6 +144,10 @@ async function collectScripts(project) {
   for (const entry of project.scripts) {
     if (typeof entry === 'string') {
       parts.push(await readText(path.join(source, entry)));
+      continue;
+    }
+    if (entry.dependency) {
+      parts.push(await readText(path.join(root, 'node_modules', entry.dependency)));
       continue;
     }
     for (const file of await listJavaScriptFiles(path.join(source, entry.directory))) {
