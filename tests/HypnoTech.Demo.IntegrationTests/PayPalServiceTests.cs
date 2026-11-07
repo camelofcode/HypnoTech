@@ -154,17 +154,10 @@ public sealed class PayPalServiceTests
             _config = config;
         }
 
-        public Config GetConfig() => _config;
-
         public Task<Config> GetConfigAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             return Task.FromResult(_config);
-        }
-
-        public void SetConfig(Config config)
-        {
-            _config = config;
         }
 
         public Task SetConfigAsync(Config config, CancellationToken cancellationToken = default)

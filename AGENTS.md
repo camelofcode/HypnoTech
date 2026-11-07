@@ -38,6 +38,11 @@ integration, architecture, or future browser tests. It defines the shared conven
 for synthetic fixtures, static registry isolation, MongoDB compatibility targets, and
 characterisation-first assertions.
 
+Run the `test-external-http-integrations` skill when testing an outbound HTTP client or
+third-party SDK adapter. It defines the local protocol-stub boundary, safety rules,
+failure coverage, and dependency policy; automated tests must never contact live or
+sandbox providers.
+
 Run the `author-async-request-paths` skill when adding or revising controllers,
 services, repository contracts, or persistence implementations. It defines the
 project's inheritance, module-boundary, native-async, cancellation, and async-only

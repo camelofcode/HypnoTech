@@ -15,12 +15,43 @@ result is evidence to record, not permission to silently correct production code
 2. For dynamic CMS or persistence behaviour, run `cms-compatibility-review` before
    changing production code.
 3. Choose the narrowest layer that proves the behaviour:
-   - unit tests for mappings, forms, controllers, services, and pure helpers;
-   - MongoDB integration tests for driver queries, BSON, ordering, paging, and DI;
-   - architecture tests for dependency and repository invariants;
-   - Playwright only for behaviour that requires the example applications and browser.
+   - unit tests for calculations, transformations, validation, branching, error
+     mapping, cancellation propagation, mappings, forms, controllers, services, and
+     pure helpers;
+   - integration tests for MongoDB queries and BSON, DI composition, middleware,
+     filesystem behaviour, SDK behaviour, and HTTP wire contracts;
+   - architecture tests for dependency direction and rules that source inspection can
+     prove reliably;
+   - Playwright only for behaviour that requires a real browser or interaction across
+     several application layers.
 4. Use hand-written fakes when the dependency surface is small. Add a mocking library
    only when repeated test code shows a clear need.
+
+## Decide when new coverage is required
+
+- Add a focused regression test for every bug fix at the lowest layer that reproduces
+  the defect.
+- Add or revise tests when observable behaviour, a public contract, a route, persisted
+  data, provider interaction, security boundary, or failure mode changes.
+- A pure refactor does not need a contrived new test when existing coverage already
+  proves the behaviour, but the relevant suite must still run.
+- Documentation and mechanical-only changes need proportionate verification, not an
+  unrelated test-count increase.
+- Do not duplicate the same assertion at every layer. Add a broader test only when it
+  protects integration that a narrow test cannot observe.
+
+## Choose honest test doubles
+
+- Fake small HypnoTech-owned interfaces directly in unit tests and model only the
+  behaviour the test needs.
+- Do not mock MongoDB Driver internals. Exercise repository behaviour against the real
+  pinned MongoDB containers.
+- Do not mock a third-party SDK's internal call chain. For outbound HTTP or SDK
+  adapters, use `test-external-http-integrations` and exercise the real client against
+  a local protocol stub.
+- Assert returned state, persisted state, emitted requests, or other observable
+  outcomes. Verify calls only when the interaction itself is the contract, such as
+  preventing a payment request or sending exactly one side-effecting operation.
 
 ## Keep fixtures safe and deterministic
 

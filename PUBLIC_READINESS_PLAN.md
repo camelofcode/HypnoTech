@@ -294,7 +294,7 @@ Add a compact root `AGENTS.md` containing:
 - [x] The boundary deferring payment-provider work.
 - [x] Explicit triggers for the initial repository skills.
 
-Start with only two narrow skills:
+The initial repository guidance started with two narrow skills:
 
 - [x] `.agents/skills/verify-engine-change/`
   - Select and run the appropriate build, frontend freshness, unit, integration, and
@@ -308,6 +308,19 @@ Start with only two narrow skills:
 Add further skills only after a repeated workflow exists. A public-release skill is a
 good later candidate once the release process has been exercised manually.
 
+Repeated implementation work has since justified these workflow-backed additions:
+
+- [x] `.agents/skills/author-characterisation-tests/`
+  - Choose the narrowest honest test boundary and define when new coverage is required.
+  - Keep fixtures synthetic, deterministic, isolated, and compatible with the MongoDB
+    test matrix.
+- [x] `.agents/skills/author-async-request-paths/`
+  - Keep repository and I/O-bound service contracts async-only with cancellation.
+  - Preserve controller, module, and provider boundaries.
+- [x] `.agents/skills/test-external-http-integrations/`
+  - Exercise real HTTP clients and SDK adapters against local protocol stubs.
+  - Prohibit live/sandbox calls and brittle mocks of third-party SDK internals.
+
 ### Exit gate
 
 - [ ] The exact publication history has passed the final pre-publication secret scan.
@@ -316,8 +329,8 @@ good later candidate once the release process has been exercised manually.
 - [ ] GitHub language classification represents authored code honestly after the remote
       cache refreshes; local attribute and byte checks pass.
 - [x] A new contributor can understand and build the engine from repository docs.
-- [x] Agent instructions are concise, accurate, and both repository skills pass the
-      skill validator.
+- [x] Agent instructions are concise, accurate, and repository skills pass the skill
+      validator.
 
 ## Phase 2 — Characterisation and test foundation
 
@@ -692,6 +705,19 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [ ] Do not claim a browser/OS combination until it has a repeatable CI environment;
       prefer the full cross-platform matrix where runner/container support permits it.
 
+### Code style and static analysis
+
+- [ ] Audit the built-in .NET/Roslyn analyzers against the current source and record a
+      clean, intentional baseline before increasing severities.
+- [ ] Enforce selected correctness and code-style diagnostics during normal builds,
+      excluding generated and vendored source where appropriate.
+- [ ] Decide whether CI should treat all build warnings as errors after the analyzer
+      baseline is repeatably clean.
+- [ ] Keep `dotnet format` optional unless a timed `--no-restore` verification run is
+      fast and stable enough for CI; analyzer enforcement is the primary style gate.
+- [ ] If baseline formatting is needed, make it a dedicated mechanical change rather
+      than mixing it with behavioural work.
+
 ### Public presentation
 
 - [ ] Add a concise architecture diagram.
@@ -970,6 +996,8 @@ stating that work was done.
 | 2026-11-06 | Phase 6 | Isolated the synchronous Serilog sink contract behind pinned `Serilog.Sinks.Async` 2.1.0 and closed the Phase 6 exit gate. | A bounded 1,000-event warning queue drops rather than blocks when full; dependency/licence and compatibility documentation are current. All five frontend outputs are current; the 30-project Release build passes with zero warnings/errors; architecture tests pass 4/4; MongoDB contracts pass 19/19 across 4.0.3, 8.0.32, and 9.0.4; demo integration passes 17/17; and the complete Podman/Chromium solution passes 80/80. | This change |
 | 2026-11-07 | Phase 6 | Removed the duplicate synchronous repository and I/O-bound service surface from public `main`. | CMS, Common, Ecommerce, Media, Frontend, email, PayPal, MongoDB helpers, public-example repositories, audio enrichment, and demo seeding are async-only; seeding now runs as an async hosted service. CPU-only APIs remain synchronous, and Serilog `Emit` remains the sole framework-mandated queued sync-I/O contract. Production sites remain untouched on `support/legacy-production`. | This change |
 | 2026-11-07 | Phase 6 | Updated repository guidance and added an architecture guard against synchronous public I/O contracts. | The async authoring skill validates; Release builds with 0 warnings/errors; architecture tests pass 5/5; and the complete rootless-Podman/Chromium solution passes 77/77. Three compatibility-only tests were removed while behavioral coverage continues through async characterisation tests. | This change |
+| 2026-11-07 | Phase 7 preparation | Strengthened test-boundary guidance and added the `test-external-http-integrations` skill. | The guidance now defines when to add unit, integration, architecture, and browser coverage; prefers observable outcomes over mock-call trivia; and standardises safe local protocol stubs without live/sandbox traffic. All five repository skills validate, the 30-project Release build passes with 0 warnings/errors, and demo integration tests pass 15/15 through rootless Podman. | This change |
+| 2026-11-07 | Phase 7 preparation | Added a measured code-style and static-analysis gate to the Phase 7 plan. | Built-in Roslyn analyzers will be baselined and selected diagnostics enforced before considering warnings-as-errors; `dotnet format` remains optional unless a timed no-restore CI run proves fast and stable. Formatting churn must remain separate from behavioural changes. | This change |
 
 ## Immediate next actions
 
