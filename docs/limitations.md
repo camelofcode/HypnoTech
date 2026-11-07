@@ -1,13 +1,13 @@
 # Known limitations
 
-HypnoTech 1.0 is a stable public baseline, not a claim that every planned provider,
+HypnoTech 1.1 is a stable public release, not a claim that every planned provider,
 platform, or payment integration is complete.
 
 ## Persistence
 
-- MongoDB is the production-proven provider in 1.0. The in-development v1.1 relational
-  layer now implements PostgreSQL and SQL Server; the public demo provider switch and
-  host-owned migration examples remain before the v1.1 exit gate.
+- MongoDB remains the production-proven provider. Version 1.1 adds PostgreSQL and SQL
+  Server through the shared EF Core layer, including provider selection and host-owned
+  migrations in the public example.
 - MongoDB Server 4.0.3 remains a tested production-compatibility constraint, while
   8.0.32 is the recommended supported target and 9.0.4 is exercised as the current
   compatibility target.
@@ -37,7 +37,8 @@ platform, or payment integration is complete.
 
 - Public `main` is async-only for repository and I/O-bound service contracts. The
   preserved `support/legacy-production` branch retains the historic synchronous API.
-- Version 1.0 does not promise source compatibility with that legacy branch; it defines
-  the new stable public contract from which semantic versioning proceeds.
+- Version 1.0 established the stable public contract and version 1.1 remains backward-
+  compatible with it. Neither release promises source compatibility with the legacy
+  branch.
 - The public Website remains intentionally independent of Admin/CMS mappings. A host
   may use separate read models or a different DAL for its public rendering needs.
