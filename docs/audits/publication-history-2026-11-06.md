@@ -81,3 +81,19 @@ after any later history rewrite. A clean scan does not prove that credentials ne
 existed outside Git; production credentials must still remain external to the public
 repository. If a future scan finds a real credential, rotate it before cleaning or
 publishing history.
+
+## Final publication-candidate scan — 2026-11-07
+
+The Phase 7 publication candidate was scanned again immediately before the repository
+visibility change. The final history command above traversed all refs and reported 35
+commits and approximately 27.8 MB with no leaks. A `git archive` of the exact committed
+branch tip was also scanned with the directory command and reported approximately
+20.7 MB with no leaks.
+
+For completeness, an initial directory scan of the developer working directory also
+inspected ignored build output and reported four generic-key matches in Playwright's
+generated `bin/Debug` and `bin/Release` package files. Those files are restored copies
+of Playwright's bundled `coreBundle.js` and trace-viewer terminal module; they are
+ignored, absent from `git archive`, and absent from every commit. The committed-tree
+and full-history scans are therefore the publication result. Reports remained under
+`/tmp/hypnotech-gitleaks-v8.30.1/final` and were not committed.

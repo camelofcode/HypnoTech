@@ -1,0 +1,208 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+  NUGET_XMLDOC_MODE: skip
+
+jobs:
+  frontend:
+    name: Frontend assets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24.18.0
+      - name: Use the pinned npm release
+        run: npm install --global npm@11.16.0
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Verify committed frontend assets
+        run: npm run check:frontend
+
+  build:
+    name: Release build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+      - name: Restore
+        run: dotnet restore HypnoTech.slnx
+      - name: Build
+        run: dotnet build HypnoTech.slnx -c Release --no-restore
+
+  unit-tests:
+    name: Unit and architecture tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+      - name: Test CMS
+        run: >-
+          dotnet test tests/HypnoTech.Cms.UnitTests -c Release
+          --coverage
+          --coverage-output-format cobertura
+          --coverage-output ${{ github.workspace }}/artifacts/coverage/cms.cobertura.xml
+      - name: Test Common
+        run: >-
+          dotnet test tests/HypnoTech.Common.UnitTests -c Release
+          --coverage
+          --coverage-output-format cobertura
+          --coverage-output ${{ github.workspace }}/artifacts/coverage/common.cobertura.xml
+      - name: Test architecture rules
+        run: >-
+          dotnet test tests/HypnoTech.ArchitectureTests -c Release
+          --coverage
+          --coverage-output-format cobertura
+          --coverage-output ${{ github.workspace }}/artifacts/coverage/architecture.cobertura.xml
+      - name: Upload coverage
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: coverage
+          path: artifacts/coverage/*.xml
+          if-no-files-found: error
+          retention-days: 7
+
+  mongo-integration:
+    name: MongoDB compatibility
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+      - name: Test MongoDB 4.0, 8.0, and 9.0 contracts
+        run: dotnet test tests/HypnoTech.Cms.MongoDb.IntegrationTests -c Release
+
+  demo-integration:
+    name: Example integration
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+      - name: Test the public example
+        run: dotnet test tests/HypnoTech.Demo.IntegrationTests -c Release
+
+  end-to-end:
+    name: Playwright (${{ matrix.browser }})
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        browser:
+          - chromium
+          - firefox
+          - webkit
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+      - name: Build browser tests
+        run: >-
+          dotnet build
+          tests/HypnoTech.Demo.EndToEndTests/HypnoTech.Demo.EndToEndTests.csproj
+          -c Release -m:1
+      - name: Install ${{ matrix.browser }} and host dependencies
+        run: >-
+          pwsh
+          tests/HypnoTech.Demo.EndToEndTests/bin/Release/net10.0/playwright.ps1
+          install --with-deps ${{ matrix.browser }}
+      - name: Run ${{ matrix.browser }} journeys
+        env:
+          PLAYWRIGHT_BROWSER: ${{ matrix.browser }}
+        run: >-
+          dotnet test
+          tests/HypnoTech.Demo.EndToEndTests/HypnoTech.Demo.EndToEndTests.csproj
+          -c Release --no-build
+      - name: Upload ${{ matrix.browser }} failure evidence
+        if: failure()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: playwright-${{ matrix.browser }}-failure
+          path: TestResults/Playwright/${{ matrix.browser }}/
+          if-no-files-found: warn
+          retention-days: 7
+
+  platform-smoke:
+    name: Platform smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04
+          - windows-2025
+          - macos-15-intel
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+      - name: Restore
+        run: dotnet restore HypnoTech.slnx
+      - name: Build
+        run: dotnet build HypnoTech.slnx -c Release --no-restore
+      - name: Test CMS
+        run: dotnet test tests/HypnoTech.Cms.UnitTests -c Release --no-build
+      - name: Test Common
+        run: dotnet test tests/HypnoTech.Common.UnitTests -c Release --no-build
+      - name: Test architecture rules
+        run: dotnet test tests/HypnoTech.ArchitectureTests -c Release --no-build

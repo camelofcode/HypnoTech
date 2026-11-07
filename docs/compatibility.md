@@ -51,8 +51,15 @@ they do not claim support for every MongoDB 9.0 feature.
 ## Platform policy
 
 Linux is the required development/CI and production platform for the first public
-release. Windows previously worked as a development platform but is not a release gate.
-A future Windows smoke job may be informative and non-blocking.
+release. The CI workflow also builds and runs the container-free suites on standard
+Windows and Intel macOS runners as informative, non-blocking portability checks. Those
+jobs are visibility, not support claims; only the required Linux jobs gate v0.1.
+
+GitHub's current Ubuntu 24.04 runner uses Linux kernel 7.0. The pinned MongoDB 4.0.3,
+8.0.32, and 9.0.4 compatibility containers include releases that reject Linux kernel
+6.19 and newer, so container-backed CI is pinned to the standard Ubuntu 22.04 runner.
+The required Release build and container-free suites remain on Ubuntu 24.04; this is a
+host-kernel compatibility constraint, not a paid or custom runner.
 
 ## Async API boundary
 

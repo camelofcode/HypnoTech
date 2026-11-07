@@ -1,5 +1,7 @@
 # HypnoTech
 
+[![CI](https://github.com/camelofcode/HypnoTech/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/camelofcode/HypnoTech/actions/workflows/ci.yml)
+
 HypnoTech is a modular ASP.NET Core engine for content-managed websites. It combines
 a convention-driven CMS with reusable Common, Ecommerce, Media, Frontend, and MongoDB
 components. The repository is being prepared as a public portfolio project; the
@@ -17,16 +19,17 @@ The engine currently provides:
 
 ## Status
 
-This is pre-release software under active public-readiness work. It is not yet a
-public release: the reusable projects now include an original runnable example and a
-focused browser suite. Async I/O modernisation is in progress across bounded engine
-modules, while CI remains roadmap work. Existing production users remain pinned to
-the preserved baseline and MongoDB Server 4.0.3
-compatibility remains a hard gate.
+This is pre-release software approaching its first public release. The reusable
+projects include an original runnable example, async request and persistence paths,
+layered unit/integration/architecture coverage, and a focused three-engine browser
+suite. The CI workflow is the final release-candidate gate. Existing production users
+remain pinned to the preserved baseline, and MongoDB Server 4.0.3 compatibility
+remains a hard gate.
 
 See [PUBLIC_READINESS_PLAN.md](PUBLIC_READINESS_PLAN.md) for the phased roadmap and
-work record, [docs/architecture.md](docs/architecture.md) for the design, and
-[docs/compatibility.md](docs/compatibility.md) for tested versions.
+work record, [docs/architecture.md](docs/architecture.md) for the design,
+[docs/compatibility.md](docs/compatibility.md) for tested versions, and
+[docs/ci.md](docs/ci.md) for the automated verification policy.
 
 ## Build from a fresh clone
 
@@ -60,6 +63,11 @@ instructions are in [`tests/README.md`](tests/README.md). The runnable original
 [`Lantern House example`](examples/README.md) demonstrates the CMS, Media, Ecommerce,
 Frontend, and MongoDB modules. Its focused Playwright suite runs with
 `./tests/run-end-to-end.sh`.
+
+Repository-wide instructions for coding agents are in [AGENTS.md](AGENTS.md). The
+workflow-backed authoring and verification skills under [`.agents/skills/`](.agents/skills/)
+capture the compatibility, async, testing, external-HTTP, and validation conventions
+used while preparing the engine for release.
 
 ## Repository layout
 
