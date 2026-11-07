@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using HypnoTech.Cms.Contracts.Interfaces;
+using HypnoTech.Common.Dal.EntityFrameworkCore;
+using HypnoTech.Ecommerce.Dal.EntityFrameworkCore;
 using HypnoTech.EntityFrameworkCore;
+using HypnoTech.Media.Dal.EntityFrameworkCore;
 using HypnoTech.Persistence.ContractTests.Cms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -127,6 +130,9 @@ public sealed class PostgreSqlCmsRepositoryProviderContractTests :
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.AddHypnoTechCommonModel();
+            modelBuilder.AddHypnoTechEcommerceModel();
+            modelBuilder.AddHypnoTechMediaModel();
             modelBuilder.AddHypnoTechCmsModel();
         }
     }
