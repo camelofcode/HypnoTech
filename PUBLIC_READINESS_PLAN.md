@@ -751,13 +751,13 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [x] Complete hosted verification of the candidate that replaces CMS jQuery 3.3.1
       and public jQuery 3.5.1 with exact jQuery 3.7.1, and Knockout 3.5.1 with exact
       Knockout 3.5.3.
-- [ ] Enable CodeQL with its default query suite, review the initial C#/JavaScript
+- [x] Enable CodeQL with its default query suite, review the initial C#/JavaScript
       baseline without making it a required check, and decide whether vendored and
       generated paths need an explicit exclusion after seeing the real results.
 
 ### Exit gate
 
-- [ ] A fresh Linux clone passes every documented command.
+- [x] A fresh Linux clone passes every documented command.
 - [x] Required CI is green.
 - [x] No unresolved secret, copyright, or licensing blocker remains.
 - [x] `main` is the public default branch.
@@ -962,6 +962,7 @@ These apply throughout all phases:
 | 2026-11-07 | D-029 | Keep Admin/CMS and public Website persistence mappings independent. | Accepted | The public host must remain free to use focused read models and a different DAL or ORM rather than inheriting edit-oriented Admin mappings. |
 | 2026-11-07 | D-030 | Defer public NuGet publication until a dedicated package audit and local-feed consumer rehearsal pass. | Accepted | nuget.org versions are immutable; the GitHub v1 source release should not force premature package IDs or dependency boundaries. |
 | 2026-11-07 | D-031 | Use Dependabot for security fixes only across NuGet, npm, and GitHub Actions. | Accepted | The pinned repository is maintained by one developer; routine version PRs create review and CI churn without a concrete upgrade need, while automated vulnerability updates remain valuable and are never auto-merged. |
+| 2026-11-07 | D-032 | Keep CodeQL non-blocking and scan authored C#, JavaScript, and Actions through a pinned advanced workflow. | Accepted | Default setup produced 104 mostly duplicated alerts from third-party and generated JavaScript and cannot apply a repository-local exclusion file in this personal repository. The advanced workflow retains the default query suite while excluding only `lib` trees and generated `wwwroot/js` outputs. |
 
 ## Work log
 
@@ -1038,6 +1039,8 @@ stating that work was done.
 | 2026-11-07 | Phase 7 | Corrected a WebKit-only CMS browser-test race exposed by two post-merge `main` runs. | Traces showed the public Articles request starting before the edit POST completed. The journey now waits for the exact server-rendered Added/Updated success alert after each save; the complete stateful Chromium suite passes repeatedly and again after the dependency upgrades. | This change |
 | 2026-11-07 | Phase 7 | Merged the release candidate after full hosted verification. | PR #15 and the resulting `main` push both passed all 11 CI jobs, including exact frontend dependency installation, Release build/formatting, the layered unit/integration suites, the MongoDB 4.0/8.0/9.0 matrix, Chromium/Firefox/WebKit journeys, and Ubuntu/Windows/macOS portability builds. GitHub now reports C# as the primary repository language. | PR #15 |
 | 2026-11-07 | Phase 7 | Triaged the first non-blocking CodeQL default-setup scan and hardened authored request paths. | The initial scan correctly exposed third-party/generated JavaScript noise plus authored findings: uploaded-file traversal/logging, missing antiforgery validation, and unsafe CMS list URL construction. The implementation now confines upload reads, avoids logging request-derived paths, validates login/basket/checkout posts, supplies tokens through the public Ajax contract, and encodes CMS navigation values. Focused Common tests pass 12/12, Chromium journeys pass 5/5, and the runtime-aware Podman wrapper passes the complete 79-test solution. | This change |
+| 2026-11-07 | Phase 7 | Passed the complete documented release sequence from a fresh Linux clone of the final PR commit. | Restore and exact `npm ci` succeed with zero npm vulnerabilities; Release build has zero warnings/errors; formatting and all five generated bundles are current; the Chromium journey passes 5/5; and the runtime-aware rootless-Podman wrapper passes all 79 solution tests. | PR #19 |
+| 2026-11-07 | Phase 7 | Established a clean authored-source CodeQL baseline. | The pinned advanced workflow runs the default query suite across C#, JavaScript/TypeScript, and Actions while excluding only third-party `lib` trees and committed `wwwroot/js` build outputs. All three hosted analyses pass and PR #19 has zero open code-scanning alerts after the authored findings were fixed. CodeQL remains informative rather than merge-required for v1.0. | PR #19 |
 
 ## Immediate next actions
 
