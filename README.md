@@ -63,8 +63,8 @@ Prerequisites:
 - Docker or Podman with its Docker-compatible API socket for database integration tests.
 
 ```bash
-dotnet restore HypnoTech.slnx
-dotnet build HypnoTech.slnx -c Release --no-restore
+dotnet restore HypnoTech.slnx -m:1
+dotnet build HypnoTech.slnx -c Release --no-restore -m:1
 dotnet format HypnoTech.slnx --no-restore --verify-no-changes --verbosity minimal
 npm ci
 npm run check:frontend
@@ -118,8 +118,8 @@ generated `wwwroot` bundles directly.
 
 ## Scope boundaries
 
-This repository contains only the reusable engine. Private Esoteric and SelfHypnosis
-sites, their content, branding, seed data, and imagery are deliberately excluded.
+This repository contains only the reusable engine. Private client websites and their
+content, branding, seed data, and imagery are deliberately excluded.
 Additional payment-provider work described in `ecommerce-payments-plan.md` is also
 outside the current public-readiness programme.
 

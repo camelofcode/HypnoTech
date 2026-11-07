@@ -25,6 +25,9 @@ The frontend, build, container-free, and relational jobs use the standard
 - `Playwright (chromium|firefox|webkit)` runs the five browser journeys independently
   in each engine. A failed journey retains its trace, screenshot, browser errors, and
   application logs for seven days.
+- `Playwright provider (PostgreSql|SqlServer)` runs the dynamic CMS create/upload/edit,
+  public-read, duplicate, and delete journey in Chromium. Together with the full
+  default MongoDB matrix, this proves all three example persistence choices.
 
 The integration and browser jobs use Testcontainers through the Docker service already
 provided by the standard Ubuntu runner. They do not require a repository secret and
@@ -61,8 +64,8 @@ The main local commands are:
 ```bash
 npm ci
 npm run check:frontend
-dotnet restore HypnoTech.slnx
-dotnet build HypnoTech.slnx -c Release --no-restore
+dotnet restore HypnoTech.slnx -m:1
+dotnet build HypnoTech.slnx -c Release --no-restore -m:1
 dotnet test tests/HypnoTech.Cms.UnitTests -c Release
 dotnet test tests/HypnoTech.Common.UnitTests -c Release
 dotnet test tests/HypnoTech.ArchitectureTests -c Release

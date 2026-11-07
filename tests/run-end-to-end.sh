@@ -9,30 +9,46 @@ output="${repository_root}/tests/HypnoTech.Demo.EndToEndTests/bin/Release/net10.
 node="${output}/.playwright/node/linux-x64/node"
 cli="${output}/.playwright/package/cli.js"
 browsers=("chromium")
+provider="MongoDb"
 
 usage() {
-    echo "Usage: $0 [--browser chromium|firefox|webkit | --all-browsers]"
+    echo "Usage: $0 [--browser chromium|firefox|webkit | --all-browsers] [--provider mongo|postgres|sqlserver]"
 }
 
-if [[ $# -gt 0 ]]; then
+while [[ $# -gt 0 ]]; do
     case "$1" in
+        --help|-h)
+            usage
+            exit 0
+            ;;
         --all-browsers)
-            [[ $# -eq 1 ]] || { usage; exit 2; }
             browsers=("chromium" "firefox" "webkit")
+            shift
             ;;
         --browser)
-            [[ $# -eq 2 ]] || { usage; exit 2; }
+            [[ $# -ge 2 ]] || { usage; exit 2; }
             case "$2" in
                 chromium|firefox|webkit) browsers=("$2") ;;
                 *) usage; exit 2 ;;
             esac
+            shift 2
+            ;;
+        --provider)
+            [[ $# -ge 2 ]] || { usage; exit 2; }
+            case "${2,,}" in
+                mongo|mongodb) provider="MongoDb" ;;
+                postgres|postgresql) provider="PostgreSql" ;;
+                sqlserver|mssql) provider="SqlServer" ;;
+                *) usage; exit 2 ;;
+            esac
+            shift 2
             ;;
         *)
             usage
             exit 2
             ;;
     esac
-fi
+done
 
 cd "${repository_root}"
 
@@ -44,6 +60,7 @@ export DOCKER_HOST="${DOCKER_HOST:-unix:///run/user/$(id -u)/podman/podman.sock}
 export TESTCONTAINERS_RYUK_DISABLED="${TESTCONTAINERS_RYUK_DISABLED:-true}"
 
 for browser_name in "${browsers[@]}"; do
-    echo "Running Playwright journeys with ${browser_name}"
-    PLAYWRIGHT_BROWSER="${browser_name}" dotnet test "${project}" -c Release --no-build
+    echo "Running Playwright journeys with ${browser_name} and ${provider}"
+    PLAYWRIGHT_BROWSER="${browser_name}" DEMO_PROVIDER="${provider}" \
+        dotnet test "${project}" -c Release --no-build
 done

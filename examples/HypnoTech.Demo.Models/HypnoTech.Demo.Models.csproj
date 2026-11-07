@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Common/HypnoTech.Common/HypnoTech.Common.csproj" />
-    <ProjectReference Include="../../src/Persistence/HypnoTech.MongoDb/HypnoTech.MongoDb.csproj" />
+    <PackageReference Include="MongoDB.Bson" Version="3.4.3" />
   </ItemGroup>
 
 </Project>

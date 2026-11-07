@@ -2,17 +2,24 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <BuildInParallel>false</BuildInParallel>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="../HypnoTech.Demo.Models/HypnoTech.Demo.Models.csproj" />
-    <ProjectReference Include="../../src/Persistence/HypnoTech.MongoDb/HypnoTech.MongoDb.csproj" />
-    <ProjectReference Include="../../src/Common/HypnoTech.Common.Dal.MongoDb/HypnoTech.Common.Dal.MongoDb.csproj" />
-    <ProjectReference Include="../../src/Ecommerce/HypnoTech.Ecommerce.Dal.MongoDb/HypnoTech.Ecommerce.Dal.MongoDb.csproj" />
     <ProjectReference Include="../../src/Ecommerce/HypnoTech.Ecommerce.Frontend/HypnoTech.Ecommerce.Frontend.csproj" />
     <ProjectReference Include="../../src/Frontend/HypnoTech.Frontend/HypnoTech.Frontend.csproj" />
-    <ProjectReference Include="../../src/Media/HypnoTech.Media.Dal.MongoDb/HypnoTech.Media.Dal.MongoDb.csproj" />
     <ProjectReference Include="../../src/Media/HypnoTech.Media.Frontend/HypnoTech.Media.Frontend.csproj" />
+
+    <!-- The showcase references every adapter. Real applications reference only their chosen provider. -->
+    <ProjectReference Include="../../src/Common/HypnoTech.Common.Dal.MongoDb/HypnoTech.Common.Dal.MongoDb.csproj" />
+    <ProjectReference Include="../../src/Ecommerce/HypnoTech.Ecommerce.Dal.MongoDb/HypnoTech.Ecommerce.Dal.MongoDb.csproj" />
+    <ProjectReference Include="../../src/Media/HypnoTech.Media.Dal.MongoDb/HypnoTech.Media.Dal.MongoDb.csproj" />
+    <ProjectReference Include="../../src/Common/HypnoTech.Common.Dal.EntityFrameworkCore/HypnoTech.Common.Dal.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../src/Ecommerce/HypnoTech.Ecommerce.Dal.EntityFrameworkCore/HypnoTech.Ecommerce.Dal.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../src/Media/HypnoTech.Media.Dal.EntityFrameworkCore/HypnoTech.Media.Dal.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../src/Persistence/HypnoTech.EntityFrameworkCore.PostgreSql/HypnoTech.EntityFrameworkCore.PostgreSql.csproj" />
+    <ProjectReference Include="../../src/Persistence/HypnoTech.EntityFrameworkCore.SqlServer/HypnoTech.EntityFrameworkCore.SqlServer.csproj" />
   </ItemGroup>
 
 </Project>

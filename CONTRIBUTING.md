@@ -31,7 +31,7 @@ Any agreed change must:
 - add characterisation tests before changing dynamic CMS behaviour;
 - keep required runtime assets self-hosted and dependency versions pinned;
 - edit frontend sources rather than committed generated bundles;
-- avoid private Esoteric or SelfHypnosis content and changes;
+- avoid private client-site content and changes;
 - leave additional payment-provider work out of scope;
 - update `PUBLIC_READINESS_PLAN.md` when roadmap work or a material decision changes.
 

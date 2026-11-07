@@ -12,7 +12,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using Microsoft.Data.SqlClient;
 using Microsoft.Playwright;
+using Testcontainers.MsSql;
+using Testcontainers.PostgreSql;
 using Xunit;
 
 namespace HypnoTech.Demo.EndToEndTests;
@@ -21,10 +24,10 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
 {
     private const int MongoPort = 27017;
 
-    private readonly IContainer _mongo = new ContainerBuilder("mongo:8.0.32-noble")
-        .WithPortBinding(MongoPort, assignRandomHostPort: true)
-        .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(MongoPort))
-        .Build();
+    private readonly IContainer _databaseContainer;
+    private readonly IContainer _mongoDb;
+    private readonly MsSqlContainer _sqlServer;
+    private readonly PostgreSqlContainer _postgreSql;
     private readonly ConcurrentQueue<string> _applicationLogs = new();
     private readonly string _certificatePassword = Guid.NewGuid().ToString("N");
     private readonly string _certificatePath = Path.Combine(
@@ -49,6 +52,36 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
                 "Expected chromium, firefox, or webkit.");
         }
 
+        ProviderName = Environment.GetEnvironmentVariable("DEMO_PROVIDER") ?? "MongoDb";
+        switch (ProviderName)
+        {
+            case "MongoDb":
+                _mongoDb = new ContainerBuilder("mongo:8.0.32-noble")
+                    .WithPortBinding(MongoPort, assignRandomHostPort: true)
+                    .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(MongoPort))
+                    .Build();
+                _databaseContainer = _mongoDb;
+                break;
+            case "PostgreSql":
+                _postgreSql = new PostgreSqlBuilder("postgres:18.1-alpine")
+                    .WithDatabase(_databaseName)
+                    .WithUsername("hypnotech")
+                    .WithPassword("hypnotech-tests")
+                    .Build();
+                _databaseContainer = _postgreSql;
+                break;
+            case "SqlServer":
+                _sqlServer = new MsSqlBuilder(
+                        "mcr.microsoft.com/mssql/server:2022-CU22-GDR1-ubuntu-22.04")
+                    .Build();
+                _databaseContainer = _sqlServer;
+                break;
+            default:
+                throw new ArgumentException(
+                    $"Unsupported DEMO_PROVIDER value '{ProviderName}'. " +
+                    "Expected MongoDb, PostgreSql, or SqlServer.");
+        }
+
         RepositoryRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../.."));
         AdminPort = GetAvailablePort();
         WebsitePort = GetAvailablePort();
@@ -66,13 +99,15 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
 
     public string BrowserName { get; }
 
+    public string ProviderName { get; }
+
     public IBrowser Browser { get; private set; }
 
     public async ValueTask InitializeAsync()
     {
         Directory.CreateDirectory(_uploadPath);
         CreateHttpsCertificate();
-        await _mongo.StartAsync();
+        await _databaseContainer.StartAsync();
 
         _adminProcess = StartApplication(
             "admin",
@@ -109,7 +144,7 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
         _playwright?.Dispose();
         StopApplication(_websiteProcess);
         StopApplication(_adminProcess);
-        await _mongo.DisposeAsync();
+        await _databaseContainer.DisposeAsync();
 
         if (Directory.Exists(_uploadPath))
         {
@@ -166,9 +201,29 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
         startInfo.Environment["ASPNETCORE_URLS"] = $"https://127.0.0.1:{port}";
         startInfo.Environment["ASPNETCORE_Kestrel__Certificates__Default__Path"] = _certificatePath;
         startInfo.Environment["ASPNETCORE_Kestrel__Certificates__Default__Password"] = _certificatePassword;
-        startInfo.Environment["Mongo__Server"] = _mongo.Hostname;
-        startInfo.Environment["Mongo__Port"] = _mongo.GetMappedPublicPort(MongoPort).ToString();
-        startInfo.Environment["Mongo__Database"] = _databaseName;
+        startInfo.Environment["Demo__Provider"] = ProviderName;
+        switch (ProviderName)
+        {
+            case "MongoDb":
+                startInfo.Environment["Mongo__Server"] = _mongoDb.Hostname;
+                startInfo.Environment["Mongo__Port"] =
+                    _mongoDb.GetMappedPublicPort(MongoPort).ToString();
+                startInfo.Environment["Mongo__Database"] = _databaseName;
+                break;
+            case "PostgreSql":
+                startInfo.Environment["ConnectionStrings__PostgreSql"] =
+                    _postgreSql.GetConnectionString();
+                break;
+            case "SqlServer":
+                var sqlServerConnection = new SqlConnectionStringBuilder(
+                    _sqlServer.GetConnectionString())
+                {
+                    InitialCatalog = _databaseName
+                };
+                startInfo.Environment["ConnectionStrings__SqlServer"] =
+                    sqlServerConnection.ConnectionString;
+                break;
+        }
         startInfo.Environment["UploadPath"] = _uploadPath;
         startInfo.Environment["HostURL"] = name == "admin" ? AdminUrl : WebsiteUrl;
         startInfo.Environment["CanonicalUrl"] = WebsiteUrl;
@@ -264,7 +319,13 @@ public sealed class DemoEndToEndFixture : IAsyncLifetime
     {
         var safeName = string.Concat(testName.Select(character =>
             char.IsLetterOrDigit(character) || character is '-' or '_' ? character : '_'));
-        return Path.Combine(RepositoryRoot, "TestResults", "Playwright", BrowserName, safeName);
+        return Path.Combine(
+            RepositoryRoot,
+            "TestResults",
+            "Playwright",
+            BrowserName,
+            ProviderName,
+            safeName);
     }
 
     private static int GetAvailablePort()

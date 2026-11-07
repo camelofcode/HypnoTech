@@ -35,10 +35,12 @@ enabled accidentally in a production environment.
 - OrderRepository finds and completes orders by PaymentId, assuming SaleId, PayerId, and SaleUrl are PayPal values.
 - Config and the CMS settings page currently expose only one PaypalConfig.
 
-### Hosting sites
+### Production consumers
 
-- Esoteric is the only site currently hosting checkout (sites/Esoteric/Esoteric.Website/Views/Checkout).
-- SelfHypnosis currently has no ecommerce checkout views or PayPal references. Shared engine changes should be reusable there later, without adding a second implementation now.
+- One existing client website currently hosts the checkout views outside this engine
+  repository.
+- Other existing client websites do not currently host ecommerce checkout. Shared
+  engine changes must remain reusable without adding duplicate implementations.
 
 ### Invariants to preserve
 
@@ -281,15 +283,19 @@ Keep payWithPaypal as an alias to v1 until templates and external callers migrat
 
 Expose only public configuration to the page: provider enabled flags, PayPal public client ID/environment if required by its browser SDK, and a Stripe publishable key only if a later client SDK needs it. Never render secrets or webhook configuration in HTML/JavaScript.
 
-### Esoteric views
+### Consuming-site views
 
-Update sites/Esoteric/Esoteric.Website/Views/Checkout/Index.cshtml to retain the v1 button and add separate PayPal v2 and Stripe controls. Use neutral labels and one provider-specific error at a time. The v2 button may render into a provider container; Stripe initially needs only a redirect button.
+Update the checkout-enabled consuming site's `Views/Checkout/Index.cshtml` to retain
+the v1 button and add separate PayPal v2 and Stripe controls. Use neutral labels and
+one provider-specific error at a time. The v2 button may render into a provider
+container; Stripe initially needs only a redirect button.
 
 Update Complete.cshtml and Cancelled.cshtml to use a provider-neutral result view model. Do not assume every provider has a PayPal SaleId; show a safe reference and a pending state when fulfillment is still being reconciled.
 
 Update _CheckoutLayout.cshtml only as needed to load the current PayPal browser SDK when v2 is enabled. Stripe-hosted Checkout does not require Stripe.js in the first implementation.
 
-SelfHypnosis has no checkout views. Do not add a duplicate payment implementation there; add site markup only when it actually enables ecommerce.
+Do not add duplicate payment implementations to client sites without checkout; add
+site markup only when a site actually enables ecommerce.
 
 ## Configuration and CMS
 
@@ -389,7 +395,9 @@ PayPal Sandbox: create/approve/capture, declined instrument, payer action requir
 
 Stripe test mode/CLI: hosted success/cancel, checkout.session.completed, async success/failure if enabled, duplicate/out-of-order events, invalid signature, and expired session.
 
-Esoteric browser coverage: address validation, switching providers, double-click prevention, refresh while pending, mobile layout, and cart clearing only after verified completion. Run the existing frontend checks after rebuilding raw sources.
+Consumer-site browser coverage: address validation, switching providers, double-click
+prevention, refresh while pending, mobile layout, and cart clearing only after verified
+completion. Run the existing frontend checks after rebuilding raw sources.
 
 ## Deployment and rollout
 
@@ -410,7 +418,7 @@ Rollback is a feature-flag change: disable new providers while v1 readers and ro
 2. **Checkout orchestration and fulfillment** — stable internal IDs, provider selection, idempotent transitions, and extraction of side effects.
 3. **PayPal v2 adapter** — package, OAuth/client registration, Orders v2 create/capture, mapping, flag, and webhook verification.
 4. **Stripe adapter** — Stripe.net, hosted Session, idempotency, mapping, and webhook verification.
-5. **Frontend and Esoteric views** — raw checkout source, provider controls/config, neutral result views, and bundle rebuild.
+5. **Frontend and consuming-site views** — raw checkout source, provider controls/config, neutral result views, and bundle rebuild.
 6. **CMS/configuration and observability** — masked settings, secret handling, logs, dashboards, and operational documentation.
 7. **Tests and sandbox rollout** — unit/integration/browser coverage, migration checks, and staged enablement.
 
@@ -419,7 +427,7 @@ Rollback is a feature-flag change: disable new providers while v1 readers and ro
 | Area | Files | Planned change |
 | --- | --- | --- |
 | Frontend source | src/Ecommerce/HypnoTech.Ecommerce.Frontend.Frontend/js/checkout.js | Provider-neutral state/helpers; retain v1 alias; add v2/Stripe starts. |
-| Ecommerce views | sites/Esoteric/Esoteric.Website/Views/Checkout/* | Provider controls and neutral result/pending views. |
+| Ecommerce views | External consuming-site `Views/Checkout/*` | Provider controls and neutral result/pending views. |
 | Controller | src/Ecommerce/HypnoTech.Ecommerce.Frontend/Controllers/CheckoutController.cs | Preserve v1 actions; add provider actions and webhooks. |
 | Orchestration | src/Ecommerce/HypnoTech.Ecommerce.Frontend/Services/CheckoutService.cs | Delegate to neutral payment and fulfillment services. |
 | Providers | Services/PayPalService.cs, new PayPalV2Service.cs, new StripePaymentService.cs | Isolate v1, PayPal Orders v2, and Stripe Checkout. |
@@ -439,7 +447,8 @@ Rollback is a feature-flag change: disable new providers while v1 readers and ro
 - Duplicate callbacks/webhooks cannot duplicate download codes or email.
 - Old Mongo orders remain readable and new orders show provider-neutral details in admin.
 - Secrets never appear in browser assets or logs.
-- Esoteric can enable each provider independently; SelfHypnosis needs no duplicate implementation.
+- Checkout-enabled clients can enable each provider independently; clients without
+  checkout need no duplicate implementation.
 - The frontend is rebuilt from raw source and passes existing frontend checks.
 
 ## Decisions to confirm before implementation

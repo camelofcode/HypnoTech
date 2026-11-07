@@ -54,9 +54,9 @@ jobs:
         with:
           global-json-file: global.json
       - name: Restore
-        run: dotnet restore HypnoTech.slnx
+        run: dotnet restore HypnoTech.slnx -m:1
       - name: Build
-        run: dotnet build HypnoTech.slnx -c Release --no-restore
+        run: dotnet build HypnoTech.slnx -c Release --no-restore -m:1
       - name: Verify formatting
         run: dotnet format HypnoTech.slnx --no-restore --verify-no-changes --verbosity minimal
 
@@ -196,6 +196,53 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+  provider-end-to-end:
+    name: Playwright provider (${{ matrix.provider }})
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        provider:
+          - PostgreSql
+          - SqlServer
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+      - name: Build browser tests
+        run: >-
+          dotnet build
+          tests/HypnoTech.Demo.EndToEndTests/HypnoTech.Demo.EndToEndTests.csproj
+          -c Release -m:1
+      - name: Install Chromium and host dependencies
+        run: >-
+          pwsh
+          tests/HypnoTech.Demo.EndToEndTests/bin/Release/net10.0/playwright.ps1
+          install --with-deps chromium
+      - name: Run the dynamic CMS provider journey
+        env:
+          DEMO_PROVIDER: ${{ matrix.provider }}
+          PLAYWRIGHT_BROWSER: chromium
+        run: >-
+          dotnet test
+          tests/HypnoTech.Demo.EndToEndTests/HypnoTech.Demo.EndToEndTests.csproj
+          -c Release --no-build
+          --filter "FullyQualifiedName~Dynamic_CMS_item_can_be_validated_created_uploaded_edited_searched_duplicated_and_removed"
+      - name: Upload ${{ matrix.provider }} failure evidence
+        if: failure()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: playwright-${{ matrix.provider }}-failure
+          path: TestResults/Playwright/chromium/${{ matrix.provider }}/
+          if-no-files-found: warn
+          retention-days: 7
+
   platform-smoke:
     name: Platform smoke (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -218,9 +265,9 @@ jobs:
         with:
           global-json-file: global.json
       - name: Restore
-        run: dotnet restore HypnoTech.slnx
+        run: dotnet restore HypnoTech.slnx -m:1
       - name: Build
-        run: dotnet build HypnoTech.slnx -c Release --no-restore
+        run: dotnet build HypnoTech.slnx -c Release --no-restore -m:1
       - name: Test CMS
         run: dotnet test tests/HypnoTech.Cms.UnitTests -c Release --no-build
       - name: Test Common

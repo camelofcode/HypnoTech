@@ -16,4 +16,19 @@ if [[ -z "${DOCKER_HOST:-}" ]]; then
 fi
 
 cd "${repository_root}"
-dotnet test HypnoTech.slnx -c Release "$@"
+
+dotnet build HypnoTech.slnx -c Release -m:1
+
+test_projects=(
+    tests/HypnoTech.Cms.UnitTests
+    tests/HypnoTech.Common.UnitTests
+    tests/HypnoTech.ArchitectureTests
+    tests/HypnoTech.Cms.MongoDb.IntegrationTests
+    tests/HypnoTech.Cms.EntityFrameworkCore.PostgreSql.IntegrationTests
+    tests/HypnoTech.Demo.IntegrationTests
+    tests/HypnoTech.Demo.EndToEndTests
+)
+
+for test_project in "${test_projects[@]}"; do
+    dotnet test "${test_project}" -c Release --no-build "$@"
+done
