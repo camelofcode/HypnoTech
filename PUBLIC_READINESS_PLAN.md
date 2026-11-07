@@ -66,10 +66,8 @@ The programme has two intended releases:
 
 ### Out of scope
 
-- Changes to the Esoteric repository or its committed files.
-- Changes to the SelfHypnosis repository or its committed files.
-- Publishing private content, branding, seed data, templates, or imagery from either
-  site.
+- Changes to private client-website repositories or their committed files.
+- Publishing private client content, branding, seed data, templates, or imagery.
 - Migrating the production MongoDB deployment as part of v1.0. A deferred, non-
   executable runbook is recorded in
   [`docs/operations/mongodb-production-migration.md`](docs/operations/mongodb-production-migration.md).
@@ -79,9 +77,9 @@ The programme has two intended releases:
 - Reintroducing synchronous repository or I/O-bound service APIs on public `main`.
   Production consumers retain the historic API on `support/legacy-production`.
 
-Esoteric and SelfHypnosis are external production consumers. They may be used for
+Existing client websites are external production consumers. They may be used for
 read-only compatibility analysis and temporary, uncommitted smoke-test copies, but
-this programme must not commit changes to either repository.
+this programme must not commit changes to their repositories.
 
 ## Current repository baseline
 
@@ -830,7 +828,7 @@ src/Media/
 - [x] Admin/CMS and public Website contexts and mappings remain independent. Admin owns
       write mappings and migrations; Website owns focused read repositories and may
       use different models, mappings, DAL, or ORM entirely.
-- [ ] Site-specific migrations live in the Admin host/provider example because
+- [x] Site-specific migrations live in the Admin host/provider example because
       consumer CMS model types contribute to the EF model.
 - [x] Normal EF startup applies pending migrations before any seed operation and fails
       startup if either step fails; no manual migration command is required by default.
@@ -871,9 +869,11 @@ module registrations and repositories do not change.
 
 ### Exit gate
 
-- [ ] The demo applications can select MongoDB or a supported EF provider through
+- [x] The demo applications can select MongoDB or a supported EF provider through
       startup registration.
-- [x] Each host brings in only its selected database driver.
+- [x] Provider packages let a normal consumer reference only its selected database
+      driver. The Lantern House showcase intentionally references all three adapters
+      so `Demo:Provider` can switch at runtime without maintaining three duplicate hosts.
 - [x] All supported providers pass the common contract suite.
 - [x] MongoDB remains supported and its existing persisted schema is unchanged.
 - [x] Provider limitations and migration ownership are documented.
@@ -937,7 +937,7 @@ These apply throughout all phases:
 
 | Date | ID | Decision | Status | Rationale |
 | --- | --- | --- | --- | --- |
-| 2026-11-06 | D-001 | All public-readiness work is confined to the engine repository. | Accepted | Esoteric and SelfHypnosis must not be touched or published. |
+| 2026-11-06 | D-001 | All public-readiness work is confined to the engine repository. | Accepted | Private client websites must not be touched or published. |
 | 2026-11-06 | D-002 | Treat the private sites as external production consumers. | Accepted | Engine changes require compatibility consideration without site commits. |
 | 2026-11-06 | D-003 | Additional ecommerce payment providers remain out of scope. | Accepted | They have a separate existing plan and are unrelated to public readiness. |
 | 2026-11-06 | D-004 | Use this file as the living roadmap and delivery record. | Accepted | Keeps planned, completed, and outstanding work visible in the repository. |
@@ -1008,7 +1008,7 @@ stating that work was done.
 | 2026-11-06 | Phase 2 | Corrected the four failures exposed by the initial MongoDB contracts without upgrading the driver or changing persisted data. | Empty-field search returns no rows; null child IDs remain unset; ordering boundaries are no-ops; repeated Common/Ecommerce/Media startup is idempotent. All behaviours pass against MongoDB 4.0.3, 8.0.32, and 9.0.4. | This change |
 | 2026-11-06 | Future operations planning | Added a non-executable production MongoDB migration runbook covering logical BSON transfer, a pinned Podman container, rehearsal, verification, cutover, and rollback. | Vendor upgrade, dump/restore, platform, Podman, and production guidance reviewed; no server connection or production change was made. | This change |
 | 2026-11-06 | Phase 3 | Reorganised all engine source projects under `Cms`, `Common`, `Ecommerce`, `Media`, `Persistence`, and `Frontend` without changing namespaces, assembly names, APIs, behaviour, or asset bytes. | Mechanical commit changes 827 files and is overwhelmingly detected as 100% renames; only solution, project-reference, npm-workspace, builder, architecture-test path, and documentation references changed content. | `5e17d2a` and this change |
-| 2026-11-06 | Phase 3 | Completed aggregate verification and isolated compatibility smoke builds. | The 25-project Release build passed with 0 warnings/errors after suppressing only `NU1900` from the unavailable NuGet audit service; all four frontend outputs are current; two complete Podman-backed runs passed 46/46 tests; all five static-web-asset base paths remain `_content/HypnoTech.*`; temporary Esoteric and SelfHypnosis copies compiled against `support/legacy-production` with 0 warnings/errors and `SkipFrontendBuild=true`, leaving the real private repositories untouched. A separate historical Esoteric npm 6 asset attempt reached the frontend step after compiling every .NET assembly, then failed on its existing lockfile parser (`browserslist`) rather than an engine source error. | This change |
+| 2026-11-06 | Phase 3 | Completed aggregate verification and isolated compatibility smoke builds. | The 25-project Release build passed with 0 warnings/errors after suppressing only `NU1900` from the unavailable NuGet audit service; all four frontend outputs are current; two complete Podman-backed runs passed 46/46 tests; all five static-web-asset base paths remain `_content/HypnoTech.*`; temporary client-site copies compiled against `support/legacy-production` with 0 warnings/errors and `SkipFrontendBuild=true`, leaving the real private repositories untouched. A separate historical client-site npm 6 asset attempt reached the frontend step after compiling every .NET assembly, then failed on its existing lockfile parser (`browserslist`) rather than an engine source error. | This change |
 | 2026-11-06 | Phase 4 | Added the original Lantern House example models, admin, public website, seed data, self-hosted artwork/audio/video, Podman configuration, and developer guide. | The documented root-level seed command starts the real admin host, populates a fresh MongoDB 8.0 database, hashes `HypnoTechDemo!2026` with bcrypt, and exits; authenticated admin and representative public/detail/media routes return successfully. | This change |
 | 2026-11-06 | Phase 4 | Demonstrated dynamic CMS, navigation/configuration, Media, and Ecommerce behavior without allowing a real transaction. | Admin exposes generated Articles, Artists, and Events controllers plus Media/Ecommerce settings; the public site uses database-backed navigation, server-calculated basket/postage/tracked totals, and original responsive rendering; every provider/payment lifecycle route returns HTTP 410 before MVC. | This change |
 | 2026-11-06 | Phase 4 | Added an isolated Testcontainers example suite and stable future browser-test hooks. | Nine xUnit v3 tests pass through rootless Podman against MongoDB 8.0.32, covering host seeding, representative collections, bcrypt-only credential storage, blocked payment routes, and allowed basket/checkout calculation routes. Desktop and 390 px browser checks passed, including the mobile menu. | This change |
@@ -1056,12 +1056,9 @@ stating that work was done.
 | 2026-11-07 | Phase 8 | Added inherited provider-neutral CMS, Common, Ecommerce, and Media repository contracts and removed their duplicated Mongo assertions. | Plain CMS models plus every current module repository interface exercise CRUD, generated/nested IDs, children, select lists, idempotent seeding, users/accounts, config, countries, email templates, logs, backups, navbar, catalogue, postage, orders, download codes, Media queries, search, paging, sorting, ordering, and cancellation. MongoDB passes 31/31 contract and storage checks on 4.0.3, 8.0.32, and 9.0.4; the 31-project Release build and formatting gate are clean, and the complete rootless-Podman/Chromium solution passes 93/93. | This change |
 | 2026-11-07 | Phase 9 | Added the driver-free EF Core foundation, CMS/Common/Ecommerce/Media repository implementations, and thin PostgreSQL and SQL Server provider packages. | The same 29 inherited contract/lifecycle facts pass against PostgreSQL 18.1 and SQL Server 2022 CU22 GDR1, including explicit ordered persistence for nested CMS lists and galleries. Startup migrates before ordered seeders on both providers and exposes an explicit opt-out. An architecture guard rejects concrete drivers in all five shared/module EF projects; SQL Server alone pins the patched Pkcs 9.0.22 transitive servicing release. The 39-project Release build and formatting gate are clean, and the aggregate rootless-Podman/Chromium suite passes 124/124, including unchanged MongoDB 4.0.3/8.0/9.0 behavior. | This change |
 | 2026-11-07 | Phase 9 | Corrected a relational contract-ordering failure exposed by the first hosted CI run. | The CMS relational fixture now composes Common, Ecommerce, and Media mappings before the dynamic CMS contributor, matching the documented Admin context and making CMS-visible module registrations valid regardless of test-class ordering. The 39-project Release build and formatting gate are clean, and two consecutive PostgreSQL/SQL Server runs pass 29/29. | PR #22 |
+| 2026-11-07 | Phase 9 | Added executable MongoDB, PostgreSQL, and SQL Server choices to Lantern House and closed the local implementation gate. | The readable Startup switches preserve the Admin/Website boundary; provider-specific Admin migrations run before seed; the Website owns an independent read model; and the manual Podman launcher accepts `--provider`. The 39-project Release build and formatting gate are clean; both provider migrations report no pending model changes; the complete MongoDB/relational/demo/Chromium suite passes 124/124; and the focused CMS create/upload/edit/public-read/duplicate/delete Chromium journey also passes against PostgreSQL and SQL Server. | This change |
 
 ## Immediate next actions
 
-1. Add provider-specific Lantern House Admin contexts and migrations; keep the public
-   Website context independent.
-2. Make the demo's persistence choice explicit and prove MongoDB, PostgreSQL, and SQL
-   Server startup paths without making one host bring in every driver.
-3. Complete aggregate MongoDB/relational/example/browser verification and close the
-   Phase 9 exit gate.
+1. Review and merge the example-provider pull request after required hosted CI is
+   green.

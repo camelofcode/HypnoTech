@@ -33,6 +33,7 @@ namespace HypnoTech.Common.Dal.EntityFrameworkCore
                 entity.OwnsOne(config => config.Paypal);
                 entity.OwnsOne(config => config.Email);
                 entity.OwnsOne(config => config.MainSite);
+                entity.Navigation(config => config.MainSite).IsRequired();
             });
             modelBuilder.Entity<Country>(entity =>
             {
@@ -66,6 +67,7 @@ namespace HypnoTech.Common.Dal.EntityFrameworkCore
                 entity.Ignore(entry => entry.TableClass);
                 entity.Ignore(entry => entry.DetailsClass);
                 entity.OwnsOne(entry => entry.Properties);
+                entity.Navigation(entry => entry.Properties).IsRequired();
             });
             return modelBuilder;
         }

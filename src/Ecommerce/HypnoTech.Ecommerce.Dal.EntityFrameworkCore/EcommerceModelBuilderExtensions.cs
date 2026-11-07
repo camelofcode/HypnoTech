@@ -41,6 +41,16 @@ namespace HypnoTech.Ecommerce.Dal.EntityFrameworkCore
                 entity.OwnsOne(profile => profile.RestOfWorld1);
                 entity.OwnsOne(profile => profile.RestOfWorld2);
                 entity.OwnsOne(profile => profile.RestOfWorld3);
+                entity.Navigation(profile => profile.UnitedKingdom).IsRequired();
+                entity.Navigation(profile => profile.EuropeanUnion).IsRequired();
+                entity.Navigation(profile => profile.RestOfWorld1).IsRequired();
+                entity.Navigation(profile => profile.RestOfWorld2).IsRequired();
+                entity.Navigation(profile => profile.RestOfWorld3).IsRequired();
+                ConfigurePostageRegion(entity.OwnsOne(profile => profile.UnitedKingdom));
+                ConfigurePostageRegion(entity.OwnsOne(profile => profile.EuropeanUnion));
+                ConfigurePostageRegion(entity.OwnsOne(profile => profile.RestOfWorld1));
+                ConfigurePostageRegion(entity.OwnsOne(profile => profile.RestOfWorld2));
+                ConfigurePostageRegion(entity.OwnsOne(profile => profile.RestOfWorld3));
             });
             modelBuilder.Entity<Order>(entity =>
             {
@@ -51,10 +61,15 @@ namespace HypnoTech.Ecommerce.Dal.EntityFrameworkCore
                 entity.Ignore(order => order.PostageDisplay);
                 entity.Ignore(order => order.TotalDisplay);
                 entity.Ignore(order => order.SubTotalDisplay);
+                entity.Property(order => order.Postage).HasPrecision(18, 2);
+                entity.Property(order => order.Total).HasPrecision(18, 2);
+                entity.Property(order => order.SubTotal).HasPrecision(18, 2);
                 entity.OwnsOne(order => order.Address);
+                entity.Navigation(order => order.Address).IsRequired();
                 var items = entity.OwnsMany(order => order.Items);
                 items.ToTable("orders_Items");
                 items.Property<int>("PersistenceId").ValueGeneratedOnAdd();
+                items.Property(item => item.RowPrice).HasPrecision(18, 2);
                 items.HasKey("PersistenceId");
                 entity.Property(order => order.DownloadCodeIds)
                     .HasConversion(
@@ -83,6 +98,15 @@ namespace HypnoTech.Ecommerce.Dal.EntityFrameworkCore
         {
             entity.HasKey("Id");
             entity.Property<string>("Id").ValueGeneratedNever();
+        }
+
+        private static void ConfigurePostageRegion(
+            Microsoft.EntityFrameworkCore.Metadata.Builders.OwnedNavigationBuilder<
+                PostageProfile,
+                PostageRegion> region)
+        {
+            region.Property(value => value.Alone).HasPrecision(18, 2);
+            region.Property(value => value.WithOthers).HasPrecision(18, 2);
         }
 
         private static ValueComparer<List<string>> StringListComparer()

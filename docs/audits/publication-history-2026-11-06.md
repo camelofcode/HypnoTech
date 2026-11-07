@@ -3,7 +3,7 @@
 ## Scope
 
 This audit covered the HypnoTech engine repository only. It did not modify or scan the
-working trees of the private Esoteric or SelfHypnosis sites.
+working trees of any private client websites.
 
 The Git history scan traversed every ref reachable through `--all`, including the
 production baseline tag, support branch, frozen `master`, `main`, and

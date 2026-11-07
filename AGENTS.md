@@ -8,8 +8,8 @@ authoritative solution map; projects are physically grouped under `src/Cms`,
 `src/Common`, `src/Ecommerce`, `src/Media`, `src/Frontend`, and `src/Persistence`.
 
 Work only in this engine repository. Do not edit or copy content, configuration, seed
-data, branding, or imagery from the private Esoteric or SelfHypnosis sites. Treat those
-sites as external production consumers. Additional payment-provider work in
+data, branding, or imagery from private client websites. Treat those sites as external
+production consumers. Additional payment-provider work in
 `ecommerce-payments-plan.md` is deferred.
 
 ## Compatibility rules
@@ -62,9 +62,9 @@ Never edit a generated `wwwroot` bundle directly. Change its source, run
 ## Standard commands
 
 ```bash
-dotnet restore HypnoTech.slnx
-dotnet build HypnoTech.slnx -c Release --no-restore
-dotnet test HypnoTech.slnx -c Release --no-build
+dotnet restore HypnoTech.slnx -m:1
+dotnet build HypnoTech.slnx -c Release --no-restore -m:1
+./tests/run-solution-tests.sh
 npm ci
 npm run check:frontend
 ```

@@ -96,8 +96,10 @@ reports those drops. Normal host disposal flushes the queue during shutdown.
 
 ## Example application verification
 
-The Lantern House public example has been exercised on Linux against the pinned
-MongoDB 8.0.32 development target. The Playwright for .NET suite runs the real admin
+The Lantern House public example has been exercised on Linux against MongoDB 8.0.32,
+PostgreSQL 18.1, and SQL Server 2022 CU22 GDR1. The full Playwright browser matrix uses
+MongoDB, while the dynamic CMS create/upload/edit/public-read/delete journey also runs
+against both relational providers. The Playwright for .NET suite runs the real admin
 and public hosts with a unique database and upload store, fresh browser contexts, and
 headless Chromium, Firefox, and WebKit. Both hosts use test-only ephemeral HTTPS so
 their secure authentication and antiforgery cookies are exercised consistently rather

@@ -12,6 +12,46 @@ services:
       interval: 5s
       timeout: 5s
       retries: 12
+    profiles: ["mongodb"]
+
+  postgres:
+    image: docker.io/library/postgres:18.1-alpine
+    container_name: hypnotech-demo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hypnotech_demo_lantern
+      POSTGRES_USER: hypnotech
+      POSTGRES_PASSWORD: HypnoTechDemo!2026Pg
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - hypnotech-demo-postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hypnotech -d hypnotech_demo_lantern"]
+      interval: 5s
+      timeout: 5s
+      retries: 18
+    profiles: ["postgresql"]
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-CU22-GDR1-ubuntu-22.04
+    container_name: hypnotech-demo-sqlserver
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: HypnoTechDemo!2026Sql
+    ports:
+      - "127.0.0.1:1433:1433"
+    volumes:
+      - hypnotech-demo-sqlserver:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'HypnoTechDemo!2026Sql' -C -Q 'SELECT 1' >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+    profiles: ["sqlserver"]
 
 volumes:
   hypnotech-demo-mongo:
+  hypnotech-demo-postgres:
+  hypnotech-demo-sqlserver:

@@ -1,7 +1,7 @@
 # Lantern House public example
 
 Lantern House is a fictional independent arts venue built to demonstrate the reusable
-HypnoTech CMS, Media, Ecommerce, Frontend, and MongoDB modules. Its names, writing,
+HypnoTech CMS, Media, Ecommerce, Frontend, and swappable persistence modules. Its names, writing,
 models, seed documents, vector artwork, audio, video, and styling were created for this
 repository. Nothing was copied or adapted from a production client site.
 
@@ -23,9 +23,11 @@ repository. Nothing was copied or adapted from a production client site.
 - Progressive partial-page navigation with full-document fallback, persistent audio
   player and basket drawers, page-level track launch events, and a deliberately
   separate checkout flow.
-- A deliberate Admin/Website boundary: shared models and BSON metadata are neutral,
-  fluent edit mappings remain in Admin, and the public site uses focused read
+- A deliberate Admin/Website boundary: shared domain models remain separate from edit
+  mappings, fluent CMS mappings and migrations remain in Admin, and the public site uses focused read
   repositories without referencing CMS web or admin assemblies.
+- One readable `Demo:Provider` switch in each Startup selects MongoDB, PostgreSQL, or
+  SQL Server. Admin automatically migrates relational databases before idempotent seed.
 
 ## Developer guides
 
@@ -47,18 +49,25 @@ verify them with `npm run check:frontend` from the repository root.
 
 ## One-command launch
 
-From the repository root, the launcher starts MongoDB, seeds the demo, and runs both
-applications:
+From the repository root, the launcher starts the selected database, migrates when
+needed, seeds the demo, and runs both applications. MongoDB is the default:
 
 ```bash
 ./examples/run-demo.sh
+./examples/run-demo.sh --provider postgres
+./examples/run-demo.sh --provider sqlserver
 ```
 
 It prints the URLs and development login when both applications are ready. It also
 pins the admin and website to the same absolute `.demo/uploads` path, so files uploaded
 through the CMS are visible from either host. Press Ctrl+C to stop the admin and
-website. The named MongoDB container and volume remain in place for the next run; use
+website. The named database container and volume remain in place for the next run; use
 the reset commands below when you want fresh data.
+
+The showcase projects intentionally reference all three adapters so one configuration
+value can demonstrate each option. A real application references only its selected
+thin provider project, so choosing SQL Server does not bring in Npgsql and choosing
+PostgreSQL does not bring in the SQL Server driver.
 
 ## Automated browser journeys
 
@@ -83,7 +92,14 @@ The browser suite uses a unique disposable database and upload directory. It doe
 use the persistent manual-demo database and deliberately stops before any payment or
 order submission.
 
-## Start MongoDB
+Run all journeys against either relational provider with:
+
+```bash
+./tests/run-end-to-end.sh --provider postgres
+./tests/run-end-to-end.sh --provider sqlserver
+```
+
+## Start a database manually
 
 The example uses the same pinned supported MongoDB release as the engine integration
 suite. Start it with Podman:
@@ -98,7 +114,9 @@ podman run -d --replace --name hypnotech-demo-mongo \
 If a Compose provider is configured for Podman, the equivalent command is:
 
 ```bash
-podman compose -f examples/compose.yaml up -d mongo
+podman compose -f examples/compose.yaml --profile mongodb up -d mongo
+podman compose -f examples/compose.yaml --profile postgresql up -d postgres
+podman compose -f examples/compose.yaml --profile sqlserver up -d sqlserver
 ```
 
 Neither command requires the Docker daemon or a Docker-command compatibility package.
@@ -108,11 +126,12 @@ Neither command requires the Docker daemon or a Docker-command compatibility pac
 From the repository root, run:
 
 ```bash
-dotnet run --project examples/HypnoTech.Demo.Admin -- --seed-only
+Demo__Provider=PostgreSql dotnet run --project examples/HypnoTech.Demo.Admin -- --seed-only
 ```
 
 Seeding is additive and idempotent per collection: it populates only empty demo
-collections. It also copies the synthetic media fixtures into the configured shared
+tables or collections. Relational startup first applies pending Admin-owned migrations.
+Seeding also copies the synthetic media fixtures into the configured shared
 upload store. The seed command refuses to run outside the Development environment.
 
 The development administrator is:
@@ -170,6 +189,8 @@ container and its named volume:
 ```bash
 podman rm -f hypnotech-demo-mongo
 podman volume rm hypnotech-demo-mongo
+podman rm -f hypnotech-demo-postgres hypnotech-demo-sqlserver
+podman volume rm hypnotech-demo-postgres hypnotech-demo-sqlserver
 ```
 
 Run the start and seed commands again to recreate the example.
