@@ -58,6 +58,8 @@ public sealed class AdminContentTests : DemoPageTest
 
                 await page.GetByRole(AriaRole.Button, new() { Name = "Save Changes", Exact = true }).ClickAsync();
                 await Assertions.Expect(page).ToHaveURLAsync($"{Fixture.AdminUrl}/Cms/Articles");
+                await Assertions.Expect(page.GetByRole(AriaRole.Alert))
+                    .ToContainTextAsync($"Added '{originalTitle}'");
 
                 await SearchAsync(page, searchTerm);
                 var row = RowFor(page, originalTitle);
@@ -65,6 +67,9 @@ public sealed class AdminContentTests : DemoPageTest
                 await row.Locator("a:has(.fa-pen)").ClickAsync();
                 await page.GetByLabel("Title", new() { Exact = true }).FillAsync(editedTitle);
                 await page.GetByRole(AriaRole.Button, new() { Name = "Save Changes", Exact = true }).ClickAsync();
+                await Assertions.Expect(page).ToHaveURLAsync($"{Fixture.AdminUrl}/Cms/Articles");
+                await Assertions.Expect(page.GetByRole(AriaRole.Alert))
+                    .ToContainTextAsync($"Updated '{editedTitle}'");
 
                 await page.GotoAsync($"{Fixture.WebsiteUrl}/Articles");
                 var publicArticle = page.Locator("article").Filter(new() { HasText = editedTitle });
@@ -79,6 +84,9 @@ public sealed class AdminContentTests : DemoPageTest
                 await row.Locator("a:has(.fa-copy)").ClickAsync();
                 await page.GetByLabel("Title", new() { Exact = true }).FillAsync(duplicateTitle);
                 await page.GetByRole(AriaRole.Button, new() { Name = "Save Changes", Exact = true }).ClickAsync();
+                await Assertions.Expect(page).ToHaveURLAsync($"{Fixture.AdminUrl}/Cms/Articles");
+                await Assertions.Expect(page.GetByRole(AriaRole.Alert))
+                    .ToContainTextAsync($"Added '{duplicateTitle}'");
 
                 await SearchAsync(page, searchTerm);
                 await Assertions.Expect(RowFor(page, editedTitle)).ToBeVisibleAsync();
