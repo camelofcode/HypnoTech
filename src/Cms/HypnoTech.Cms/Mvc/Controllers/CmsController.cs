@@ -204,6 +204,7 @@ namespace HypnoTech.Cms.Mvc.Controllers
         }
 
         [Route("Remove/{id}")]
+        [Route("Remove")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Remove(string id)

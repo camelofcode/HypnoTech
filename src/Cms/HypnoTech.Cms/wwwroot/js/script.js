@@ -19712,8 +19712,7 @@ function CmsListViewModel() {
 
                 document.getElementById("item-title").innerText = title;
 
-                var removeForm = document.getElementById("remove-form");
-                removeForm.action = removeForm.getAttribute("data-action") + encodeURIComponent(id);
+                document.getElementById("remove-id").value = id;
             }
             //Sort order hookup
             else if (event.target.matches('[data-sort]')) {

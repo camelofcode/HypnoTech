@@ -48,8 +48,9 @@
 
                 </div>
                 <div class="modal-footer">
-                    <form action="" method="POST" id="remove-form" data-action="/Settings/User/Remove/">
+                    <form action="/Settings/User/Remove/" method="POST" id="remove-form">
                         @Html.AntiForgeryToken()
+                        <input type="hidden" id="remove-id" name="id" />
                         <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-dark">Delete User</button>
                     </form>
@@ -71,8 +72,7 @@
 
                     document.getElementById("item-title").innerText = title;
 
-                    var removeForm = document.getElementById("remove-form");
-                    removeForm.action = removeForm.getAttribute("data-action") + id;
+                    document.getElementById("remove-id").value = id;
                 }
             },
             false);
