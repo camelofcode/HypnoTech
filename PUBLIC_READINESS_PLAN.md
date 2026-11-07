@@ -6,9 +6,9 @@
 >
 > **Last updated:** 2026-11-07
 >
-> **Current phase:** Phase 7 in progress; final release candidate under hosted verification
+> **Current phase:** Phase 7 complete; `v1.0.0` is public
 >
-> **Next action:** Merge PR #19 after its final hosted checks pass, then tag and publish v1.0.0.
+> **Next action:** Begin Phase 8 by extracting the provider-independent persistence contract suite.
 
 ## How to maintain this document
 
@@ -134,7 +134,7 @@ date.
 | 4 | Original public example admin and website | Complete | v1.0 |
 | 5 | Focused Playwright portfolio smoke suite | Complete | v1.0 |
 | 6 | Async I/O modernisation | Complete | v1.0 |
-| 7 | CI, documentation, `main`, and public release | In progress | v1.0 |
+| 7 | CI, documentation, `main`, and public release | Complete | v1.0 |
 | 8 | Persistence contracts hardened | Not started | v1.1 |
 | 9 | EF Core implementations and provider packaging | Not started | v1.1 |
 
@@ -743,7 +743,7 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [x] Retain `master` as a frozen alias of `support/legacy-production` through the v1.0
       release; revisit deletion after external links and consumers have moved to the
       named support branch.
-- [ ] Publish an annotated `v1.0.0` release.
+- [x] Publish an annotated `v1.0.0` release.
 - [x] Enable public-repository secret scanning and dependency alerts.
 - [x] Enable private vulnerability reporting so the channel documented in
       `SECURITY.md` is available.
@@ -761,7 +761,7 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [x] Required CI is green.
 - [x] No unresolved secret, copyright, or licensing blocker remains.
 - [x] `main` is the public default branch.
-- [ ] `v1.0.0` is published with useful release notes.
+- [x] `v1.0.0` is published with useful release notes.
 
 ## Phase 8 — Persistence contracts for v1.1
 
@@ -1042,12 +1042,13 @@ stating that work was done.
 | 2026-11-07 | Phase 7 | Passed the complete documented release sequence from a fresh Linux clone of the final PR commit. | Restore and exact `npm ci` succeed with zero npm vulnerabilities; Release build has zero warnings/errors; formatting and all five generated bundles are current; the Chromium journey passes 5/5; and the runtime-aware rootless-Podman wrapper passes all 79 solution tests. | PR #19 |
 | 2026-11-07 | Phase 7 | Established a clean authored-source CodeQL baseline. | The pinned advanced workflow runs the default query suite across C#, JavaScript/TypeScript, and Actions while excluding only third-party `lib` trees and committed `wwwroot/js` build outputs. All three hosted analyses pass and PR #19 has zero open code-scanning alerts after the authored findings were fixed. CodeQL remains informative rather than merge-required for v1.0. | PR #19 |
 | 2026-11-07 | Phase 7 | Corrected the end-to-end public host to use test-only HTTPS after antiforgery hardening exposed WebKit's strict secure-cookie handling. | Chromium and Firefox permit `Secure` cookies on plain localhost, but WebKit correctly withheld the public antiforgery cookie over HTTP. The fixture now serves both Admin and Website with the same ephemeral certificate, preserving production cookie policy and testing the intended HTTPS deployment boundary. | PR #19 |
+| 2026-11-07 | Phase 7 | Published the first stable public release and closed the Phase 7 exit gate. | PR #19 merged as `ceec378`; the exact `main` commit passed all 11 CI jobs and the C#, JavaScript/TypeScript, and Actions CodeQL analyses. Obsolete default-setup analyses were removed, the one containment-guard false positive was dismissed with rationale, and the repository has zero open code-scanning alerts. Annotated tag `v1.0.0` and the GitHub Release were published with the prepared release notes. | [`v1.0.0`](https://github.com/camelofcode/HypnoTech/releases/tag/v1.0.0) |
 
 ## Immediate next actions
 
-1. Merge the final release-governance and CodeQL-baseline pull request after its hosted
-   CI and authored-source scan pass.
-2. Verify that exact candidate from a fresh Linux clone using the corrected
-   Docker/Podman-aware commands.
-3. Tag the resulting `main` commit as annotated `v1.0.0` and publish the GitHub Release.
-4. Begin Phase 8 by extracting provider-independent persistence contracts.
+1. Trace the existing MongoDB repository behaviours into a provider-independent Phase 8
+   contract matrix without changing the public interfaces.
+2. Decide the shared contract-test host and fixture shape before adding relational
+   implementations.
+3. Make MongoDB pass the extracted provider-independent suite before beginning the
+   Phase 9 EF Core implementation.
