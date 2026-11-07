@@ -51,4 +51,7 @@
     <Project Path="tests/HypnoTech.Demo.EndToEndTests/HypnoTech.Demo.EndToEndTests.csproj" />
     <Project Path="tests/HypnoTech.Demo.IntegrationTests/HypnoTech.Demo.IntegrationTests.csproj" />
   </Folder>
+  <Folder Name="/tests/Persistence/">
+    <Project Path="tests/HypnoTech.Persistence.ContractTests/HypnoTech.Persistence.ContractTests.csproj" />
+  </Folder>
 </Solution>

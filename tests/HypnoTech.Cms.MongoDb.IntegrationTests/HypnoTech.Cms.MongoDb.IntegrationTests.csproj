@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../HypnoTech.Persistence.ContractTests/HypnoTech.Persistence.ContractTests.csproj" />
     <ProjectReference Include="../../src/Cms/HypnoTech.Cms.MongoDb/HypnoTech.Cms.MongoDb.csproj" />
     <ProjectReference Include="../../src/Common/HypnoTech.Common.Dal.MongoDb/HypnoTech.Common.Dal.MongoDb.csproj" />
     <ProjectReference Include="../../src/Ecommerce/HypnoTech.Ecommerce.Dal.MongoDb/HypnoTech.Ecommerce.Dal.MongoDb.csproj" />
