@@ -134,7 +134,7 @@ date.
 | 4 | Original public example admin and website | Complete | v0.1 |
 | 5 | Focused Playwright portfolio smoke suite | Complete | v0.1 |
 | 6 | Async I/O modernisation | Complete | v0.1 |
-| 7 | CI, documentation, `main`, and public release | Not started | v0.1 |
+| 7 | CI, documentation, `main`, and public release | In progress | v0.1 |
 | 8 | Persistence contracts hardened | Not started | v0.2 |
 | 9 | EF Core implementations and provider packaging | Not started | v0.2 |
 
@@ -746,9 +746,9 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 ### Exit gate
 
 - [ ] A fresh Linux clone passes every documented command.
-- [ ] Required CI is green.
-- [ ] No unresolved secret, copyright, or licensing blocker remains.
-- [ ] `main` is the public default branch.
+- [x] Required CI is green.
+- [x] No unresolved secret, copyright, or licensing blocker remains.
+- [x] `main` is the public default branch.
 - [ ] `v0.1.0` is published with useful release notes.
 
 ## Phase 8 — Persistence contracts for v0.2
@@ -895,15 +895,15 @@ These apply throughout all phases:
 
 | Risk | Impact | Mitigation | Status |
 | --- | --- | --- | --- |
-| MongoDB 4.0.3 compatibility regresses after a driver change | Production failure | Preserve driver 3.4.3 on support branch and run the exact 4.0.3 contract target before changes | Automated locally; CI pending Phase 7 |
-| Secrets exist in compact Git history | Credential exposure on publication | Full-history scan, rotation, clean history, final pre-publication scan | Initial history and working-tree scans clean; final scan pending |
+| MongoDB 4.0.3 compatibility regresses after a driver change | Production failure | Preserve driver 3.4.3 on support branch and run the exact 4.0.3 contract target before changes | Resolved for v0.1; the 4.0.3/8.0/9.0 contract matrix is green in required hosted CI |
+| Secrets exist in compact Git history | Credential exposure on publication | Full-history scan, rotation, clean history, final pre-publication scan | Resolved for publication; the final 35-commit history and exact candidate-tree scans are clean |
 | Third-party assets lack clear notices | Copyright/licensing problem | Inventory files and dependencies; preserve licences; add notices | Resolved for publication; unknown legacy package metadata is stated explicitly |
 | Tracked Montserrat fonts are corrupted | Broken fonts or an unreviewed visual change | Remove only after confirming no authored/generated CSS reference and retain recovery through the baseline refs/bundle | Resolved; owner approved removal of all 18 unreferenced files |
 | Legacy PayPal packages declare no licence metadata | Unclear provenance and public maintenance risk | Do not misstate the licence; document that packages are restored, then resolve provenance during later existing-PayPal work | Accepted known risk; binaries are not committed and provider replacement remains out of scope |
 | Physical moves break private site references | Consumer builds fail | Pin production to support branch; temporary smoke builds; optional shims | Open |
 | Static registries make tests order-dependent | Flaky test suite | Serial collections and explicit reset of mutable public registries; make BSON and model registration idempotent | Resolved for current registrations; tests remain serial where global mappings are intentionally mutated |
 | Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Resolved; Lantern House is wholly original and the example tree contains no private-site references |
-| Playwright suite becomes slow or brittle | CI friction | Keep five journey-based tests, parallelise CI by browser, and retain engine-specific traces on failure | Open |
+| Playwright suite becomes slow or brittle | CI friction | Keep five journey-based tests, parallelise CI by browser, and retain engine-specific traces on failure | Mitigated; Chromium, Firefox, and WebKit are green in required hosted CI, with WebKit's approximately 20-minute cold job given a 40-minute hard ceiling for download variance |
 | Async conversion changes routes or behaviour | Public regression | Characterisation tests first; preserve action names/routes; convert in bounded slices | Resolved for Phase 6; the full 77-test suite passes after sync removal |
 | Async APIs are wrappers over blocking work | Misleading API and thread-pool pressure | Require native provider async APIs; prohibit `Task.Run` and blocking waits in request paths | Resolved; architecture guards reject blocking waits and synchronous public I/O contracts |
 | EF providers support different EF major versions | Package conflicts or delayed providers | Recheck matrix; align EF major; add providers incrementally | Open |
@@ -1003,12 +1003,13 @@ stating that work was done.
 | 2026-11-07 | Phase 6 | Updated repository guidance and added an architecture guard against synchronous public I/O contracts. | The async authoring skill validates; Release builds with 0 warnings/errors; architecture tests pass 5/5; and the complete rootless-Podman/Chromium solution passes 77/77. Three compatibility-only tests were removed while behavioral coverage continues through async characterisation tests. | This change |
 | 2026-11-07 | Phase 7 preparation | Strengthened test-boundary guidance and added the `test-external-http-integrations` skill. | The guidance now defines when to add unit, integration, architecture, and browser coverage; prefers observable outcomes over mock-call trivia; and standardises safe local protocol stubs without live/sandbox traffic. All five repository skills validate, the 30-project Release build passes with 0 warnings/errors, and demo integration tests pass 15/15 through rootless Podman. | This change |
 | 2026-11-07 | Phase 7 preparation | Added a measured code-style and static-analysis gate to the Phase 7 plan. | Built-in Roslyn analyzers will be baselined and selected diagnostics enforced before considering warnings-as-errors; `dotnet format` remains optional unless a timed no-restore CI run proves fast and stable. Formatting churn must remain separate from behavioural changes. | This change |
-| 2026-11-07 | Phase 7 | Added the GitHub Actions release-candidate workflow, public CI documentation, and a `main`-branch README status badge. | The workflow uses immutable official-action SHAs and standard Ubuntu, Windows, and Intel macOS labels; PyYAML and actionlint 1.7.12 accept it; frontend freshness passes; coverage-producing unit/architecture suites pass 40/40; MongoDB and demo integration suites pass 32/32 through rootless Podman; and the Chromium journeys pass 5/5. The first hosted three-engine/platform run remains the public PR gate. | This change |
+| 2026-11-07 | Phase 7 | Added the GitHub Actions release-candidate workflow, public CI documentation, and a `main`-branch README status badge. | The workflow uses immutable official-action SHAs and standard Ubuntu, Windows, and Intel macOS labels; PyYAML and actionlint 1.7.12 accept it; frontend freshness passes; coverage-producing unit/architecture suites pass 40/40; MongoDB and demo integration suites pass 32/32 through rootless Podman; and the Chromium journeys pass 5/5 locally. | This change |
 | 2026-11-07 | Phase 7 | Re-ran the publication security gate against the complete reachable history and an archive of the exact committed candidate tree. | Gitleaks 8.30.1 found no leaks across 35 commits/~27.8 MB or the tracked tree/~20.7 MB. Four matches from a broad developer-directory scan were confined to ignored Playwright package output under `bin/` and are absent from Git and the publication tree. | This change |
+| 2026-11-07 | Phase 7 | Published the repository with `main` as its default branch and opened the public CI pull request. | The repository is public at `camelofcode/HypnoTech`; `support/legacy-production` remains available; PR #12 is mergeable; and the publication scan preceded the visibility change. | This change |
+| 2026-11-07 | Phase 7 | Completed the first successful hosted release-candidate run on standard free public runners. | Run `42321468198` passed all 11 jobs: frontend freshness, Release build, 40 unit/architecture tests with coverage, 19 MongoDB contracts across 4.0.3/8.0/9.0, 15 example integration tests, five journeys in each of Chromium/Firefox/WebKit, and informative Ubuntu/Windows/macOS builds. Container-backed jobs use Ubuntu 22.04 because Ubuntu 24.04's hosted kernel is incompatible with the pinned MongoDB images; WebKit's cold dependency install made its successful job approximately 20 minutes. | This change |
 
 ## Immediate next actions
 
-1. Publish the repository, open the CI pull request without spending private-repository
-   runner allowance, and make the required Linux checks green.
-2. Complete the remaining public presentation, analyzer, branch-protection, and v0.1
-   release tasks.
+1. Merge PR #12 and confirm the push-to-`main` workflow and README badge remain green.
+2. Require the agreed checks on `main`, then complete the remaining public presentation,
+   analyzer, and v0.1 release tasks.
