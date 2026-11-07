@@ -28,7 +28,9 @@ The complete captured fingerprints are in
 `global.json` requests .NET SDK 10.0.100 and allows the latest compatible feature band;
 10.0.401 is the version verified during Phase 0. `package.json` requires Node.js 22 or
 newer and pins npm 11.16.0 as the package manager. All npm build dependencies are exact
-versions and the root lockfile is authoritative. Automation must use `npm ci`.
+versions and the root lockfile is authoritative. Automation must use `npm ci`. npm
+install scripts are governed by a fail-closed allowlist; unreviewed scripts fail the
+install, and the one current scripted dependency is explicitly denied.
 
 Generated runtime assets are committed. Building the .NET projects therefore does not
 require Node.js; Node/npm are required when modifying frontend source and in freshness
@@ -53,7 +55,7 @@ they do not claim support for every MongoDB 9.0 feature.
 Linux is the required development/CI and production platform for the first public
 release. The CI workflow also builds and runs the container-free suites on standard
 Windows and Intel macOS runners as informative, non-blocking portability checks. Those
-jobs are visibility, not support claims; only the required Linux jobs gate v0.1.
+jobs are visibility, not support claims; only the required Linux jobs gate v1.0.
 
 GitHub's current Ubuntu 24.04 runner uses Linux kernel 7.0. The pinned MongoDB 4.0.3,
 8.0.32, and 9.0.4 compatibility containers include releases that reject Linux kernel

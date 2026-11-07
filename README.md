@@ -4,9 +4,9 @@
 
 HypnoTech is a modular ASP.NET Core engine for content-managed websites. It combines
 a convention-driven CMS with reusable Common, Ecommerce, Media, Frontend, and MongoDB
-components. The repository is being prepared as a public portfolio project; the
-production-compatible baseline is preserved separately while this branch gains tests,
-examples, documentation, and modern asynchronous APIs.
+components. It is aimed at developers building bespoke, content-heavy sites that need
+an editable admin application without surrendering control of the public website's
+models, rendering, or data-access design.
 
 The engine currently provides:
 
@@ -19,17 +19,31 @@ The engine currently provides:
 
 ## Status
 
-This is pre-release software approaching its first public release. The reusable
-projects include an original runnable example, async request and persistence paths,
-layered unit/integration/architecture coverage, and a focused three-engine browser
-suite. The CI workflow is the final release-candidate gate. Existing production users
-remain pinned to the preserved baseline, and MongoDB Server 4.0.3 compatibility
-remains a hard gate.
+Version 1.0 is the first stable public and portfolio baseline. The engine has an
+original runnable example, native async request and persistence paths, layered
+unit/integration/architecture coverage, and a focused Chromium/Firefox/WebKit browser
+suite. Existing production consumers remain pinned to the preserved legacy branch,
+and MongoDB Server 4.0.3 compatibility remains a required CI gate.
 
 See [PUBLIC_READINESS_PLAN.md](PUBLIC_READINESS_PLAN.md) for the phased roadmap and
 work record, [docs/architecture.md](docs/architecture.md) for the design,
 [docs/compatibility.md](docs/compatibility.md) for tested versions, and
-[docs/ci.md](docs/ci.md) for the automated verification policy.
+[docs/limitations.md](docs/limitations.md) for intentionally unsupported or deferred
+areas. The automated gates are described in [docs/ci.md](docs/ci.md) and
+[docs/code-quality.md](docs/code-quality.md).
+
+## Lantern House example
+
+The repository includes an entirely fictional arts-venue site demonstrating the
+generated CMS, partial-page navigation, persistent audio player, Media, Ecommerce,
+uploads, responsive rendering, and the deliberate Admin/Website boundary.
+
+![Lantern House public website](docs/images/lantern-house-website.png)
+
+![Lantern House generated Articles CMS](docs/images/lantern-house-admin.png)
+
+See the [example guide](examples/README.md) for the one-command Podman launcher,
+development login, feature inventory, and browser journeys.
 
 ## Build from a fresh clone
 
@@ -42,6 +56,7 @@ Prerequisites:
 ```bash
 dotnet restore HypnoTech.slnx
 dotnet build HypnoTech.slnx -c Release --no-restore
+dotnet format HypnoTech.slnx --no-restore --verify-no-changes --verbosity minimal
 npm ci
 npm run check:frontend
 ./tests/run-end-to-end.sh
@@ -69,6 +84,10 @@ workflow-backed authoring and verification skills under [`.agents/skills/`](.age
 capture the compatibility, async, testing, external-HTTP, and validation conventions
 used while preparing the engine for release.
 
+Public NuGet packages are not published yet. The package audit, local-feed rehearsal,
+nuget.org Trusted Publishing setup, and future consumer migration are defined in the
+[NuGet packaging plan](docs/nuget-packaging-plan.md).
+
 ## Repository layout
 
 Source projects are grouped physically by functional area:
@@ -84,8 +103,9 @@ Source projects are grouped physically by functional area:
 - `tools/` — deterministic frontend build tooling.
 
 `*.Frontend` runtime projects contain committed `wwwroot` output. Similarly named
-frontend-asset directories contain the authored JavaScript/SCSS plus vendored browser
-libraries. Do not edit generated `wwwroot` bundles directly.
+frontend-asset directories contain authored JavaScript/SCSS and remaining historical
+browser snapshots; exact root npm dependencies supply jQuery and Knockout. Do not edit
+generated `wwwroot` bundles directly.
 
 ## Scope boundaries
 

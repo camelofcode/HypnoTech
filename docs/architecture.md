@@ -6,6 +6,49 @@ and MongoDB infrastructure. The physical project layout matches those functional
 under `src/`; production consumers remain pinned to the preserved support branch whose
 project paths are unchanged.
 
+```mermaid
+flowchart LR
+    subgraph Hosts[Consumer-owned hosts]
+        Admin[Admin application]
+        Website[Public website]
+    end
+
+    subgraph Engine[HypnoTech engine]
+        CMS[Dynamic CMS and form mappings]
+        Common[Common services]
+        Ecommerce[Ecommerce]
+        Media[Media]
+        Frontend[Frontend helpers and assets]
+        Contracts[Async repository contracts]
+    end
+
+    subgraph Persistence[Replaceable persistence]
+        Mongo[MongoDB implementations]
+        Future[Future relational implementations]
+    end
+
+    Admin --> CMS
+    Admin --> Common
+    Admin --> Ecommerce
+    Admin --> Media
+    Website --> Frontend
+    Website --> Common
+    Website --> Ecommerce
+    Website --> Media
+    Website --> Focused[Host-owned focused read repositories]
+    CMS --> Contracts
+    Common --> Contracts
+    Ecommerce --> Contracts
+    Media --> Contracts
+    Focused --> Persistence
+    Contracts --> Mongo
+    Contracts -. provider contract .-> Future
+```
+
+The Admin host owns edit mappings and the generic CMS write path. The public website
+does not reference CMS/Admin assemblies; it owns focused read repositories and may use
+different models or persistence even when both hosts read the same underlying data.
+
 ## Layers and modules
 
 | Area | Responsibility | Current projects |
@@ -60,17 +103,19 @@ The Phase 4 example applications will become the canonical executable compositio
 
 Admin and public website hosts have different dependency boundaries. The Admin host
 owns `FormClassMapping` registrations and the CMS repository provider. A public website
-shares neutral model/BSON metadata but uses focused read repositories over the base
-persistence project; it must not reference `HypnoTech.Cms` or
-`HypnoTech.Cms.MongoDb`. Besides keeping edit behavior server-side, this prevents CMS
-controllers and admin static assets from flowing into the public application.
+may share provider-neutral model types, but owns its focused read repositories and
+persistence mappings; it must not reference `HypnoTech.Cms`, an Admin mapping project,
+or `HypnoTech.Cms.MongoDb`. Besides keeping edit behavior server-side, this prevents
+CMS controllers, editing concerns, and admin static assets from flowing into the public
+application. The two hosts may use different DAL or ORM implementations entirely.
 
 ## Frontend assets
 
-Authored JavaScript and SCSS live in the frontend-asset directories, alongside pinned
-vendored browser libraries under `lib/`. `tools/build-frontend.mjs` concatenates and
-minifies JavaScript and compiles/minifies CMS styles into the runtime projects'
-`wwwroot` directories.
+Authored JavaScript and SCSS live in the frontend-asset directories. Historical browser
+snapshots remain under `lib/`; jQuery and Knockout are exact root npm development
+dependencies so the lockfile and security tooling can identify their versions.
+`tools/build-frontend.mjs` concatenates and minifies JavaScript and compiles/minifies
+CMS styles into the runtime projects' `wwwroot` directories.
 
 The generated outputs are committed so a .NET consumer does not need Node.js. Runtime
 assets remain self-hosted. The root `package-lock.json` and exact devDependency versions
