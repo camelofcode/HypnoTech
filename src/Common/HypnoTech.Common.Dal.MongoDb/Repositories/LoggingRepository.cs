@@ -15,19 +15,9 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
         {
         }
 
-        public PagedListResponse<SerilogEntry> GetLogs(PagedRequest request)
-        {
-            return GetPaged<SerilogEntry>(request, "Timestamp", true);
-        }
-
         public Task<PagedListResponse<SerilogEntry>> GetLogsAsync(PagedRequest request, CancellationToken cancellationToken = default)
         {
             return GetPagedAsync<SerilogEntry>(request, "Timestamp", true, cancellationToken);
-        }
-
-        public SerilogEntry GetLog(string id)
-        {
-            return GetByObjectId<SerilogEntry>(id);
         }
 
         public Task<SerilogEntry> GetLogAsync(string id, CancellationToken cancellationToken = default)

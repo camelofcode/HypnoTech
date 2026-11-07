@@ -55,7 +55,7 @@ public sealed class RepositoryArchitectureTests
     }
 
     [Fact]
-    public void Converted_request_path_source_does_not_block_on_tasks()
+    public void Request_path_source_does_not_block_on_tasks()
     {
         var root = FindRepositoryRoot();
         var scopedDirectories = new[]
@@ -80,7 +80,6 @@ public sealed class RepositoryArchitectureTests
             .SelectMany(path => File.ReadLines(path)
                 .Select((line, index) => new { path, line, number = index + 1 }))
             .Where(candidate => blockingPattern.IsMatch(candidate.line))
-            .Where(candidate => !IsApprovedPayPalV1CompatibilityAdapter(candidate.path, candidate.line))
             .Select(candidate =>
                 $"{Path.GetRelativePath(root, candidate.path)}:{candidate.number}: {candidate.line.Trim()}")
             .ToList();
@@ -110,10 +109,44 @@ public sealed class RepositoryArchitectureTests
         Assert.Empty(violations);
     }
 
-    private static bool IsApprovedPayPalV1CompatibilityAdapter(string path, string line)
+    [Fact]
+    public void Public_io_contracts_are_async_only()
     {
-        return Path.GetFileName(path) == "PayPalService.cs" &&
-               line.Contains("client.Execute(request).Result", StringComparison.Ordinal);
+        var root = FindRepositoryRoot();
+        var contractDirectories = new[]
+        {
+            "src/Cms/HypnoTech.Cms.Contracts/Interfaces",
+            "src/Cms/HypnoTech.Cms/Services/Interfaces",
+            "src/Common/HypnoTech.Common.Dal/Repositories",
+            "src/Ecommerce/HypnoTech.Ecommerce.Dal/Repositories",
+            "src/Ecommerce/HypnoTech.Ecommerce.Frontend/Services/Interfaces",
+            "src/Media/HypnoTech.Media.Dal/Repositories"
+        };
+        var contractFiles = contractDirectories
+            .SelectMany(directory => Directory.GetFiles(
+                Path.Combine(root, directory),
+                "*.cs",
+                SearchOption.AllDirectories))
+            .Concat(new[]
+            {
+                Path.Combine(root, "src/Common/HypnoTech.Common.Emails/IEmailService.cs"),
+                Path.Combine(root, "src/Common/HypnoTech.Common/Services/IUploadedFilesService.cs")
+            });
+        var methodPattern = new Regex(
+            @"^[ \t]*(?:[\w<>,\[\]?]+[ \t]+)+(?<name>\w+)[ \t]*\([^;{}]*\)[ \t]*;",
+            RegexOptions.Compiled | RegexOptions.Multiline);
+
+        var violations = contractFiles
+            .SelectMany(path => methodPattern.Matches(File.ReadAllText(path))
+                .Cast<Match>()
+                .Where(match => !match.Groups["name"].Value.EndsWith(
+                    "Async",
+                    StringComparison.Ordinal))
+                .Select(match =>
+                    $"{Path.GetRelativePath(root, path)}: {match.Groups["name"].Value}"))
+            .ToList();
+
+        Assert.Empty(violations);
     }
 
     private static string FindRepositoryRoot()

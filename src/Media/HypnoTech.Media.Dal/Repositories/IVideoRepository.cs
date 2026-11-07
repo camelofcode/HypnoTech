@@ -7,7 +7,6 @@ namespace HypnoTech.Media.Dal.Repositories
 {
     public interface IVideoRepository
     {
-        ICollection<YouTubeVideo> GetVideos();
         Task<ICollection<YouTubeVideo>> GetVideosAsync(CancellationToken cancellationToken = default);
     }
 }

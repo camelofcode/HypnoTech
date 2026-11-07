@@ -16,40 +16,11 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
         {
         }
 
-        public AdminUser GetUserByName(string name)
-        {
-            return GetOne<AdminUser>(new BsonDocument("username" , new BsonRegularExpression($"^{name}$", "i")));
-        }
-
         public Task<AdminUser> GetUserByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             return GetOneAsync<AdminUser>(
                 new BsonDocument("username", new BsonRegularExpression($"^{name}$", "i")),
                 cancellationToken);
-        }
-
-        public string UpdateAccount(AdminUser user)
-        {
-            var existing = GetByObjectId<AdminUser>(user.Id);
-            var duplicate = Collection.Find(new BsonDocument("username", new BsonRegularExpression($"^{user.Username}$", "i"))).FirstOrDefault();
-
-            if (duplicate != null && BsonSerializer.Deserialize<AdminUser>(duplicate).Id != user.Id)
-            {
-                return "Username is already in use";
-            }
-
-            duplicate = Collection.Find(new BsonDocument("email", user.Email)).FirstOrDefault();
-
-            if (duplicate != null && BsonSerializer.Deserialize<AdminUser>(duplicate).Id != user.Id)
-            {
-                return "Email is already in use";
-            }
-
-            user.Password = existing.Password;
-            user.Roles = existing.Roles;
-            Collection.ReplaceOne(new BsonDocument("_id", new ObjectId(user.Id)), user.ToBsonDocument());
-
-            return null;
         }
 
         public async Task<string> UpdateAccountAsync(AdminUser user, CancellationToken cancellationToken = default)
@@ -80,13 +51,6 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
                 cancellationToken: cancellationToken);
 
             return null;
-        }
-
-        public void ChangePassword(string id, string password)
-        {
-            var user = GetByObjectId<AdminUser>(id);
-            user.Password = password;
-            Collection.ReplaceOne(new BsonDocument("_id", new ObjectId(user.Id)), user.ToBsonDocument());
         }
 
         public async Task ChangePasswordAsync(string id, string password, CancellationToken cancellationToken = default)

@@ -16,21 +16,10 @@ namespace HypnoTech.Cms.Services
             _repository = repository;
         }
 
-        public bool VerifyUser(string username, string password)
-        {
-            var user = _repository.GetUserForLogin(username);
-            return user != null && PasswordHelper.VerifyPassword(password, user.Password);
-        }
-
         public async Task<bool> VerifyUserAsync(string username, string password, CancellationToken cancellationToken = default)
         {
             var user = await _repository.GetUserForLoginAsync(username, cancellationToken);
             return user != null && PasswordHelper.VerifyPassword(password, user.Password);
-        }
-
-        public List<string> GetRoles(string username)
-        {
-            return _repository.GetUserRoles(username);
         }
 
         public Task<List<string>> GetRolesAsync(string username, CancellationToken cancellationToken = default)

@@ -5,7 +5,6 @@ namespace HypnoTech.Common.Emails
 {
     public interface IEmailService
     {
-        void SendEmail(string to, string templateName, string fileName, BaseEmailViewModel model);
         Task SendEmailAsync(string to, string templateName, string fileName, BaseEmailViewModel model, CancellationToken cancellationToken = default);
     }
 }

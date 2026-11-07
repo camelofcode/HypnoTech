@@ -21,48 +21,14 @@ namespace HypnoTech.Common.Services
             _logger = logger;
         }
 
-        public FileResult GetImage(string section, string filename)
-        {
-            return GetFileResult("Images", section, filename, false);
-        }
-
         public Task<FileResult> GetImageAsync(string section, string filename, CancellationToken cancellationToken = default)
         {
             return GetFileResultAsync("Images", section, filename, false, cancellationToken);
         }
 
-        public FileResult GetFile(string section, string filename)
-        {
-            return GetFileResult("Files", section, filename, true);
-        }
-
         public Task<FileResult> GetFileAsync(string section, string filename, CancellationToken cancellationToken = default)
         {
             return GetFileResultAsync("Files", section, filename, true, cancellationToken);
-        }
-
-        private FileResult GetFileResult(string category, string section, string filename, bool enableRangeProcessing)
-        {
-            var path = Path.GetFullPath(Path.Combine(_basePath, category, section, filename));
-
-            try
-            {
-                var file = File.ReadAllBytes(path);
-                var contentType = GetContentType(filename);
-                return new FileContentResult(file, contentType)
-                {
-                    FileDownloadName = filename,
-                    EnableRangeProcessing = enableRangeProcessing &&
-                                            (contentType.StartsWith("audio") || contentType.StartsWith("video"))
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogWarning(exception,
-                    "Could not serve uploaded {Category} file from {Path}. UploadPath resolved to {UploadPath}.",
-                    category, path, _basePath);
-                return null;
-            }
         }
 
         private async Task<FileResult> GetFileResultAsync(

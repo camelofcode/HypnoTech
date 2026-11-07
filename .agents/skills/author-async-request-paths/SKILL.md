@@ -1,6 +1,6 @@
 ---
 name: author-async-request-paths
-description: Add or revise HypnoTech ASP.NET Core controllers, services, repository contracts, or persistence implementations. Use when creating request paths or changing I/O so module boundaries, controller conventions, native async APIs, cancellation, and v0.1 sync compatibility remain consistent.
+description: Add or revise HypnoTech ASP.NET Core controllers, services, repository contracts, or persistence implementations. Use when creating request paths or changing I/O so module boundaries, controller conventions, native async APIs, cancellation, and async-only public contracts remain consistent.
 ---
 
 # Author HypnoTech request paths
@@ -53,20 +53,15 @@ making CPU-only work artificially asynchronous.
   and other CPU-only work synchronous unless it naturally participates in an async
   method that also performs I/O.
 
-## Retain compatibility deliberately
+## Keep I/O contracts async-only
 
-- Existing public synchronous members remain available through v0.1 unless a breaking
-  change is explicitly authorised.
-- Keep retained sync members natively synchronous. Never implement them by blocking on
-  async members.
-- Make the async member the path used by engine controllers, tag helpers, services,
-  and examples.
-- For an additive interface member that existing third-party implementations cannot
-  immediately implement, consider a default compatibility implementation only when it
-  preserves source and binary consumers. Ensure first-party implementations with I/O
-  override it using native async calls.
+- Do not add synchronous repository or I/O-bound service members to public `main`.
+- Do not add sync-over-async compatibility wrappers. Production consumers that need
+  the historic synchronous API remain pinned to `support/legacy-production`.
+- Keep framework-mandated synchronous contracts explicit and isolated from request
+  threads, as with the queued Serilog `ILogEventSink.Emit` implementation.
 - Preserve routes, verbs, response and view types, validation, flash messages,
-  ordering, collection names, and BSON names during an async-only conversion.
+  ordering, collection names, and BSON names when changing an async request path.
 
 ## Verify the complete path
 

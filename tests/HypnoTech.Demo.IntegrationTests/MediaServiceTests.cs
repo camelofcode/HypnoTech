@@ -35,21 +35,6 @@ public sealed class MediaServiceTests
         Assert.Equal(TestContext.Current.CancellationToken, repository.CancellationToken);
         Assert.Equal(TestContext.Current.CancellationToken, enrichment.CancellationToken);
         Assert.True(enrichment.AsyncCalled);
-        Assert.False(enrichment.SyncCalled);
-    }
-
-    [Fact]
-    public async Task EnrichAudioTracksAsync_preserves_sync_only_implementation_compatibility()
-    {
-        IAudioTrackEnrichmentService enrichment = new SyncOnlyAudioTrackEnrichmentService();
-        ICollection<AudioTrack> tracks = [new AudioTrack { RelatedId = "synthetic-related-item" }];
-
-        var enriched = await enrichment.EnrichAudioTracksAsync(
-            tracks,
-            TestContext.Current.CancellationToken);
-
-        Assert.Same(tracks, enriched);
-        Assert.Null(Assert.Single(enriched).RelatedId);
     }
 
     private sealed class StubAudioTrackRepository : IAudioTrackRepository
@@ -63,8 +48,6 @@ public sealed class MediaServiceTests
 
         public CancellationToken CancellationToken { get; private set; }
 
-        public ICollection<AudioTrack> GetTracksForPlayer() => _tracks;
-
         public Task<ICollection<AudioTrack>> GetTracksForPlayerAsync(
             CancellationToken cancellationToken = default)
         {
@@ -75,17 +58,9 @@ public sealed class MediaServiceTests
 
     private sealed class StubAudioTrackEnrichmentService : IAudioTrackEnrichmentService
     {
-        public bool SyncCalled { get; private set; }
-
         public bool AsyncCalled { get; private set; }
 
         public CancellationToken CancellationToken { get; private set; }
-
-        public ICollection<AudioTrack> EnrichAudioTracks(ICollection<AudioTrack> tracks)
-        {
-            SyncCalled = true;
-            return Enrich(tracks);
-        }
 
         public Task<ICollection<AudioTrack>> EnrichAudioTracksAsync(
             ICollection<AudioTrack> tracks,
@@ -107,16 +82,4 @@ public sealed class MediaServiceTests
         }
     }
 
-    private sealed class SyncOnlyAudioTrackEnrichmentService : IAudioTrackEnrichmentService
-    {
-        public ICollection<AudioTrack> EnrichAudioTracks(ICollection<AudioTrack> tracks)
-        {
-            foreach (var track in tracks)
-            {
-                track.RelatedId = null;
-            }
-
-            return tracks;
-        }
-    }
 }

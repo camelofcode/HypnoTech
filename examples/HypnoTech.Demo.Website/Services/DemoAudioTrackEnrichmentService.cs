@@ -18,12 +18,6 @@ public sealed class DemoAudioTrackEnrichmentService : IAudioTrackEnrichmentServi
         _artists = artists;
     }
 
-    public ICollection<AudioTrack> EnrichAudioTracks(ICollection<AudioTrack> tracks)
-    {
-        var artists = _artists.GetAll().ToDictionary(artist => artist.Id);
-        return EnrichAudioTracks(tracks, artists);
-    }
-
     public async Task<ICollection<AudioTrack>> EnrichAudioTracksAsync(
         ICollection<AudioTrack> tracks,
         CancellationToken cancellationToken = default)

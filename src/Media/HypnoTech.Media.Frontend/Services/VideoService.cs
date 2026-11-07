@@ -8,7 +8,6 @@ namespace HypnoTech.Media.Frontend.Services
 {
     public interface IVideoService
     {
-        ICollection<YouTubeVideo> GetVideos();
         Task<ICollection<YouTubeVideo>> GetVideosAsync(CancellationToken cancellationToken = default);
     }
 
@@ -19,11 +18,6 @@ namespace HypnoTech.Media.Frontend.Services
         public VideoService(IVideoRepository repository)
         {
             _repository = repository;
-        }
-
-        public ICollection<YouTubeVideo> GetVideos()
-        {
-            return _repository.GetVideos();
         }
 
         public Task<ICollection<YouTubeVideo>> GetVideosAsync(CancellationToken cancellationToken = default)

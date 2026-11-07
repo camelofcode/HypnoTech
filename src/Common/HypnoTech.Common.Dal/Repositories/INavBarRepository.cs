@@ -7,10 +7,6 @@ namespace HypnoTech.Common.Dal.Repositories
 {
     public interface INavBarRepository
     {
-        List<NavBarLink> GetEnabledNavBarLinks();
-
-        Task<List<NavBarLink>> GetEnabledNavBarLinksAsync(
-            CancellationToken cancellationToken = default) =>
-            Task.FromResult(GetEnabledNavBarLinks());
+        Task<List<NavBarLink>> GetEnabledNavBarLinksAsync(CancellationToken cancellationToken = default);
     }
 }

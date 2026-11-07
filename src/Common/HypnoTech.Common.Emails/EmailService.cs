@@ -21,15 +21,6 @@ namespace HypnoTech.Common.Emails
             _emailTemplateRepository = emailTemplateRepository;
         }
 
-        public void SendEmail(string to, string templateName, string filename, BaseEmailViewModel model)
-        {
-            var config = _configRepository.GetConfig();
-            var template = _emailTemplateRepository.GetEmailTemplate(templateName);
-            RegisterPartials();
-            model.ApplyTemplate(config.MainSite.Url, template);
-            SendEmail(config.Email, to, template.Subject, BuildEmail(model, filename));
-        }
-
         public async Task SendEmailAsync(
             string to,
             string templateName,
@@ -49,29 +40,6 @@ namespace HypnoTech.Common.Emails
                 template.Subject,
                 await BuildEmailAsync(model, filename, cancellationToken),
                 cancellationToken);
-        }
-
-        private void SendEmail(EmailConfig config, string to, string subject, string body)
-        {
-            if (!config.EnableEmails)
-            {
-                WriteToFolder(subject, body);
-                return;
-            }
-
-            using SmtpClient client = new SmtpClient(config.SmtpServer)
-            {
-                Credentials = new NetworkCredential(config.MailboxUser, config.MailboxPassword)
-            };
-
-            using MailMessage message = new MailMessage(config.Sender, to)
-            {
-                Subject = subject,
-                IsBodyHtml = true,
-                Body = body
-            };
-
-            client.Send(message);
         }
 
         private async Task SendEmailAsync(
@@ -101,12 +69,6 @@ namespace HypnoTech.Common.Emails
             await client.SendMailAsync(message, cancellationToken);
         }
 
-        private void WriteToFolder(string subject, string body)
-        {
-            Directory.CreateDirectory("TestEmails");
-            File.WriteAllText($@"TestEmails/{DateTime.Now:dd MM yyyy - hh-mm}-{subject}.html", body);
-        }
-
         private async Task WriteToFolderAsync(string subject, string body, CancellationToken cancellationToken)
         {
             Directory.CreateDirectory("TestEmails");
@@ -114,12 +76,6 @@ namespace HypnoTech.Common.Emails
                 $@"TestEmails/{DateTime.Now:dd MM yyyy - hh-mm}-{subject}.html",
                 body,
                 cancellationToken);
-        }
-
-        private string BuildEmail(BaseEmailViewModel model, string name)
-        {
-            var render = Handlebars.Compile(File.ReadAllText($@"EmailTemplates/{name}.hbs"));
-            return render(model);
         }
 
         private async Task<string> BuildEmailAsync(
@@ -132,17 +88,6 @@ namespace HypnoTech.Common.Emails
                 cancellationToken);
             var render = Handlebars.Compile(source);
             return render(model);
-        }
-
-        private void RegisterPartials()
-        {
-            RegisterPartial("Footer");
-            RegisterPartial("Head");
-            RegisterPartial("Header");
-            RegisterPartial("OrderDetails");
-            RegisterPartial("PasswordResetLink");
-            RegisterPartial("Preamble");
-            RegisterPartial("DownloadCodes");
         }
 
         private async Task RegisterPartialsAsync(CancellationToken cancellationToken)
@@ -163,13 +108,5 @@ namespace HypnoTech.Common.Emails
             }
         }
 
-        private void RegisterPartial(string name)
-        {
-            var path = $@"EmailTemplates/Partials/{name}.hbs";
-            if (File.Exists(path))
-            {
-                Handlebars.RegisterTemplate(name, File.ReadAllText($@"EmailTemplates/Partials/{name}.hbs"));
-            }
-        }
     }
 }

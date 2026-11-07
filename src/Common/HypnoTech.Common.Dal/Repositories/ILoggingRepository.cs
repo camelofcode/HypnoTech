@@ -8,10 +8,7 @@ namespace HypnoTech.Common.Dal.Repositories
 {
     public interface ILoggingRepository
     {
-        PagedListResponse<SerilogEntry> GetLogs(PagedRequest request);
         Task<PagedListResponse<SerilogEntry>> GetLogsAsync(PagedRequest request, CancellationToken cancellationToken = default);
-
-        SerilogEntry GetLog(string id);
         Task<SerilogEntry> GetLogAsync(string id, CancellationToken cancellationToken = default);
     }
 }

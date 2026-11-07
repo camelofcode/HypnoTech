@@ -14,15 +14,6 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
         {
         }
 
-        public string CreateResetPasswordCode(AdminUser user)
-        {
-            var reset = new PasswordReset(user);
-
-            Collection.InsertOne(reset.ToBsonDocument());
-
-            return reset.Code;
-        }
-
         public async Task<string> CreateResetPasswordCodeAsync(AdminUser user, CancellationToken cancellationToken = default)
         {
             var reset = new PasswordReset(user);
@@ -32,19 +23,9 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
             return reset.Code;
         }
 
-        public PasswordReset GetCode(string code)
-        {
-            return GetOne<PasswordReset>(new BsonDocument("code", code));
-        }
-
         public Task<PasswordReset> GetCodeAsync(string code, CancellationToken cancellationToken = default)
         {
             return GetOneAsync<PasswordReset>(new BsonDocument("code", code), cancellationToken);
-        }
-
-        public void RemoveCode(string code)
-        {
-            Collection.DeleteOne(new BsonDocument("code", code));
         }
 
         public async Task RemoveCodeAsync(string code, CancellationToken cancellationToken = default)

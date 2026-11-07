@@ -21,15 +21,6 @@ namespace HypnoTech.Frontend.Caching
             CachedLinks = new List<NavBarLink>();
         }
 
-        public static void Init(INavBarRepository repository)
-        {
-            var navigationLinks = GetNavigationLinks();
-            var enabledLinks = GetEnabledLinks(repository);
-
-            PopulateUrls(navigationLinks, enabledLinks);
-            CachedLinks = enabledLinks;
-        }
-
         public static async Task InitAsync(
             INavBarRepository repository,
             CancellationToken cancellationToken = default)
@@ -57,19 +48,6 @@ namespace HypnoTech.Frontend.Caching
             foreach (var enabledLink in enabledLinks)
             {
                 enabledLink.Url = navigationLinks.FirstOrDefault(p => p.GetNavigationLinkId() == enabledLink.Key)?.GetUrl();
-            }
-        }
-
-        private static List<NavBarLink> GetEnabledLinks(INavBarRepository repository)
-        {
-            try
-            {
-                return repository.GetEnabledNavBarLinks();
-            }
-            catch
-            {
-                Log.Logger.Warning("NavBar could not be loaded from Data Store");
-                return new List<NavBarLink>();
             }
         }
 

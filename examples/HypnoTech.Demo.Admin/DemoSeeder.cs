@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Cms.Contracts.Interfaces;
 using HypnoTech.Common;
 using HypnoTech.Common.Dal.Repositories;
@@ -20,7 +22,10 @@ public static class DemoSeeder
     public const string AdminUsername = "admin";
     public const string AdminPassword = "HypnoTechDemo!2026";
 
-    public static void Seed(IServiceProvider services, IWebHostEnvironment environment)
+    public static async Task SeedAsync(
+        IServiceProvider services,
+        IWebHostEnvironment environment,
+        CancellationToken cancellationToken = default)
     {
         if (!environment.IsDevelopment())
         {
@@ -29,26 +34,29 @@ public static class DemoSeeder
         }
 
         using var scope = services.CreateScope();
-        CopyDemoUploads(scope.ServiceProvider.GetRequiredService<IConfiguration>(), environment);
+        await CopyDemoUploadsAsync(
+            scope.ServiceProvider.GetRequiredService<IConfiguration>(),
+            environment,
+            cancellationToken);
         var seed = scope.ServiceProvider.GetRequiredService<ISeedRepository>();
 
-        seed.Seed<Artist>("demoArtists", "artists");
-        seed.Seed<Article>("demoArticles", "articles");
-        seed.Seed<Event>("demoEvents", "events");
-        seed.Seed<AudioTrack>("audiotracks", "audiotracks");
-        seed.Seed<PhotoAlbum>("photoalbums", "photoalbums");
-        seed.Seed<YouTubeVideo>("videos", "videos");
-        seed.Seed<MerchCategoryType>("merchcategorytypes", "merchcategorytypes");
-        seed.Seed<MerchItem>("merches", "merch");
-        seed.Seed<PostageProfile>("postageprofiles", "postageprofiles");
-        seed.Seed<Country>("countries", "countries");
-        seed.Seed<Config>("config", "config");
-        seed.Seed<NavBarLink>("navbar", "navbar");
+        await seed.SeedAsync<Artist>("demoArtists", "artists", cancellationToken);
+        await seed.SeedAsync<Article>("demoArticles", "articles", cancellationToken);
+        await seed.SeedAsync<Event>("demoEvents", "events", cancellationToken);
+        await seed.SeedAsync<AudioTrack>("audiotracks", "audiotracks", cancellationToken);
+        await seed.SeedAsync<PhotoAlbum>("photoalbums", "photoalbums", cancellationToken);
+        await seed.SeedAsync<YouTubeVideo>("videos", "videos", cancellationToken);
+        await seed.SeedAsync<MerchCategoryType>("merchcategorytypes", "merchcategorytypes", cancellationToken);
+        await seed.SeedAsync<MerchItem>("merches", "merch", cancellationToken);
+        await seed.SeedAsync<PostageProfile>("postageprofiles", "postageprofiles", cancellationToken);
+        await seed.SeedAsync<Country>("countries", "countries", cancellationToken);
+        await seed.SeedAsync<Config>("config", "config", cancellationToken);
+        await seed.SeedAsync<NavBarLink>("navbar", "navbar", cancellationToken);
 
         var users = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-        if (users.GetUserForLogin(AdminUsername) == null)
+        if (await users.GetUserForLoginAsync(AdminUsername, cancellationToken) == null)
         {
-            users.AddUser(new AdminUser
+            await users.AddUserAsync(new AdminUser
             {
                 Username = AdminUsername,
                 Password = PasswordHelper.HashPassword(AdminPassword),
@@ -59,11 +67,14 @@ public static class DemoSeeder
                     "users", "config", "features", "emailtemplates", "logs", "backups",
                     "orders", "postageprofiles", "downloadcodes"
                 }
-            });
+            }, cancellationToken);
         }
     }
 
-    private static void CopyDemoUploads(IConfiguration configuration, IWebHostEnvironment environment)
+    private static async Task CopyDemoUploadsAsync(
+        IConfiguration configuration,
+        IWebHostEnvironment environment,
+        CancellationToken cancellationToken)
     {
         var packagedRoot = Path.Combine(environment.ContentRootPath, "DemoUploads");
         var websiteRoot = Directory.Exists(packagedRoot)
@@ -72,22 +83,26 @@ public static class DemoSeeder
                 environment.ContentRootPath, "..", "HypnoTech.Demo.Website", "wwwroot"));
         var uploadRoot = configuration.UploadPath();
 
-        Copy("images/artwork-amber.svg", "Images/Demo/artwork-amber.svg");
-        Copy("images/artwork-indigo.svg", "Images/Demo/artwork-indigo.svg");
-        Copy("images/artwork-mint.svg", "Images/Demo/artwork-mint.svg");
-        Copy("images/artwork-rose.svg", "Images/Demo/artwork-rose.svg");
-        Copy("documents/shadow-workshop.txt", "Files/Demo/shadow-workshop.txt");
-        Copy("documents/signals-programme.txt", "Files/Demo/signals-programme.txt");
-        Copy("media/lantern-signal.wav", "Files/Demo/lantern-signal.wav");
-        Copy("media/lantern-motion.mp4", "Files/Demo/lantern-motion.mp4");
-        return;
-
-        void Copy(string sourceRelativePath, string destinationRelativePath)
+        foreach (var (source, destination) in new[]
+                 {
+                     ("images/artwork-amber.svg", "Images/Demo/artwork-amber.svg"),
+                     ("images/artwork-indigo.svg", "Images/Demo/artwork-indigo.svg"),
+                     ("images/artwork-mint.svg", "Images/Demo/artwork-mint.svg"),
+                     ("images/artwork-rose.svg", "Images/Demo/artwork-rose.svg"),
+                     ("documents/shadow-workshop.txt", "Files/Demo/shadow-workshop.txt"),
+                     ("documents/signals-programme.txt", "Files/Demo/signals-programme.txt"),
+                     ("media/lantern-signal.wav", "Files/Demo/lantern-signal.wav"),
+                     ("media/lantern-motion.mp4", "Files/Demo/lantern-motion.mp4")
+                 })
         {
-            var sourcePath = Path.Combine(websiteRoot, sourceRelativePath);
-            var destinationPath = Path.Combine(uploadRoot, destinationRelativePath);
+            var sourcePath = Path.Combine(websiteRoot, source);
+            var destinationPath = Path.Combine(uploadRoot, destination);
             Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
-            File.Copy(sourcePath, destinationPath, true);
+            await using var input = new FileStream(
+                sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read, 81920, true);
+            await using var output = new FileStream(
+                destinationPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, true);
+            await input.CopyToAsync(output, cancellationToken);
         }
     }
 }

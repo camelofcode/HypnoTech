@@ -16,24 +16,6 @@ namespace HypnoTech.Ecommerce.Frontend.Services
             _merchRepository = merchRepository;
         }
 
-        public BasketDetails GetDetails(BasketSummary summary)
-        {
-            var merchItems = _merchRepository.GetMerchFlattened();
-
-            BasketDetails details = new BasketDetails();
-
-            foreach (var summaryItem in summary.Items)
-            {
-                var merchItem = merchItems.FirstOrDefault(p => p.Id == summaryItem.MerchId);
-                if (merchItem != null)
-                {
-                    details.AddItem(summaryItem, merchItem);
-                }
-            }
-
-            return details;
-        }
-
         public async Task<BasketDetails> GetDetailsAsync(
             BasketSummary summary,
             CancellationToken cancellationToken = default)

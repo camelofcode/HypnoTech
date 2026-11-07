@@ -34,33 +34,7 @@ public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoComp
     }
 
     [Fact]
-    public void Add_get_edit_and_remove_round_trip_on_all_supported_targets()
-    {
-        ForEachTarget((repository, options) =>
-        {
-            var article = new SyntheticArticle
-            {
-                Heading = "Original heading",
-                Summary = "Synthetic content",
-                Published = new DateTime(2026, 1, 2, 12, 0, 0, DateTimeKind.Utc)
-            };
-
-            repository.Add(article);
-            var added = repository.GetById(article.Id);
-            Assert.Equal("Original heading", added.Heading);
-            added.Heading = "Edited heading";
-            repository.Edit(added);
-            var edited = repository.GetById(article.Id);
-            repository.Remove(article.Id);
-
-            Assert.True(ObjectId.TryParse(article.Id, out _));
-            Assert.Equal("Edited heading", edited.Heading);
-            Assert.Empty(repository.GetAll<SyntheticArticle>());
-        });
-    }
-
-    [Fact]
-    public async Task Async_crud_paging_and_ordering_match_synchronous_contract_on_all_supported_targets()
+    public async Task Async_crud_paging_and_ordering_work_on_all_supported_targets()
     {
         await ForEachTargetAsync(async (repository, options) =>
         {
@@ -103,23 +77,23 @@ public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoComp
     }
 
     [Fact]
-    public void Paging_default_sort_explicit_sort_and_total_pages_are_consistent()
+    public async Task Paging_default_sort_explicit_sort_and_total_pages_are_consistent()
     {
-        ForEachTarget((repository, _) =>
+        await ForEachTargetAsync(async (repository, _) =>
         {
-            AddArticles(repository,
+            await AddArticlesAsync(repository,
                 ("Charlie", 1),
                 ("Alpha", 3),
                 ("Echo", 2),
                 ("Bravo", 5),
                 ("Delta", 4));
 
-            var defaultPage = repository.GetPaged<SyntheticArticle>(new CmsListRequest
+            var defaultPage = await repository.GetPagedAsync<SyntheticArticle>(new CmsListRequest
             {
                 Page = 1,
                 PageSize = 2
             });
-            var explicitPage = repository.GetPaged<SyntheticArticle>(new CmsListRequest
+            var explicitPage = await repository.GetPagedAsync<SyntheticArticle>(new CmsListRequest
             {
                 Page = 2,
                 PageSize = 2,
@@ -134,16 +108,16 @@ public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoComp
     }
 
     [Fact]
-    public void Search_is_case_insensitive_escaped_and_checks_all_searchable_members()
+    public async Task Search_is_case_insensitive_escaped_and_checks_all_searchable_members()
     {
-        ForEachTarget((repository, _) =>
+        await ForEachTargetAsync(async (repository, _) =>
         {
-            repository.Add(new SyntheticArticle { Heading = "Literal [draft]", Summary = "ordinary" });
-            repository.Add(new SyntheticArticle { Heading = "Published", Summary = "Contains NEEDLE here" });
-            repository.Add(new SyntheticArticle { Heading = "Needle heading", Summary = "ordinary" });
+            await repository.AddAsync(new SyntheticArticle { Heading = "Literal [draft]", Summary = "ordinary" });
+            await repository.AddAsync(new SyntheticArticle { Heading = "Published", Summary = "Contains NEEDLE here" });
+            await repository.AddAsync(new SyntheticArticle { Heading = "Needle heading", Summary = "ordinary" });
 
-            var escaped = repository.GetPaged<SyntheticArticle>(new CmsListRequest { Search = "[draft]" });
-            var acrossMembers = repository.GetPaged<SyntheticArticle>(new CmsListRequest { Search = "needle" });
+            var escaped = await repository.GetPagedAsync<SyntheticArticle>(new CmsListRequest { Search = "[draft]" });
+            var acrossMembers = await repository.GetPagedAsync<SyntheticArticle>(new CmsListRequest { Search = "needle" });
 
             Assert.Equal("Literal [draft]", Assert.Single(escaped.Items).Heading);
             Assert.Equal(2, acrossMembers.Items.Count);
@@ -151,14 +125,14 @@ public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoComp
     }
 
     [Fact]
-    public void Search_with_no_searchable_members_returns_no_items()
+    public async Task Search_with_no_searchable_members_returns_no_items()
     {
-        ForEachTarget((_, options) =>
+        await ForEachTargetAsync(async (_, options) =>
         {
             var repository = new CmsRepository<NonSearchableDocument>(options);
-            repository.Add(new NonSearchableDocument { Name = "Present but not searchable" });
+            await repository.AddAsync(new NonSearchableDocument { Name = "Present but not searchable" });
 
-            var result = repository.GetPaged<NonSearchableDocument>(new CmsListRequest { Search = "Present" });
+            var result = await repository.GetPagedAsync<NonSearchableDocument>(new CmsListRequest { Search = "Present" });
 
             Assert.Empty(result.Items);
             Assert.Equal(0, result.TotalPages);
@@ -166,34 +140,34 @@ public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoComp
     }
 
     [Fact]
-    public void Ordered_movement_swaps_adjacent_items_and_boundary_moves_are_no_ops()
+    public async Task Ordered_movement_swaps_adjacent_items_and_boundary_moves_are_no_ops()
     {
-        ForEachTarget((_, options) =>
+        await ForEachTargetAsync(async (_, options) =>
         {
             var repository = new CmsRepository<OrderedDocument>(options);
             var first = new OrderedDocument { Name = "First", Order = 1 };
             var second = new OrderedDocument { Name = "Second", Order = 2 };
             var third = new OrderedDocument { Name = "Third", Order = 3 };
-            repository.Add(first);
-            repository.Add(second);
-            repository.Add(third);
+            await repository.AddAsync(first);
+            await repository.AddAsync(second);
+            await repository.AddAsync(third);
 
-            repository.MoveDown(first.Id);
+            await repository.MoveDownAsync(first.Id);
 
-            Assert.Equal(2, repository.GetById(first.Id).Order);
-            Assert.Equal(1, repository.GetById(second.Id).Order);
-            repository.MoveUp(second.Id);
-            repository.MoveDown(third.Id);
+            Assert.Equal(2, (await repository.GetByIdAsync(first.Id)).Order);
+            Assert.Equal(1, (await repository.GetByIdAsync(second.Id)).Order);
+            await repository.MoveUpAsync(second.Id);
+            await repository.MoveDownAsync(third.Id);
 
-            Assert.Equal(1, repository.GetById(second.Id).Order);
-            Assert.Equal(3, repository.GetById(third.Id).Order);
+            Assert.Equal(1, (await repository.GetByIdAsync(second.Id)).Order);
+            Assert.Equal(3, (await repository.GetByIdAsync(third.Id)).Order);
         });
     }
 
     [Fact]
-    public void Add_uses_persisted_bson_names_and_generates_nested_list_ids()
+    public async Task Add_uses_persisted_bson_names_and_generates_nested_list_ids()
     {
-        ForEachTarget((repository, options) =>
+        await ForEachTargetAsync(async (repository, options) =>
         {
             var article = new SyntheticArticle
             {
@@ -201,11 +175,11 @@ public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoComp
                 Sections = [new SyntheticSection { Name = "Generated ID" }],
                 Photos = [new SyntheticPhoto { Path = "/Images/synthetic.png", Caption = "Synthetic" }]
             };
-            repository.Add(article);
-            var document = Database(options)
+            await repository.AddAsync(article);
+            var document = await Database(options)
                 .GetCollection<BsonDocument>("syntheticArticles")
                 .Find(Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(article.Id)))
-                .Single();
+                .SingleAsync();
 
             Assert.True(document.Contains("heading"));
             Assert.False(document.Contains(nameof(SyntheticArticle.Heading)));
@@ -217,23 +191,23 @@ public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoComp
     }
 
     [Fact]
-    public void GetById_populates_registered_child_from_legacy_reference()
+    public async Task GetById_populates_registered_child_from_legacy_reference()
     {
         FormClassMapping.GetMapping<SyntheticArticle>()
             .RegisterChild(article => article.Child, article => article.ChildId, "syntheticChildren");
 
-        ForEachTarget((repository, options) =>
+        await ForEachTargetAsync(async (repository, options) =>
         {
             var childId = ObjectId.GenerateNewId();
-            Database(options).GetCollection<BsonDocument>("syntheticChildren").InsertOne(new BsonDocument
+            await Database(options).GetCollection<BsonDocument>("syntheticChildren").InsertOneAsync(new BsonDocument
             {
                 { "_id", childId },
                 { "name", "Referenced child" }
             });
             var article = new SyntheticArticle { Heading = "Has child", ChildId = childId.ToString() };
-            repository.Add(article);
+            await repository.AddAsync(article);
 
-            var loaded = repository.GetById(article.Id);
+            var loaded = await repository.GetByIdAsync(article.Id);
 
             Assert.NotNull(loaded.Child);
             Assert.Equal("Referenced child", loaded.Child.Name);
@@ -266,35 +240,35 @@ public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoComp
     }
 
     [Fact]
-    public void Registered_child_with_null_reference_leaves_child_unset()
+    public async Task Registered_child_with_null_reference_leaves_child_unset()
     {
         FormClassMapping.GetMapping<SyntheticArticle>()
             .RegisterChild(article => article.Child, article => article.ChildId, "syntheticChildren");
 
-        ForEachTarget((repository, _) =>
+        await ForEachTargetAsync(async (repository, _) =>
         {
             var article = new SyntheticArticle { Heading = "No child reference" };
-            repository.Add(article);
+            await repository.AddAsync(article);
 
-            var loaded = repository.GetById(article.Id);
+            var loaded = await repository.GetByIdAsync(article.Id);
 
             Assert.Null(loaded.Child);
         });
     }
 
     [Fact]
-    public void Representative_legacy_document_with_missing_optional_fields_deserialises()
+    public async Task Representative_legacy_document_with_missing_optional_fields_deserialises()
     {
-        ForEachTarget((repository, options) =>
+        await ForEachTargetAsync(async (repository, options) =>
         {
             var id = ObjectId.GenerateNewId();
-            Database(options).GetCollection<BsonDocument>("syntheticArticles").InsertOne(new BsonDocument
+            await Database(options).GetCollection<BsonDocument>("syntheticArticles").InsertOneAsync(new BsonDocument
             {
                 { "_id", id },
                 { "heading", "Legacy minimum" }
             });
 
-            var article = repository.GetById(id.ToString());
+            var article = await repository.GetByIdAsync(id.ToString());
 
             Assert.Equal("Legacy minimum", article.Heading);
             Assert.Null(article.Summary);
@@ -317,43 +291,10 @@ public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoComp
                 });
 
             var repository = new SelectListRepository(options);
-            var choices = repository.GetSelectListItems(typeof(SyntheticChoice));
-            var asyncChoices = await repository.GetSelectListItemsAsync(typeof(SyntheticChoice));
+            var choices = await repository.GetSelectListItemsAsync(typeof(SyntheticChoice));
 
             Assert.Equal("Choice A", Assert.IsType<SyntheticChoice>(Assert.Single(choices)).Name);
-            Assert.Equal("Choice A", Assert.IsType<SyntheticChoice>(Assert.Single(asyncChoices)).Name);
         });
-    }
-
-    [Fact]
-    public void Seed_repository_inserts_only_when_collection_is_empty()
-    {
-        var seedDirectory = Path.Combine(Directory.GetCurrentDirectory(), "SeedData");
-        var seedName = $"characterisation-{Guid.NewGuid():N}";
-        var seedPath = Path.Combine(seedDirectory, $"{seedName}.json");
-        Directory.CreateDirectory(seedDirectory);
-        File.WriteAllText(seedPath, "[{\"heading\":\"Seeded synthetic article\"}]");
-
-        try
-        {
-            ForEachTarget((_, options) =>
-            {
-                var repository = new SeedRepository(options);
-
-                repository.Seed<SyntheticArticle>("seededSyntheticArticles", seedName);
-                repository.Seed<SyntheticArticle>("seededSyntheticArticles", seedName);
-
-                var documents = Database(options)
-                    .GetCollection<BsonDocument>("seededSyntheticArticles")
-                    .Find(new BsonDocument())
-                    .ToList();
-                Assert.Equal("Seeded synthetic article", Assert.Single(documents)["heading"].AsString);
-            });
-        }
-        finally
-        {
-            File.Delete(seedPath);
-        }
     }
 
     [Fact]
@@ -398,32 +339,6 @@ public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoComp
         }
     }
 
-    private void ForEachTarget(Action<CmsRepository<SyntheticArticle>, IOptions<MongoOptions>> assertion)
-    {
-        foreach (var target in _fixture.Targets)
-        {
-            var options = Options.Create(new MongoOptions
-            {
-                Server = target.Host,
-                Port = target.Port,
-                Database = $"hypnotech_{target.Name.Replace('-', '_').Replace('.', '_')}_{Guid.NewGuid():N}"
-            });
-
-            try
-            {
-                assertion(new CmsRepository<SyntheticArticle>(options), options);
-            }
-            catch (Exception exception)
-            {
-                throw new Xunit.Sdk.XunitException($"MongoDB target '{target.Name}' failed: {exception}");
-            }
-            finally
-            {
-                new MongoClient(options.Value.ConnectionString).DropDatabase(options.Value.Database);
-            }
-        }
-    }
-
     private async Task ForEachTargetAsync(
         Func<CmsRepository<SyntheticArticle>, IOptions<MongoOptions>, Task> assertion)
     {
@@ -457,11 +372,13 @@ public sealed partial class CmsRepositoryContractTests : IClassFixture<MongoComp
         return new MongoClient(options.Value.ConnectionString).GetDatabase(options.Value.Database);
     }
 
-    private static void AddArticles(CmsRepository<SyntheticArticle> repository, params (string Heading, int Day)[] values)
+    private static async Task AddArticlesAsync(
+        CmsRepository<SyntheticArticle> repository,
+        params (string Heading, int Day)[] values)
     {
         foreach (var value in values)
         {
-            repository.Add(new SyntheticArticle
+            await repository.AddAsync(new SyntheticArticle
             {
                 Heading = value.Heading,
                 Published = new DateTime(2026, 1, value.Day, 12, 0, 0, DateTimeKind.Utc)

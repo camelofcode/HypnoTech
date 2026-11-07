@@ -16,22 +16,11 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
         {
         }
 
-        public List<NavBarLink> GetNavBarLinks()
-        {
-            return GetAll<NavBarLink>().OrderBy(p => p.Order).ToList();
-        }
-
         public async Task<List<NavBarLink>> GetNavBarLinksAsync(CancellationToken cancellationToken = default)
         {
             return (await GetAllAsync<NavBarLink>(cancellationToken: cancellationToken))
                 .OrderBy(p => p.Order)
                 .ToList();
-        }
-
-        public void UpdateNavBarLinks(List<NavBarLink> links)
-        {
-            Collection.DeleteMany(new BsonDocument());
-            Collection.InsertMany(links.Select(p => p.ToBsonDocument()));
         }
 
         public async Task UpdateNavBarLinksAsync(List<NavBarLink> links, CancellationToken cancellationToken = default)

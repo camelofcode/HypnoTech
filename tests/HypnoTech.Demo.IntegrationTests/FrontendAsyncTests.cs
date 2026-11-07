@@ -3,8 +3,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using HypnoTech.Common.Dal.Repositories;
-using HypnoTech.Common.Models.Settings;
 using HypnoTech.Frontend.Ajax;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -55,17 +53,6 @@ public sealed class FrontendAsyncTests
         Assert.Contains("\"canonicalUrl\":\"https://example.test/stories\"", json);
     }
 
-    [Fact]
-    public async Task Navbar_async_default_preserves_sync_only_implementation_compatibility()
-    {
-        INavBarRepository repository = new SyncOnlyNavBarRepository();
-
-        var links = await repository.GetEnabledNavBarLinksAsync(
-            TestContext.Current.CancellationToken);
-
-        Assert.Equal("synthetic", Assert.Single(links).Key);
-    }
-
     private sealed class RejectingSyncWriterFactory : IHttpResponseStreamWriterFactory
     {
         public TextWriter CreateWriter(Stream stream, Encoding encoding) =>
@@ -90,11 +77,4 @@ public sealed class FrontendAsyncTests
             throw new InvalidDataException("Synchronous response writes are forbidden.");
     }
 
-    private sealed class SyncOnlyNavBarRepository : INavBarRepository
-    {
-        public List<NavBarLink> GetEnabledNavBarLinks() =>
-        [
-            new NavBarLink("synthetic", "Synthetic")
-        ];
-    }
 }

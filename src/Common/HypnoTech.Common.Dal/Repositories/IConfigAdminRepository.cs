@@ -6,10 +6,7 @@ namespace HypnoTech.Common.Dal.Repositories
 {
     public interface IConfigAdminRepository
     {
-        Config GetConfig();
         Task<Config> GetConfigAsync(CancellationToken cancellationToken = default);
-
-        void SetConfig(Config config);
         Task SetConfigAsync(Config config, CancellationToken cancellationToken = default);
     }
 }

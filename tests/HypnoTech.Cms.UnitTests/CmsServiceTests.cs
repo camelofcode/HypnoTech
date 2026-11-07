@@ -64,7 +64,7 @@ public sealed class CmsServiceTests : IDisposable
     }
 
     [Fact]
-    public void Add_applies_generated_date_and_checkbox_rules_before_repository_write()
+    public async Task Add_applies_generated_date_and_checkbox_rules_before_repository_write()
     {
         var model = new ServiceDocument
         {
@@ -74,7 +74,7 @@ public sealed class CmsServiceTests : IDisposable
             RelatedValue = "must be cleared"
         };
 
-        _service.Add(model, [], []);
+        await _service.AddAsync(model, [], [], TestContext.Current.CancellationToken);
 
         Assert.Same(model, _repository.Added);
         Assert.Equal("synthetic-document", model.Slug);
@@ -83,7 +83,7 @@ public sealed class CmsServiceTests : IDisposable
     }
 
     [Fact]
-    public void Edit_applies_transformations_and_delegates_to_repository()
+    public async Task Edit_applies_transformations_and_delegates_to_repository()
     {
         var model = new ServiceDocument
         {
@@ -94,7 +94,7 @@ public sealed class CmsServiceTests : IDisposable
             RelatedValue = "preserved"
         };
 
-        _service.Edit(model, [], [], []);
+        await _service.EditAsync(model, [], [], [], TestContext.Current.CancellationToken);
 
         Assert.Same(model, _repository.Edited);
         Assert.Equal("edited-document", model.Slug);
@@ -103,35 +103,39 @@ public sealed class CmsServiceTests : IDisposable
     }
 
     [Fact]
-    public void Form_building_and_validation_preserve_routes_controls_and_required_rules()
+    public async Task Form_building_and_validation_preserve_routes_controls_and_required_rules()
     {
-        var addForm = _service.BuildAddForm();
-        var valid = _service.Validate(new ServiceDocument(), isEdit: false, [], out var validatedForm);
+        var addForm = await _service.BuildAddFormAsync(TestContext.Current.CancellationToken);
+        var validation = await _service.ValidateAsync(
+            new ServiceDocument(),
+            isEdit: false,
+            [],
+            TestContext.Current.CancellationToken);
 
         Assert.Equal("/Cms/ServiceDocuments", addForm.BackUrl);
         Assert.Equal("/Cms/ServiceDocuments/Add", addForm.PostUrl);
         Assert.DoesNotContain(addForm.Controls, control => control.Name == nameof(ServiceDocument.Id));
-        Assert.False(valid);
-        Assert.True(validatedForm.HasBeenValidated);
-        Assert.Contains(validatedForm.Controls, control =>
+        Assert.False(validation.IsValid);
+        Assert.True(validation.Form.HasBeenValidated);
+        Assert.Contains(validation.Form.Controls, control =>
             control.Name == nameof(ServiceDocument.Title) && !control.IsValid);
     }
 
     [Fact]
-    public void Remove_without_file_mappings_delegates_without_loading_entity()
+    public async Task Remove_without_file_mappings_delegates_without_loading_entity()
     {
         FormClassMapping.GetMapping<ServiceDocument>().MemberMappings =
             new List<FormMemberMapping>(FormClassMapping.GetMapping<ServiceDocument>().MemberMappings
                 .Where(mapping => !mapping.IsFileInput));
 
-        _service.Remove("synthetic-id");
+        await _service.RemoveAsync("synthetic-id", TestContext.Current.CancellationToken);
 
         Assert.Equal("synthetic-id", _repository.RemovedId);
         Assert.Equal(0, _repository.GetByIdCalls);
     }
 
     [Fact]
-    public void Add_writes_file_uploads_to_isolated_storage_and_delegates_images()
+    public async Task Add_writes_file_uploads_to_isolated_storage_and_delegates_images()
     {
         var audioBytes = Encoding.UTF8.GetBytes("synthetic audio payload");
         var audio = new FormFile(new MemoryStream(audioBytes), 0, audioBytes.Length, "file", "sample.mp3")
@@ -146,10 +150,16 @@ public sealed class CmsServiceTests : IDisposable
         };
         var model = new ServiceDocument { Title = "Uploads" };
 
-        _service.Add(model, [audio, image], [nameof(ServiceDocument.Attachment), nameof(ServiceDocument.Image)]);
+        await _service.AddAsync(
+            model,
+            [audio, image],
+            [nameof(ServiceDocument.Attachment), nameof(ServiceDocument.Image)],
+            TestContext.Current.CancellationToken);
 
         Assert.Equal("/Files/Documents/sample.mp3", model.Attachment);
-        Assert.Equal(audioBytes, File.ReadAllBytes(Path.Combine(_uploadPath, "Files", "Documents", "sample.mp3")));
+        Assert.Equal(audioBytes, await File.ReadAllBytesAsync(
+            Path.Combine(_uploadPath, "Files", "Documents", "sample.mp3"),
+            TestContext.Current.CancellationToken));
         Assert.Equal("/Images/Covers/synthetic.png", model.Image);
         Assert.Equal("Covers", _imageService.LastSubdirectory);
     }
@@ -226,34 +236,25 @@ public sealed class CmsServiceTests : IDisposable
         public int GetByIdCalls { get; private set; }
         public CancellationToken LastCancellationToken { get; private set; }
 
-        public ICollection<ServiceDocument> GetAll<T>(string orderBy = null, bool descending = false) => [];
         public Task<ICollection<ServiceDocument>> GetAllAsync<T>(string orderBy = null, bool descending = false, CancellationToken cancellationToken = default)
         {
             LastCancellationToken = cancellationToken;
             return Task.FromResult<ICollection<ServiceDocument>>([]);
         }
-        public CmsListReponse<ServiceDocument> GetPaged<T>(CmsListRequest request) => new() { Items = [] };
         public Task<CmsListReponse<ServiceDocument>> GetPagedAsync<T>(CmsListRequest request, CancellationToken cancellationToken = default)
         {
             LastCancellationToken = cancellationToken;
             return Task.FromResult(new CmsListReponse<ServiceDocument> { Items = [] });
         }
-        public void MoveUp(string id) { }
         public Task MoveUpAsync(string id, CancellationToken cancellationToken = default)
         {
             LastCancellationToken = cancellationToken;
             return Task.CompletedTask;
         }
-        public void MoveDown(string id) { }
         public Task MoveDownAsync(string id, CancellationToken cancellationToken = default)
         {
             LastCancellationToken = cancellationToken;
             return Task.CompletedTask;
-        }
-        public ServiceDocument GetById(string id)
-        {
-            GetByIdCalls++;
-            return Added;
         }
         public Task<ServiceDocument> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
@@ -261,21 +262,18 @@ public sealed class CmsServiceTests : IDisposable
             GetByIdCalls++;
             return Task.FromResult(Added);
         }
-        public void Add(ServiceDocument model) => Added = model;
         public Task AddAsync(ServiceDocument model, CancellationToken cancellationToken = default)
         {
             LastCancellationToken = cancellationToken;
             Added = model;
             return Task.CompletedTask;
         }
-        public void Edit(ServiceDocument model) => Edited = model;
         public Task EditAsync(ServiceDocument model, CancellationToken cancellationToken = default)
         {
             LastCancellationToken = cancellationToken;
             Edited = model;
             return Task.CompletedTask;
         }
-        public void Remove(string id) => RemovedId = id;
         public Task RemoveAsync(string id, CancellationToken cancellationToken = default)
         {
             LastCancellationToken = cancellationToken;
@@ -288,24 +286,16 @@ public sealed class CmsServiceTests : IDisposable
     {
         public string LastSubdirectory { get; private set; }
 
-        public string AddImage(IFormFile file, string subdirectory, int maxHeight, int maxWidth)
-        {
-            LastSubdirectory = subdirectory;
-            return $"/Images/{subdirectory}/synthetic.png";
-        }
-
         public Task<string> AddImageAsync(IFormFile file, string subdirectory, int maxHeight, int maxWidth, CancellationToken cancellationToken = default)
         {
             LastSubdirectory = subdirectory;
             return Task.FromResult($"/Images/{subdirectory}/synthetic.png");
         }
 
-        public string RemoveImage(string name, string subdirectory) => null;
     }
 
     private sealed class EmptySelectListRepository : ISelectListRepository
     {
-        public List<object> GetSelectListItems(Type type) => [];
         public Task<List<object>> GetSelectListItemsAsync(Type type, CancellationToken cancellationToken = default) =>
             Task.FromResult(new List<object>());
     }

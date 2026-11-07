@@ -16,11 +16,6 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
         {
         }
 
-        public List<NavBarLink> GetEnabledNavBarLinks()
-        {
-            return GetAll<NavBarLink>().Where(p => p.Enabled).OrderBy(p => p.Order).ToList();
-        }
-
         public async Task<List<NavBarLink>> GetEnabledNavBarLinksAsync(
             CancellationToken cancellationToken = default)
         {

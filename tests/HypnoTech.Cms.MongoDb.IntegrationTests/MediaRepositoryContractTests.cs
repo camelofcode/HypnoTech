@@ -18,15 +18,15 @@ namespace HypnoTech.Cms.MongoDb.IntegrationTests;
 public sealed partial class CmsRepositoryContractTests
 {
     [Fact]
-    public void Media_repositories_preserve_collections_bson_names_ordering_and_lookup()
+    public async Task Media_repositories_preserve_collections_bson_names_ordering_and_lookup()
     {
         RegisterMediaMappings();
 
-        ForEachMediaTarget(options =>
+        await ForEachMediaTargetAsync(async options =>
         {
             var database = Database(options);
             var relatedId = ObjectId.GenerateNewId().ToString();
-            database.GetCollection<BsonDocument>("audiotracks").InsertMany(
+            await database.GetCollection<BsonDocument>("audiotracks").InsertManyAsync(
             [
                 new AudioTrack
                 {
@@ -42,21 +42,21 @@ public sealed partial class CmsRepositoryContractTests
                     Path = "/Files/Synthetic/second.wav"
                 }.ToBsonDocument()
             ]);
-            database.GetCollection<BsonDocument>("videos").InsertOne(
+            await database.GetCollection<BsonDocument>("videos").InsertOneAsync(
                 new YouTubeVideo
                 {
                     Id = ObjectId.GenerateNewId().ToString(),
                     Title = "Synthetic video",
                     YouTubeId = "synthetic-video-id"
                 }.ToBsonDocument());
-            database.GetCollection<BsonDocument>("photoalbums").InsertMany(
+            await database.GetCollection<BsonDocument>("photoalbums").InsertManyAsync(
             [
                 CreatePhotoAlbum("older-album", "Older album", new DateTime(2026, 1, 2, 12, 0, 0, DateTimeKind.Utc)),
                 CreatePhotoAlbum("newer-album", "Newer album", new DateTime(2026, 6, 7, 12, 0, 0, DateTimeKind.Utc))
             ]);
 
-            var tracks = new AudioTrackRepository(options).GetTracksForPlayer();
-            var videos = new VideoRepository(options).GetVideos();
+            var tracks = await new AudioTrackRepository(options).GetTracksForPlayerAsync();
+            var videos = await new VideoRepository(options).GetVideosAsync();
             var photoAlbums = new PhotoAlbumRepository(options);
 
             Assert.Equal(
@@ -66,8 +66,8 @@ public sealed partial class CmsRepositoryContractTests
             Assert.Equal("Synthetic video", Assert.Single(videos).Title);
             Assert.Equal(
                 ["Newer album", "Older album"],
-                photoAlbums.GetPhotoAlbums().Select(album => album.Title));
-            Assert.Equal("Older album", photoAlbums.GetPhotoAlbum("older-album").Title);
+                (await photoAlbums.GetPhotoAlbumsAsync()).Select(album => album.Title));
+            Assert.Equal("Older album", (await photoAlbums.GetPhotoAlbumAsync("older-album")).Title);
 
             var audioDocument = database.GetCollection<BsonDocument>("audiotracks")
                 .Find(Builders<BsonDocument>.Filter.Eq("title", "Synthetic first track"))
@@ -82,7 +82,7 @@ public sealed partial class CmsRepositoryContractTests
     }
 
     [Fact]
-    public async Task Media_async_repositories_match_the_synchronous_contract_and_honour_cancellation()
+    public async Task Media_async_repositories_honour_cancellation()
     {
         RegisterMediaMappings();
 
@@ -141,33 +141,6 @@ public sealed partial class CmsRepositoryContractTests
             await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
                 audio.GetTracksForPlayerAsync(cancelled.Token));
         });
-    }
-
-    private void ForEachMediaTarget(Action<IOptions<MongoOptions>> assertion)
-    {
-        foreach (var target in _fixture.Targets)
-        {
-            var options = Options.Create(new MongoOptions
-            {
-                Server = target.Host,
-                Port = target.Port,
-                Database = $"ht_m_{target.Name.Replace('-', '_').Replace('.', '_')}_{Guid.NewGuid():N}"
-            });
-
-            try
-            {
-                assertion(options);
-            }
-            catch (Exception exception)
-            {
-                throw new Xunit.Sdk.XunitException($"MongoDB target '{target.Name}' failed: {exception}");
-            }
-            finally
-            {
-                new MongoClient(options.Value.ConnectionString)
-                    .DropDatabase(options.Value.Database);
-            }
-        }
     }
 
     private async Task ForEachMediaTargetAsync(Func<IOptions<MongoOptions>, Task> assertion)

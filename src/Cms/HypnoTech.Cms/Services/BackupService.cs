@@ -22,41 +22,9 @@ namespace HypnoTech.Cms.Services
             _basePath = config.UploadPath();
         }
 
-        public dynamic GetAllData(List<string> includedTypes)
-        {
-            return _backupRespository.GetAllData(includedTypes);
-        }
-
         public Task<dynamic> GetAllDataAsync(List<string> includedTypes, CancellationToken cancellationToken = default)
         {
             return _backupRespository.GetAllDataAsync(includedTypes, cancellationToken);
-        }
-
-        public byte[] GetAllFiles(List<string> includedTypes)
-        {
-            using (var stream = new MemoryStream())
-            {
-                using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, true))
-                {
-                    foreach (var mapping in FileUploadFolderCache.Mappings.Where(p => includedTypes.Contains(p.Folder)))
-                    {
-                        var folderPath = Path.Combine(_basePath, mapping.Folder);
-                        if (!Directory.Exists(folderPath))
-                        {
-                            continue;
-                        }
-
-                        foreach (var filePath in Directory.EnumerateFiles(folderPath, "*", SearchOption.AllDirectories))
-                        {
-                            var relativePath = Path.GetRelativePath(folderPath, filePath);
-                            var entryName = Path.Combine(mapping.Folder, relativePath).Replace('\\', '/');
-                            archive.CreateEntryFromFile(filePath, entryName, CompressionLevel.Optimal);
-                        }
-                    }
-                }
-
-                return stream.ToArray();
-            }
         }
 
         public async Task<byte[]> GetAllFilesAsync(

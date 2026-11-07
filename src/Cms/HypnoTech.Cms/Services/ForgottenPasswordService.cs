@@ -26,21 +26,6 @@ namespace HypnoTech.Cms.Services
             _options = options.Value;
         }
 
-        public bool CreatePasswordResetIfUserExists(string nameOrEmail)
-        {
-            AdminUser user = _userRepository.GetUserByUsernameOrEmail(nameOrEmail);
-            if (user == null)
-            {
-                return false;
-            }
-
-            var code = _passwordResetRepository.CreateResetPasswordCode(user);
-
-            _emailService.SendEmail(user.Email, "PasswordReset", "PasswordReset", new PasswordResetEmailViewModel($"{_options.AdminUrl}/Home/ChangePassword/{code}", user.Username));
-
-            return true;
-        }
-
         public async Task<bool> CreatePasswordResetIfUserExistsAsync(
             string nameOrEmail,
             CancellationToken cancellationToken = default)
@@ -66,23 +51,10 @@ namespace HypnoTech.Cms.Services
             return true;
         }
 
-        public bool CheckCode(string code)
-        {
-            var reset = _passwordResetRepository.GetCode(code);
-            return reset != null && reset.Valid;
-        }
-
         public async Task<bool> CheckCodeAsync(string code, CancellationToken cancellationToken = default)
         {
             var reset = await _passwordResetRepository.GetCodeAsync(code, cancellationToken);
             return reset != null && reset.Valid;
-        }
-
-        public void ResetPassword(string code, string password)
-        {
-            var email = _passwordResetRepository.GetCode(code).Email;
-            _userRepository.ChangePasswordByEmail(email, PasswordHelper.HashPassword(password));
-            _passwordResetRepository.RemoveCode(code);
         }
 
         public async Task ResetPasswordAsync(string code, string password, CancellationToken cancellationToken = default)

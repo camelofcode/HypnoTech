@@ -24,24 +24,6 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
             _database = client.GetDatabase(options.Value.Database);
         }
 
-        public dynamic GetAllData(List<string> includedTypes)
-        {
-            var expando = new ExpandoObject();
-
-            MethodInfo method = typeof(BackupRepository).GetMethod("GetAll");
-
-            foreach (var type in ModelRegistry.Registrations)
-            {
-                if (method != null && includedTypes.Contains(type.DataName))
-                {
-                    MethodInfo generic = method.MakeGenericMethod(type.Type);
-                    AddProperty(expando, type.DataName, generic.Invoke(null, new object[] {_database, type.DataName }));
-                }
-            }
-
-            return expando;
-        }
-
         public async Task<dynamic> GetAllDataAsync(
             List<string> includedTypes,
             CancellationToken cancellationToken = default)
@@ -62,15 +44,6 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
             }
 
             return expando;
-        }
-
-        public static List<T> GetAll<T>(IMongoDatabase database, string table)
-        {
-            IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(table);
-
-            var items = collection.Find(new BsonDocument());
-
-            return items.ToList().Select(p => BsonSerializer.Deserialize<T>(p)).ToList();
         }
 
         public static async Task<object> GetAllAsObjectAsync<T>(

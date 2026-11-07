@@ -7,10 +7,7 @@ namespace HypnoTech.Common.Dal.Repositories
 {
     public interface ICountryRepository
     {
-        List<Country> GetCountries();
         Task<List<Country>> GetCountriesAsync(CancellationToken cancellationToken = default);
-
-        Country GetCountryByCode(string code);
         Task<Country> GetCountryByCodeAsync(string code, CancellationToken cancellationToken = default);
     }
 }

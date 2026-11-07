@@ -7,8 +7,6 @@ namespace HypnoTech.Cms.Contracts.Interfaces
 {
     public interface ISelectListRepository
     {
-        List<object> GetSelectListItems(Type type);
-
         Task<List<object>> GetSelectListItemsAsync(Type type, CancellationToken cancellationToken = default);
     }
 }

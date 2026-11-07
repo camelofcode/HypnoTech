@@ -114,7 +114,7 @@ MongoDB Server 4.0.3. Until targeted tests and a migration plan say otherwise:
 
 - persisted BSON names and collection names are contracts;
 - public namespaces, assemblies, routes, and static asset paths remain stable;
-- the existing synchronous surface is retained while native async APIs are added;
+- public repository and I/O-bound service contracts on `main` are async-only;
 - ordered moves swap adjacent items and treat collection boundaries as no-ops;
 - generated bundles change only through their source and build tool;
 - production sites remain on the preserved support branch.

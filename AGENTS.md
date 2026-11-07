@@ -24,6 +24,8 @@ sites as external production consumers. Additional payment-provider work in
   route, registry, repository, search, paging, child-population, or ordering behaviour.
 - Use native async provider APIs for I/O; do not introduce `Task.Run`, `.Result`,
   `.Wait()`, or `GetAwaiter().GetResult()` into request paths.
+- Keep public repository and I/O-bound service contracts async-only. The production
+  sites consume the preserved support branch, not public `main`.
 - Keep required browser assets self-hosted and versions pinned.
 
 Run the `cms-compatibility-review` skill before implementing a change that affects the
@@ -38,8 +40,8 @@ characterisation-first assertions.
 
 Run the `author-async-request-paths` skill when adding or revising controllers,
 services, repository contracts, or persistence implementations. It defines the
-project's inheritance, module-boundary, native-async, cancellation, and retained-sync
-compatibility conventions.
+project's inheritance, module-boundary, native-async, cancellation, and async-only
+contract conventions.
 
 ## Source and generated assets
 
