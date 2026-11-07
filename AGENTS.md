@@ -48,6 +48,11 @@ services, repository contracts, or persistence implementations. It defines the
 project's inheritance, module-boundary, native-async, cancellation, and async-only
 contract conventions.
 
+Run the `release-engine` skill when preparing a numbered release, choosing its SemVer
+increment, updating release metadata/notes, tagging verified `main`, or publishing the
+GitHub Release. It keeps GitHub source releases separate from NuGet publication and
+production deployment.
+
 ## Source and generated assets
 
 Authored browser source is under the frontend-asset directories such as

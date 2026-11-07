@@ -6,9 +6,9 @@
 >
 > **Last updated:** 2026-11-07
 >
-> **Current phase:** Phase 9 in progress; shared EF repositories pass on PostgreSQL and SQL Server
+> **Current phase:** Phase 9 complete; v1.1.0 release candidate
 >
-> **Next action:** Add provider-specific Lantern House Admin contexts/migrations and a documented demo provider switch.
+> **Next action:** Merge the release-preparation PR after CI, then tag and publish v1.1.0.
 
 ## How to maintain this document
 
@@ -134,7 +134,7 @@ date.
 | 6 | Async I/O modernisation | Complete | v1.0 |
 | 7 | CI, documentation, `main`, and public release | Complete | v1.0 |
 | 8 | Persistence contracts hardened | Complete | v1.1 |
-| 9 | EF Core implementations and provider packaging | In progress | v1.1 |
+| 9 | EF Core implementations and provider packaging | Complete | v1.1 |
 
 ### Ordering constraints
 
@@ -304,8 +304,7 @@ The initial repository guidance started with two narrow skills:
     repositories, persisted data, and public behaviour before implementation.
   - Require a compatibility decision and targeted test plan.
 
-Add further skills only after a repeated workflow exists. A public-release skill is a
-good later candidate once the release process has been exercised manually.
+Add further skills only after a repeated workflow exists.
 
 Repeated implementation work has since justified these workflow-backed additions:
 
@@ -319,6 +318,11 @@ Repeated implementation work has since justified these workflow-backed additions
 - [x] `.agents/skills/test-external-http-integrations/`
   - Exercise real HTTP clients and SDK adapters against local protocol stubs.
   - Prohibit live/sandbox calls and brittle mocks of third-party SDK internals.
+- [x] `.agents/skills/release-engine/`
+  - Prepare consistent version metadata, release notes, status documentation, and
+    verification evidence after the manual process has been exercised.
+  - Tag only the exact verified `main` commit and keep GitHub source publication
+    separate from NuGet, production deployment, and database migration.
 
 ### Exit gate
 
@@ -1057,8 +1061,11 @@ stating that work was done.
 | 2026-11-07 | Phase 9 | Added the driver-free EF Core foundation, CMS/Common/Ecommerce/Media repository implementations, and thin PostgreSQL and SQL Server provider packages. | The same 29 inherited contract/lifecycle facts pass against PostgreSQL 18.1 and SQL Server 2022 CU22 GDR1, including explicit ordered persistence for nested CMS lists and galleries. Startup migrates before ordered seeders on both providers and exposes an explicit opt-out. An architecture guard rejects concrete drivers in all five shared/module EF projects; SQL Server alone pins the patched Pkcs 9.0.22 transitive servicing release. The 39-project Release build and formatting gate are clean, and the aggregate rootless-Podman/Chromium suite passes 124/124, including unchanged MongoDB 4.0.3/8.0/9.0 behavior. | This change |
 | 2026-11-07 | Phase 9 | Corrected a relational contract-ordering failure exposed by the first hosted CI run. | The CMS relational fixture now composes Common, Ecommerce, and Media mappings before the dynamic CMS contributor, matching the documented Admin context and making CMS-visible module registrations valid regardless of test-class ordering. The 39-project Release build and formatting gate are clean, and two consecutive PostgreSQL/SQL Server runs pass 29/29. | PR #22 |
 | 2026-11-07 | Phase 9 | Added executable MongoDB, PostgreSQL, and SQL Server choices to Lantern House and closed the local implementation gate. | The readable Startup switches preserve the Admin/Website boundary; provider-specific Admin migrations run before seed; the Website owns an independent read model; and the manual Podman launcher accepts `--provider`. The 39-project Release build and formatting gate are clean; both provider migrations report no pending model changes; the complete MongoDB/relational/demo/Chromium suite passes 124/124; and the focused CMS create/upload/edit/public-read/duplicate/delete Chromium journey also passes against PostgreSQL and SQL Server. | This change |
+| 2026-11-07 | Phase 9 | Prepared the v1.1.0 release candidate, codified the exercised release workflow, and closed the Phase 9 exit gate. | PR #23 merged as `c5cb69e` after every hosted CI, CodeQL, relational-provider, browser, and platform check passed. Shared version metadata now resolves `Version`, `VersionPrefix`, and `PackageVersion` to `1.1.0`; the release-only 39-project build and formatting gate are clean; current documentation and release notes describe the completed provider support and compatibility boundaries; and the `release-engine` skill passes its validator. | This change |
 
 ## Immediate next actions
 
-1. Review and merge the example-provider pull request after required hosted CI is
-   green.
+1. Review and merge the v1.1.0 release-preparation pull request after required hosted
+   CI is green.
+2. Create annotated tag `v1.1.0` from the exact merged and verified `main` commit and
+   publish the GitHub Release using `docs/releases/v1.1.0.md`.

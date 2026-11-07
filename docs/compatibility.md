@@ -26,8 +26,8 @@ test covers the combination.
 The complete captured fingerprints are in
 [`docs/baselines/production-2026-11-06.md`](baselines/production-2026-11-06.md).
 
-The relational targets are v1.1 development evidence, not claims about the unchanged
-v1.0 production sites. PostgreSQL and SQL Server run the same CMS, Common, Ecommerce,
+The relational targets are v1.1 release evidence, not claims about the unchanged
+legacy production sites. PostgreSQL and SQL Server run the same CMS, Common, Ecommerce,
 Media, and migrate-before-seed assertions. The SQL Server adapter directly pins the
 patched `System.Security.Cryptography.Pkcs` 9.0.22 servicing release because the
 current SQL client dependency floor otherwise resolves the vulnerable 9.0.11 release.

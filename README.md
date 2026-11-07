@@ -20,15 +20,16 @@ The engine currently provides:
 
 ## Status
 
-Version 1.0 is the first stable public and portfolio baseline. The engine has an
+Version 1.1 is the current stable public and portfolio release. The engine has an
 original runnable example, native async request and persistence paths, layered
 unit/integration/architecture coverage, and a focused Chromium/Firefox/WebKit browser
 suite. Existing production consumers remain pinned to the preserved legacy branch,
 and MongoDB Server 4.0.3 compatibility remains a required CI gate.
 
-The v1.1 work in progress adds EF Core 10 implementations for PostgreSQL and SQL Server.
-Both real databases pass the inherited CMS, Common, Ecommerce, Media, and startup
-lifecycle contracts; the public demo provider switch remains before the v1.1 release.
+Version 1.1 adds shared EF Core 10 implementations plus thin PostgreSQL and SQL Server
+adapters. Both real databases pass the inherited CMS, Common, Ecommerce, Media, and
+startup lifecycle contracts. The public example can run against any of the three
+providers while keeping its Admin write model independent from its Website read model.
 
 See [PUBLIC_READINESS_PLAN.md](PUBLIC_READINESS_PLAN.md) for the phased roadmap and
 work record, [docs/architecture.md](docs/architecture.md) for the design,
@@ -40,6 +41,7 @@ migrations, and provider packaging, and
 [docs/limitations.md](docs/limitations.md) for intentionally unsupported or deferred
 areas. The automated gates are described in [docs/ci.md](docs/ci.md) and
 [docs/code-quality.md](docs/code-quality.md).
+Release details are in [docs/releases/v1.1.0.md](docs/releases/v1.1.0.md).
 
 ## Lantern House example
 
