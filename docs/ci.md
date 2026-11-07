@@ -6,7 +6,8 @@ the same pull request are cancelled.
 
 ## Required Linux checks
 
-The required jobs use the standard `ubuntu-24.04` GitHub-hosted runner:
+The frontend, build, and container-free required jobs use the standard `ubuntu-24.04`
+GitHub-hosted runner. Container-backed jobs use the standard `ubuntu-22.04` runner:
 
 - `Frontend assets` installs the pinned Node.js/npm toolchain with `npm ci` and rejects
   stale committed browser bundles.
@@ -23,7 +24,10 @@ The required jobs use the standard `ubuntu-24.04` GitHub-hosted runner:
 
 The integration and browser jobs use Testcontainers through the Docker service already
 provided by the standard Ubuntu runner. They do not require a repository secret and
-never call a live or sandbox payment provider.
+never call a live or sandbox payment provider. The older runner is intentional: the
+pinned MongoDB compatibility images reject Linux kernel 6.19 and newer, while GitHub's
+current Ubuntu 24.04 runner uses a newer kernel. Both labels are standard free public
+runners; Ubuntu 24.04 continues to cover the normal build and container-free suites.
 
 ## Portability checks
 
