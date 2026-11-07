@@ -22,7 +22,7 @@ namespace HypnoTech.Common.Models.Settings
 
         public NavBarLink()
         {
-            
+
         }
     }
 }

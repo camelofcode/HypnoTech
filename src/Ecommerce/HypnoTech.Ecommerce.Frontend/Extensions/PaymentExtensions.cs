@@ -24,7 +24,7 @@ namespace HypnoTech.Ecommerce.Frontend.Extensions
                 Postage = decimal.Parse(transaction.Amount.Details.Shipping),
                 Address = transaction.ItemList.ShippingAddress.ToAddress(),
                 Items = transaction.ItemList.Items.Select(p => p.ToItem()).ToList(),
-                DownloadCodeIds = downloadCodeIds              
+                DownloadCodeIds = downloadCodeIds
             };
         }
 

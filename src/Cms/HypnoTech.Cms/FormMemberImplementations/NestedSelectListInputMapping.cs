@@ -91,7 +91,7 @@ namespace HypnoTech.Cms.FormMemberImplementations
             Expression<Func<TListClass, TTextMember>> textLambda,
             Expression<Func<TListClass, TChildListMember>> childListLambda,
             Expression<Func<TChildListClass, TChildKeyMember>> childKeyLambda,
-            Expression<Func<TChildListClass, TChildTextMember>> childTextLambda, 
+            Expression<Func<TChildListClass, TChildTextMember>> childTextLambda,
             string childDisplayText)
         {
             ListType = typeof(TListClass);

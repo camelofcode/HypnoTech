@@ -167,7 +167,7 @@ namespace HypnoTech.Cms
                         break;
                     case InputType.Text:
                         memberMap = new TextInputMapping(info, accessPath, this);
-                        break;                    
+                        break;
                     case InputType.TextArea:
                         memberMap = new TextAreaInputMapping(info, accessPath, this);
                         break;

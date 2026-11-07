@@ -13,7 +13,7 @@ namespace HypnoTech.Cms.Forms.Controls
 
         public ReadOnlyFormControl(ReadOnlyMapping mapping, object obj) : base(mapping)
         {
-           Value = mapping.GetPropertyValue(obj).ToString();
+            Value = mapping.GetPropertyValue(obj).ToString();
         }
 
         public override string EditorTemplate => "ReadOnly";

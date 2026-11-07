@@ -16,13 +16,13 @@ namespace HypnoTech.Cms
 
         public string AccessPath { get; set; }
 
-        protected InputType InputType { get;  set; }
+        protected InputType InputType { get; set; }
 
         public bool IsList => InputType == InputType.List;
 
-        public bool IncludedInTable { get;  protected set; }
+        public bool IncludedInTable { get; protected set; }
 
-        public string TableHeading { get;  protected set; }
+        public string TableHeading { get; protected set; }
 
         public int? TableOrder { get; private set; }
 
@@ -119,15 +119,15 @@ namespace HypnoTech.Cms
 
         public FormMemberMapping WithDateStringFormatter(string formatString = "dd MMM yyyy")
         {
-           _stringFormatter = value =>
-            {
-                if (!(value is DateTime dateTime))
-                {
-                    return string.Empty;
-                }
+            _stringFormatter = value =>
+             {
+                 if (!(value is DateTime dateTime))
+                 {
+                     return string.Empty;
+                 }
 
-                return dateTime.ToString("dd MMM yy");
-            };
+                 return dateTime.ToString("dd MMM yy");
+             };
             return this;
         }
     }

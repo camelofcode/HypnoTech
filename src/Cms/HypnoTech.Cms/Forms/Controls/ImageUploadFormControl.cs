@@ -11,9 +11,9 @@ namespace HypnoTech.Cms.Forms.Controls
 
         public bool HasValue => !string.IsNullOrEmpty(ImagePath);
 
-        public string ViewModelName  => $"modelFor{Name}";
+        public string ViewModelName => $"modelFor{Name}";
 
-        public string Anchor  => $"{Id}-anchor";
+        public string Anchor => $"{Id}-anchor";
 
         public List<string> AllowedFileTypes;
 

@@ -57,9 +57,9 @@ public sealed class PublicExperienceTests : DemoPageTest
                 await Assertions.Expect(summary).ToContainTextAsync("£3.50");
                 await Assertions.Expect(summary).ToContainTextAsync("£17.50");
                 await Assertions.Expect(page.GetByRole(AriaRole.Button, new()
-                    {
-                        NameRegex = new System.Text.RegularExpressions.Regex("Pay|Place order|Submit order")
-                    }))
+                {
+                    NameRegex = new System.Text.RegularExpressions.Regex("Pay|Place order|Submit order")
+                }))
                     .ToHaveCountAsync(0);
             });
 

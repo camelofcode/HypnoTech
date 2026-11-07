@@ -6,7 +6,7 @@ namespace HypnoTech.Common.Models.Settings
 {
     public class PasswordReset
     {
-        public string Email{ get; set; }
+        public string Email { get; set; }
 
         public string Username { get; set; }
 
@@ -23,7 +23,7 @@ namespace HypnoTech.Common.Models.Settings
             Email = user.Email;
             Username = user.Username;
             GenerateCode();
-            Created = DateTime.UtcNow;          
+            Created = DateTime.UtcNow;
         }
 
         private void GenerateCode()

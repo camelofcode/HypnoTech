@@ -15,7 +15,7 @@ namespace HypnoTech.Cms.Forms.Controls
 
         public TextInputFormControl(FormMemberMapping mapping, object obj) : base(mapping)
         {
-           Value = mapping.GetPropertyValue(obj)?.ToString();
+            Value = mapping.GetPropertyValue(obj)?.ToString();
         }
 
         public override string EditorTemplate => "TextInput";

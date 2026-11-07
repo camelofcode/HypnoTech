@@ -11,9 +11,9 @@ namespace HypnoTech.Cms.Forms.Controls
 
         public object Value => FilePath;
 
-        public string ViewModelName  => $"modelFor{Name}";
+        public string ViewModelName => $"modelFor{Name}";
 
-        public string Anchor  => $"{Id}-anchor";
+        public string Anchor => $"{Id}-anchor";
 
         public List<string> AllowedFileTypes;
 

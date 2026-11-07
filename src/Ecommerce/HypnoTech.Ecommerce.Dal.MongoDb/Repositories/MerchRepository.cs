@@ -35,10 +35,10 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb.Repositories
                     {
                         Name = grouping.Key,
                         SubCategories = groupedBySubCategory.Select(p => new MerchSubCategory
-                            {
-                                Name = p.Key,
-                                Items = p.ToList()
-                            })
+                        {
+                            Name = p.Key,
+                            Items = p.ToList()
+                        })
                             .ToList()
                     }).ToList();
         }

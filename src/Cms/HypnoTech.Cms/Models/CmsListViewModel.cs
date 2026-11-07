@@ -20,9 +20,9 @@ namespace HypnoTech.Cms.Models
 
         public bool CanEdit { get; protected set; }
 
-        public bool CanRemove { get; protected set; }    
+        public bool CanRemove { get; protected set; }
 
-        public bool CanDuplicate { get; protected set; }    
+        public bool CanDuplicate { get; protected set; }
 
         public string DisplayName { get; set; }
 

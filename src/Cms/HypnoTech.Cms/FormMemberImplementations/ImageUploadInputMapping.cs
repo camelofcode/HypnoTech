@@ -22,7 +22,7 @@ namespace HypnoTech.Cms.FormMemberImplementations
 
         public override FormControl GetControl()
         {
-           return new ImageUploadFormControl(this);
+            return new ImageUploadFormControl(this);
         }
 
         public override FormControl GetControl(object obj)

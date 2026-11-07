@@ -73,7 +73,7 @@ namespace HypnoTech.Cms.Mvc.Controllers
             var mapping = FormClassMapping.GetMapping<TClass>();
             if (!mapping.CanAdd)
             {
-                throw new NotSupportedException($"Add is not supported for {mapping.DisplayName}" );
+                throw new NotSupportedException($"Add is not supported for {mapping.DisplayName}");
             }
 
             var model = await _service.BuildAddFormAsync(HttpContext.RequestAborted);

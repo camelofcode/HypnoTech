@@ -56,9 +56,9 @@ namespace HypnoTech.Common.Extensions
 
         public static string LineBreaksToHtml(this string input)
         {
-            input =  input.Replace("\r\n", "<br />");
-            input =  input.Replace("\r", "<br />");
-            input =  input.Replace("\n", "<br />");
+            input = input.Replace("\r\n", "<br />");
+            input = input.Replace("\r", "<br />");
+            input = input.Replace("\n", "<br />");
             return input;
         }
     }
