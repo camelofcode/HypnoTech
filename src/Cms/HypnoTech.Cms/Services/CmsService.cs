@@ -35,11 +35,6 @@ namespace HypnoTech.Cms.Services
             _baseFilePath = config.UploadPath();
         }
 
-        public ICollection<TClass> GetAll<T>(string orderBy = null, bool descending = false)
-        {
-            return _repository.GetAll<T>(orderBy, descending);
-        }
-
         public Task<ICollection<TClass>> GetAllAsync<T>(
             string orderBy = null,
             bool descending = false,
@@ -48,19 +43,9 @@ namespace HypnoTech.Cms.Services
             return _repository.GetAllAsync<T>(orderBy, descending, cancellationToken);
         }
 
-        public void MoveUp(string id)
-        {
-            _repository.MoveUp(id);
-        }
-
         public Task MoveUpAsync(string id, CancellationToken cancellationToken = default)
         {
             return _repository.MoveUpAsync(id, cancellationToken);
-        }
-
-        public void MoveDown(string id)
-        {
-            _repository.MoveDown(id);
         }
 
         public Task MoveDownAsync(string id, CancellationToken cancellationToken = default)
@@ -68,19 +53,9 @@ namespace HypnoTech.Cms.Services
             return _repository.MoveDownAsync(id, cancellationToken);
         }
 
-        public TClass GetById(string id)
-        {
-            return _repository.GetById(id);
-        }
-
         public Task<TClass> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
             return _repository.GetByIdAsync(id, cancellationToken);
-        }
-
-        public CmsListReponse<TClass> GetPaged<T>(CmsListRequest request)
-        {
-            return _repository.GetPaged<T>(request);
         }
 
         public Task<CmsListReponse<TClass>> GetPagedAsync<T>(
@@ -88,16 +63,6 @@ namespace HypnoTech.Cms.Services
             CancellationToken cancellationToken = default)
         {
             return _repository.GetPagedAsync<T>(request, cancellationToken);
-        }
-
-        public void Add(TClass model, List<IFormFile> files, List<string> addedFiles)
-        {
-            HandleFileUploads(model, files, addedFiles);
-            PopulateGeneratedMembers(model);
-            NormaliseDates(model);
-            ApplyDefaultValuesToHiddenFields(model);
-
-            _repository.Add(model);
         }
 
         public async Task AddAsync(
@@ -114,16 +79,6 @@ namespace HypnoTech.Cms.Services
             await _repository.AddAsync(model, cancellationToken);
         }
 
-        public void Duplicate(TClass model, List<IFormFile> files, List<string> addedFiles)
-        {
-            var mapping = FormClassMapping.GetMapping<TClass>();
-            if (mapping.CloneFilesWhenDuplicating)
-            {
-                CloneFiles(model);
-            }
-            Add(model, files, addedFiles);
-        }
-
         public async Task DuplicateAsync(
             TClass model,
             List<IFormFile> files,
@@ -136,17 +91,6 @@ namespace HypnoTech.Cms.Services
                 await CloneFilesAsync(model, cancellationToken);
             }
             await AddAsync(model, files, addedFiles, cancellationToken);
-        }
-
-        public void Edit(TClass model, List<IFormFile> files, List<string> addedFiles, List<string> removedFiles)
-        {
-            HandleRemovedFiles(removedFiles);
-            HandleFileUploads(model, files, addedFiles);
-            PopulateGeneratedMembers(model);
-            NormaliseDates(model);
-            ApplyDefaultValuesToHiddenFields(model);
-
-            _repository.Edit(model);
         }
 
         public async Task EditAsync(
@@ -163,24 +107,6 @@ namespace HypnoTech.Cms.Services
             ApplyDefaultValuesToHiddenFields(model);
 
             await _repository.EditAsync(model, cancellationToken);
-        }
-
-        public void Remove(string id)
-        {
-            var mapping = FormClassMapping.GetMapping<TClass>();
-            if (mapping.MemberMappings.Any(p => p.IsFileInput))
-            {
-                var model = GetById(id);
-                foreach (var fileInputMember in mapping.MemberMappings.Where(p => p.IsFileInput))
-                {
-                    var file = typeof(TClass).GetProperty(fileInputMember.MemberName)?.GetValue(model)?.ToString();
-                    if (!string.IsNullOrEmpty(file))
-                    {
-                        HandleRemovedFile(file);
-                    }
-                }
-            }
-            _repository.Remove(id);
         }
 
         public async Task RemoveAsync(string id, CancellationToken cancellationToken = default)
@@ -201,28 +127,11 @@ namespace HypnoTech.Cms.Services
             await _repository.RemoveAsync(id, cancellationToken);
         }
 
-        public AddForm BuildAddForm()
-        {
-            var mapping = FormClassMapping.GetMapping<TClass>();
-            var form = new AddForm(mapping);
-            BuildSelectLists(form);
-            return form;
-        }
-
         public async Task<AddForm> BuildAddFormAsync(CancellationToken cancellationToken = default)
         {
             var mapping = FormClassMapping.GetMapping<TClass>();
             var form = new AddForm(mapping);
             await BuildSelectListsAsync(form, cancellationToken);
-            return form;
-        }
-
-        public EditForm BuildEditForm(string id)
-        {
-            var mapping = FormClassMapping.GetMapping<TClass>();
-            var entity = GetById(id);
-            var form = new EditForm(mapping, entity);
-            BuildSelectLists(form);
             return form;
         }
 
@@ -237,15 +146,6 @@ namespace HypnoTech.Cms.Services
             return form;
         }
 
-        public DuplicateForm BuildDuplicateForm(string id)
-        {
-            var mapping = FormClassMapping.GetMapping<TClass>();
-            var entity = GetById(id);
-            var form = new DuplicateForm(mapping, entity);
-            BuildSelectLists(form);
-            return form;
-        }
-
         public async Task<DuplicateForm> BuildDuplicateFormAsync(
             string id,
             CancellationToken cancellationToken = default)
@@ -255,14 +155,6 @@ namespace HypnoTech.Cms.Services
             var form = new DuplicateForm(mapping, entity);
             await BuildSelectListsAsync(form, cancellationToken);
             return form;
-        }
-
-        public bool Validate(TClass model, bool isEdit, List<string> addedFiles, out Form form)
-        {
-            var mapping = FormClassMapping.GetMapping<TClass>();
-            form = isEdit ? (Form)new EditForm(mapping, model) : new AddForm(mapping, model);
-            BuildSelectLists(form);
-            return form.Validate(addedFiles);
         }
 
         public async Task<(bool IsValid, Form Form)> ValidateAsync(
@@ -275,20 +167,6 @@ namespace HypnoTech.Cms.Services
             Form form = isEdit ? new EditForm(mapping, model) : new AddForm(mapping, model);
             await BuildSelectListsAsync(form, cancellationToken);
             return (form.Validate(addedFiles), form);
-        }
-
-        private void BuildSelectLists(Form form)
-        {
-            foreach (var control in form.Controls.Where(p => p is SelectListInputFormControl))
-            {
-                var selectListControl = (SelectListInputFormControl)control;
-                selectListControl.MapValues(_selectListRepository.GetSelectListItems(selectListControl.ListType));
-            }
-            foreach (var control in form.Controls.Where(p => p is NestedSelectListInputFormControl))
-            {
-                var selectListControl = (NestedSelectListInputFormControl)control;
-                selectListControl.MapValues(_selectListRepository.GetSelectListItems(selectListControl.ListType));
-            }
         }
 
         private async Task BuildSelectListsAsync(Form form, CancellationToken cancellationToken)
@@ -306,42 +184,6 @@ namespace HypnoTech.Cms.Services
                 selectListControl.MapValues(await _selectListRepository.GetSelectListItemsAsync(
                     selectListControl.ListType,
                     cancellationToken));
-            }
-        }
-
-        private void CloneFiles(TClass model)
-        {
-            var mapping = FormClassMapping.GetMapping<TClass>();
-
-            foreach (var file in mapping.MemberMappings.Where(p => p is ImageUploadInputMapping || p is FileUploadInputMapping))
-            {
-                var currentValue = typeof(TClass).GetProperty(file.MemberName)?.GetValue(model)?.ToString();
-                if (!string.IsNullOrEmpty(currentValue))
-                {
-                    var newValue = CloneFile(currentValue);
-                    typeof(TClass).GetProperty(file.MemberName)?.SetValue(model, newValue);
-                }
-            }
-
-            foreach (var gallery in mapping.MemberMappings.Where(p => p is PhotoGalleryInputMapping))
-            {
-                if (!(gallery is PhotoGalleryInputMapping strictGallery)) 
-                {
-                    return;
-                }
-
-                var photos = typeof(TClass).GetProperty(strictGallery.MemberName)?.GetValue(model) as IList;
-
-                for (int i = 0; i < photos?.Count; i++)
-                {
-                    var item = photos[i];
-                    var currentValue = item?.GetType().GetProperty(strictGallery.ImagePathName)?.GetValue(item)?.ToString();
-                    if (!string.IsNullOrEmpty(currentValue))
-                    {
-                        var newValue = CloneFile(currentValue);
-                        strictGallery.SetImage(model, i, newValue);
-                    }
-                }
             }
         }
 
@@ -381,16 +223,6 @@ namespace HypnoTech.Cms.Services
             }
         }
 
-        private string CloneFile(string path)
-        {
-            var fullPath = Path.Combine(_baseFilePath, StringExtensions.UrlToFilePath(path).Trim(Path.DirectorySeparatorChar));
-            var clonePath = FileHelper.GetDeduplicatedPath(fullPath);
-
-            File.Copy(fullPath, clonePath);
-
-            return clonePath.Replace(_baseFilePath, string.Empty);
-        }
-
         private async Task<string> CloneFileAsync(string path, CancellationToken cancellationToken)
         {
             var fullPath = Path.Combine(_baseFilePath, StringExtensions.UrlToFilePath(path).Trim(Path.DirectorySeparatorChar));
@@ -413,60 +245,6 @@ namespace HypnoTech.Cms.Services
             await source.CopyToAsync(destination, cancellationToken);
 
             return clonePath.Replace(_baseFilePath, string.Empty);
-        }
-
-        private void HandleFileUploads(TClass model, List<IFormFile> files, List<string> addedFiles)
-        {
-            for (int i = 0; i < files.Count; i++)
-            {
-                var file = files[i];
-                var fileProperty = addedFiles[i];
-                var fileIndex = 0;
-
-                if (fileProperty.Contains("_"))
-                {
-                    var split = fileProperty.Split('_');
-                    fileProperty = split[0];
-                    fileIndex = int.Parse(split[1]);
-                }
-
-                var mapping = FormClassMapping.GetMapping<TClass>();
-                var memberMapping = mapping.GetMember(fileProperty);
-
-                ValidateFileType(file, memberMapping);
-
-                if (memberMapping is ImageUploadInputMapping imageMapping)
-                {
-                    var path = _imageUploadService.AddImage(file, imageMapping.TargetDirectory, imageMapping.MaxHeight, imageMapping.MaxWidth);
-                    typeof(TClass).GetProperty(fileProperty)?.SetValue(model, path);
-                }
-                else if (memberMapping is PhotoGalleryInputMapping photoGalleryMapping)
-                {
-                    var galleryName = StringExtensions.GenerateSlug(mapping.GetTitle(model));
-                    
-                    var path = _imageUploadService.AddImage(file, Path.Combine(photoGalleryMapping.TargetDirectory, galleryName), photoGalleryMapping.MaxHeight, photoGalleryMapping.MaxWidth);
-                    photoGalleryMapping.SetImage(model.GetType().GetProperty(fileProperty)?.GetValue(model), fileIndex, path);
-                }
-                else if (memberMapping is FileUploadInputMapping fileMapping)
-                {
-                    var directory = Path.Combine(_baseFilePath, "Files", fileMapping.TargetDirectory);
-                    Directory.CreateDirectory(directory);
-
-                    var filePath = Path.Combine(directory, file.FileName);
-                    if (file.Length > 0)
-                    {
-                        using (var ms = new MemoryStream())
-                        {
-                            file.CopyTo(ms);
-                            var fileBytes = ms.ToArray();
-
-                            File.WriteAllBytes(filePath, fileBytes);
-                            var saveLocation = $"/Files/{fileMapping.TargetDirectory}/{file.FileName}";
-                            typeof(TClass).GetProperty(fileProperty)?.SetValue(model, saveLocation);
-                        }
-                    }
-                }
-            }
         }
 
         private async Task HandleFileUploadsAsync(

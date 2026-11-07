@@ -1,4 +1,3 @@
-using HypnoTech.Common.Dal.Repositories;
 using HypnoTech.Common.Services;
 using HypnoTech.Common.StaticWebAssets;
 using HypnoTech.Frontend.Ajax;
@@ -14,7 +13,6 @@ using HypnoTech.Frontend.Attributes;
 using HypnoTech.Frontend.Caching;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 
 namespace HypnoTech.Frontend.Startup
@@ -27,20 +25,8 @@ namespace HypnoTech.Frontend.Startup
             services.TryAddSingleton<IActionResultExecutor<AjaxPartialViewResult>, AjaxPartialViewResultExecutor>();
             services.AddScoped<ApiAuthorizeAttribute>();
             StaticFiles.RegisterStaticFiles(env);
-
-            //This is needed to allow AjaxPartialViewResult to be written.
-            //See: https://stackoverflow.com/questions/47735133/asp-net-core-synchronous-operations-are-disallowed-call-writeasync-or-set-all
-            //TODO: Work out what is needed to convert whatever option is throwing this error to async.
-            //TODO: Check on server what needs to be done as we will not be hiding behind IIS there.
-            services.Configure<IISServerOptions>(options =>
-            {
-                options.AllowSynchronousIO = true;
-            });
-
-            services.Configure<KestrelServerOptions>(options =>
-            {
-                options.AllowSynchronousIO = true;
-            });
+            SiteAssetManifest.Register(env);
+            services.AddHostedService<NavBarCacheHostedService>();
 
             services.AddMvc();
         }
@@ -87,7 +73,6 @@ namespace HypnoTech.Frontend.Startup
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            NavBarCache.Init(app.ApplicationServices.GetService<INavBarRepository>());
         }
     }
 }

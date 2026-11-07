@@ -20,26 +20,8 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb.Repositories
             _merchRepository = merchRepository;
         }
 
-        public PostageProfile GetProfile(string name)
-        {
-            return GetOne<PostageProfile>(new BsonDocument("name", name));
-        }
-
         public Task<PostageProfile> GetProfileAsync(string name, CancellationToken cancellationToken = default) =>
             GetOneAsync<PostageProfile>(new BsonDocument("name", name), cancellationToken);
-
-        public List<PostageProfile> GetProfiles()
-        {
-            var profiles = GetAll<PostageProfile>();
-            var merch = _merchRepository.GetMerchFlattened();
-
-            foreach (var profile in profiles)
-            {
-                profile.CanDelete = merch.All(p => !string.Equals(p.PostageProfile, profile.Name, StringComparison.InvariantCultureIgnoreCase));
-            }
-
-            return profiles.ToList();
-        }
 
         public async Task<List<PostageProfile>> GetProfilesAsync(CancellationToken cancellationToken = default)
         {
@@ -57,12 +39,6 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb.Repositories
             return profiles.ToList();
         }
 
-        public void AddProfile(PostageProfile profile)
-        {
-            profile.Id = ObjectId.GenerateNewId().ToString();
-            Collection.InsertOne(profile.ToBsonDocument());
-        }
-
         public async Task AddProfileAsync(PostageProfile profile, CancellationToken cancellationToken = default)
         {
             profile.Id = ObjectId.GenerateNewId().ToString();
@@ -71,26 +47,8 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb.Repositories
                 cancellationToken: cancellationToken);
         }
 
-        public PostageProfile GetProfileForEdit(string id)
-        {
-            return GetByObjectId<PostageProfile>(id);
-        }
-
         public Task<PostageProfile> GetProfileForEditAsync(string id, CancellationToken cancellationToken = default) =>
             GetByObjectIdAsync<PostageProfile>(id, cancellationToken);
-
-        public void UpdateProfile(PostageProfile profile)
-        {
-            var existing = GetByObjectId<PostageProfile>(profile.Id);
-
-            existing.UnitedKingdom = profile.UnitedKingdom;
-            existing.EuropeanUnion = profile.EuropeanUnion;
-            existing.RestOfWorld1 = profile.RestOfWorld1;
-            existing.RestOfWorld2 = profile.RestOfWorld2;
-            existing.RestOfWorld3 = profile.RestOfWorld3;
-
-            Collection.ReplaceOne(new BsonDocument("_id", new ObjectId(existing.Id)), existing.ToBsonDocument());
-        }
 
         public async Task UpdateProfileAsync(PostageProfile profile, CancellationToken cancellationToken = default)
         {
@@ -106,20 +64,6 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb.Repositories
                 new BsonDocument("_id", new ObjectId(existing.Id)),
                 existing.ToBsonDocument(),
                 cancellationToken: cancellationToken);
-        }
-
-        public string RemoveProfile(string id)
-        {
-            var profile = GetByObjectId<PostageProfile>(id);
-            var merch = _merchRepository.GetMerchFlattened();
-
-            if (merch.Any(p => string.Equals(p.PostageProfile, profile.Name, StringComparison.InvariantCultureIgnoreCase)))
-            {
-                return $"'{profile.Name}' cannot be removed as it has merch associated. Move all merch to a different profile before removing.";
-            }
-
-            Collection.DeleteOne(new BsonDocument("_id", new ObjectId(id)));
-            return null;
         }
 
         public async Task<string> RemoveProfileAsync(string id, CancellationToken cancellationToken = default)

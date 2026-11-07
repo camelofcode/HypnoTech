@@ -17,21 +17,6 @@ namespace HypnoTech.Cms.Services
             _config = config;
         }
 
-        public void ClearSiteNavbarCache()
-        {
-            try
-            {
-                using var client = BuildClient(_config.GetConfig().MainSite);
-                using var request = new HttpRequestMessage(HttpMethod.Get, "ClearNavbarCache");
-                using var response = client.Send(request);
-                response.EnsureSuccessStatusCode();
-            }
-            catch (Exception ex)
-            {
-                Log.Logger.Error(ex, "Error");
-            }
-        }
-
         public async Task ClearSiteNavbarCacheAsync(CancellationToken cancellationToken = default)
         {
             try

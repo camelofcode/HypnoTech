@@ -14,11 +14,6 @@ namespace HypnoTech.Media.Dal.MongoDb.Repositories
         {
         }
 
-        public ICollection<AudioTrack> GetTracksForPlayer()
-        {
-            return GetAll<AudioTrack>();
-        }
-
         public Task<ICollection<AudioTrack>> GetTracksForPlayerAsync(CancellationToken cancellationToken = default)
         {
             return GetAllAsync<AudioTrack>(cancellationToken: cancellationToken);

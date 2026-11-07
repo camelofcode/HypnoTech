@@ -8,7 +8,6 @@ namespace HypnoTech.Media.Frontend.Services
 {
     public interface IAudioTrackService
     {
-        ICollection<AudioTrack> GetTracksForPlayer();
         Task<ICollection<AudioTrack>> GetTracksForPlayerAsync(CancellationToken cancellationToken = default);
     }
 
@@ -21,11 +20,6 @@ namespace HypnoTech.Media.Frontend.Services
         {
             _audioTrackEnrichmentService = audioTrackEnrichmentService;
             _repository = repository;
-        }
-
-        public ICollection<AudioTrack> GetTracksForPlayer()
-        {
-            return _audioTrackEnrichmentService.EnrichAudioTracks(_repository.GetTracksForPlayer());
         }
 
         public async Task<ICollection<AudioTrack>> GetTracksForPlayerAsync(CancellationToken cancellationToken = default)

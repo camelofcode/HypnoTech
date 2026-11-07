@@ -24,16 +24,6 @@ namespace HypnoTech.Cms.MongoDb.Repositories
             _database = client.GetDatabase(options.Value.Database);
         }
 
-        public List<object> GetSelectListItems(Type type)
-        {
-            var collection = ModelRegistry.Registrations.FirstOrDefault(p => p.Type == type)?.DataName;
-
-            MethodInfo method = typeof(SelectListRepository).GetMethod("GetAll");
-            MethodInfo generic = method?.MakeGenericMethod(type);
-            var result = generic?.Invoke(null, new object[] { _database, collection });
-            return (List<object>)result;
-        }
-
         public Task<List<object>> GetSelectListItemsAsync(
             Type type,
             CancellationToken cancellationToken = default)
@@ -44,21 +34,6 @@ namespace HypnoTech.Cms.MongoDb.Repositories
             MethodInfo generic = method?.MakeGenericMethod(type);
             var result = generic?.Invoke(null, new object[] { _database, collection, cancellationToken });
             return (Task<List<object>>)result;
-        }
-
-        public static List<object> GetAll<T>(IMongoDatabase database, string table)
-        {
-            IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(table);
-            var items = collection.Find(new BsonDocument());
-            var result = items.ToList().Select(p => BsonSerializer.Deserialize<T>(p)).ToList();
-
-            List<object> objects = new List<object>();
-            foreach (var item in result)
-            {
-                objects.Add(item);
-            }
-
-            return objects;
         }
 
         public static async Task<List<object>> GetAllAsync<T>(

@@ -15,11 +15,6 @@ namespace HypnoTech.Ecommerce.Dal.MongoDb.Repositories
         {
         }
 
-        public List<MerchCategoryType> GetTypes()
-        {
-            return GetAll<MerchCategoryType>().ToList();
-        }
-
         public async Task<List<MerchCategoryType>> GetTypesAsync(CancellationToken cancellationToken = default)
         {
             return (await GetAllAsync<MerchCategoryType>(cancellationToken: cancellationToken)).ToList();

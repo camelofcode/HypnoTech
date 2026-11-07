@@ -76,8 +76,8 @@ The programme has two intended releases:
 - PayPal v2, Stripe, or other work described in `ecommerce-payments-plan.md`.
 - Exhaustive test coverage.
 - Windows as a required CI or production platform.
-- Immediate removal of every synchronous public API. Async APIs will be added and used
-  by the public engine while compatibility members are retired deliberately.
+- Reintroducing synchronous repository or I/O-bound service APIs on public `main`.
+  Production consumers retain the historic API on `support/legacy-production`.
 
 Esoteric and SelfHypnosis are external production consumers. They may be used for
 read-only compatibility analysis and temporary, uncommitted smoke-test copies, but
@@ -133,7 +133,7 @@ date.
 | 3 | Projects physically organised without semantic changes | Complete | v0.1 |
 | 4 | Original public example admin and website | Complete | v0.1 |
 | 5 | Focused Playwright portfolio smoke suite | Complete | v0.1 |
-| 6 | Async I/O modernisation | In progress | v0.1 |
+| 6 | Async I/O modernisation | Complete | v0.1 |
 | 7 | CI, documentation, `main`, and public release | Not started | v0.1 |
 | 8 | Persistence contracts hardened | Not started | v0.2 |
 | 9 | EF Core implementations and provider packaging | Not started | v0.2 |
@@ -580,35 +580,33 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 
 ### Design rules
 
-- [ ] Use native asynchronous APIs from MongoDB, streams, SMTP, HTTP, and ASP.NET Core.
-- [ ] Add the `Async` suffix to repository and service methods that return `Task` or
+- [x] Use native asynchronous APIs from MongoDB, streams, SMTP, HTTP, and ASP.NET Core.
+- [x] Add the `Async` suffix to repository and service methods that return `Task` or
       `ValueTask`; preserve controller action routes and names.
-- [ ] Accept `CancellationToken` on public async I/O methods and pass
+- [x] Accept `CancellationToken` on public async I/O methods and pass
       `HttpContext.RequestAborted` from web requests.
-- [ ] Do not implement fake async with `Task.Run` around MongoDB, file, or other blocking
+- [x] Do not implement fake async with `Task.Run` around MongoDB, file, or other blocking
       I/O.
-- [ ] Keep CPU-only mapping, validation, image transformation, collection projection,
+- [x] Keep CPU-only mapping, validation, image transformation, collection projection,
       and filesystem metadata operations synchronous unless measurement proves a need.
-- [ ] Do not block on tasks with `.Result`, `.Wait()`, or
+- [x] Do not block on tasks with `.Result`, `.Wait()`, or
       `GetAwaiter().GetResult()` in request paths.
-- [ ] Preserve routes, response types, validation, flash messages, persisted BSON names,
+- [x] Preserve routes, response types, validation, flash messages, persisted BSON names,
       and observable ordering.
 - [x] Keep the existing PayPal v1 routes and behaviour; replacing its sync-over-async
       calls must not expand into the deferred payment-provider work.
 
 ### Compatibility approach
 
-- [ ] Add true async methods before removing synchronous methods.
-- [ ] Make async methods the implementation used by public-engine controllers and
+- [x] Add true async methods before removing synchronous methods.
+- [x] Make async methods the implementation used by public-engine controllers and
       services.
-- [ ] Retain synchronous compatibility members initially where removal would create an
-      unnecessary source break.
-- [ ] Do not implement retained sync methods as sync-over-async wrappers. Keep a native
-      synchronous implementation temporarily or move compatibility to an explicitly
-      isolated adapter.
-- [ ] Mark compatibility methods obsolete only after call sites and downstream impact
-      are understood.
-- [ ] Document the intended removal policy before a later breaking release.
+- [x] Remove duplicate synchronous repository and I/O-bound service contracts and
+      implementations before the first public release.
+- [x] Keep unchanged production consumers pinned to `support/legacy-production` rather
+      than maintaining two implementations on public `main`.
+- [x] Keep CPU-only work synchronous and isolate framework-mandated synchronous
+      contracts, such as Serilog `Emit`, behind an asynchronous boundary.
 
 ### Repository and service work
 
@@ -639,21 +637,21 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
       while preserving the existing provider and routes.
 - [x] Use async SMTP sending and async template/file reads where supported.
 - [x] Use `IFormFile.CopyToAsync`, async streams, and async file writes for uploads.
-- [ ] Review custom MVC result execution and remove the synchronous-I/O server option if
+- [x] Review custom MVC result execution and remove the synchronous-I/O server option if
       the complete response path no longer needs it.
-- [ ] Treat synchronous-only framework contracts, such as a Serilog sink `Emit` method,
+- [x] Treat synchronous-only framework contracts, such as a Serilog sink `Emit` method,
       as explicit exceptions rather than disguising them as async.
 
 ### Verification
 
-- [ ] Extend unit tests to cover async success, validation, exception, and cancellation
+- [x] Extend unit tests to cover async success, validation, exception, and cancellation
       paths.
 - [x] Run MongoDB contract and integration tests through the async APIs.
 - [x] Run Playwright journeys against the async controller paths.
 - [x] Add a repository check that rejects new blocking task waits in request-path code,
       with documented exceptions if any remain.
 - [x] Compare routes and representative HTTP responses before and after conversion.
-- [x] Record retained synchronous APIs and their planned lifetime.
+- [x] Add an architecture check that keeps public I/O contracts async-only.
 
 ### Exit gate
 
@@ -663,6 +661,7 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
       documented PayPal v1 transport limitation.
 - [x] No unapproved `.Result`, `.Wait()`, or `GetAwaiter().GetResult()` remains in
       request-path code.
+- [x] No duplicate synchronous repository or I/O-bound service API remains on `main`.
 - [x] CPU-only code has not been wrapped in fake async.
 - [x] All unit, integration, and browser tests pass without route or behaviour changes.
 
@@ -741,8 +740,7 @@ designing a parallel synchronous provider surface.
 - [ ] Legacy MongoDB document compatibility where relevant.
 - [ ] A clear distinction between engine contracts and MongoDB implementation accidents.
 - [ ] Treat the async contracts introduced in Phase 6 as the primary provider API.
-- [ ] Require retained synchronous compatibility members to match the same semantics
-      until their documented removal.
+- [ ] Keep provider contracts async-only; do not design a parallel synchronous surface.
 
 ### Exit gate
 
@@ -859,7 +857,7 @@ These apply throughout all phases:
 | Q-006 | What neutral theme should the public demo use? | Phase 4 | Answered: Lantern House, a fictional independent arts venue |
 | Q-007 | Should external contributions be accepted before a contributor-licensing process exists? | Phase 7 | Answered: no external contributions will be accepted |
 | Q-008 | Which relational provider should be implemented first once the provider matrix is rechecked? | Phase 9 | Proposed: PostgreSQL if compatible |
-| Q-009 | How long should synchronous compatibility methods remain after public controllers move to async APIs? | Phase 6 | Proposed: retain through v0.1 and review for the next breaking release |
+| Q-009 | How long should synchronous compatibility methods remain after public controllers move to async APIs? | Phase 6 | Answered: remove before v0.1; production remains pinned to `support/legacy-production` |
 | Q-010 | Which verified Montserrat release should replace the 18 corrupted baseline font files, or should Montserrat be removed? | Phase 1 | Answered: remove them; all 18 were corrupted and unreferenced |
 | Q-011 | Is the legacy PayPal/Braintree NuGet provenance gap acceptable until the deferred payment work, given that binaries are restored rather than vendored? | Phase 1 | Answered: accept as a documented risk until existing-PayPal work; no package binaries are committed |
 
@@ -876,8 +874,8 @@ These apply throughout all phases:
 | Static registries make tests order-dependent | Flaky test suite | Serial collections and explicit reset of mutable public registries; make BSON and model registration idempotent | Resolved for current registrations; tests remain serial where global mappings are intentionally mutated |
 | Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Resolved; Lantern House is wholly original and the example tree contains no private-site references |
 | Playwright suite becomes slow or brittle | CI friction | Keep five journey-based tests, parallelise CI by browser, and retain engine-specific traces on failure | Open |
-| Async conversion changes routes or behaviour | Public regression | Characterisation tests first; preserve action names/routes; convert in bounded slices | Open |
-| Async APIs are wrappers over blocking work | Misleading API and thread-pool pressure | Require native provider async APIs; prohibit `Task.Run` and blocking waits in request paths | Open |
+| Async conversion changes routes or behaviour | Public regression | Characterisation tests first; preserve action names/routes; convert in bounded slices | Resolved for Phase 6; the full 77-test suite passes after sync removal |
+| Async APIs are wrappers over blocking work | Misleading API and thread-pool pressure | Require native provider async APIs; prohibit `Task.Run` and blocking waits in request paths | Resolved; architecture guards reject blocking waits and synchronous public I/O contracts |
 | EF providers support different EF major versions | Package conflicts or delayed providers | Recheck matrix; align EF major; add providers incrementally | Open |
 | Repository skills become decorative or stale | Misleading AI story | Start with two workflow-backed skills; test commands; evolve from use | Open |
 
@@ -909,6 +907,7 @@ These apply throughout all phases:
 | 2026-11-06 | D-022 | Keep unchanged production consumers pinned to `support/legacy-production` while public `main` adopts the functional source layout. | Accepted | Avoids private-site edits and path shims while the preserved branch remains an exact, buildable production dependency. |
 | 2026-11-06 | D-023 | Use Lantern House, a fictional independent arts venue, for the public example. | Accepted | It can demonstrate editorial, programme, media, and ecommerce features with wholly original synthetic content and branding. |
 | 2026-11-06 | D-024 | Keep the Phase 4 checkout as a fail-closed pricing demonstration and defer a reusable mock provider to the payment plan. | Accepted | Basket and postage calculations remain demonstrable, while payment/completion/cancellation routes return 410 before provider, order, email, download-code, or fulfilment code can run. |
+| 2026-11-07 | D-025 | Make public `main` async-only for repository and I/O-bound service contracts before v0.1. | Accepted | Both production sites are pinned to the preserved support branch, so duplicate sync implementations add maintenance risk without protecting an in-solution caller. CPU-only APIs stay synchronous and Serilog's required sync contract remains queued. |
 
 ## Work log
 
@@ -967,10 +966,12 @@ stating that work was done.
 | 2026-11-06 | Phase 6 | Added Media sync/async repository and service characterisation and completed aggregate verification for the slice. | All 30 projects build in Release with zero warnings/errors; CMS unit tests pass 25/25, Common unit tests 10/10, architecture tests 3/3, MongoDB contracts 18/18 across 4.0.3, 8.0.32, and 9.0.4, demo integration tests 14/14, and the Chromium/Podman journeys 5/5 including Media navigation, player, gallery, and video behavior. | This change |
 | 2026-11-06 | Phase 6 | Closed the remaining public-example async gap across Articles, Artists, Events, Home, Media, Shop, focused read repositories, and artist-based audio enrichment. | Every database-backed Lantern House action now propagates `RequestAborted`; independent Home and Media reads run concurrently; an additive Media enrichment async hook preserves sync-only consumer compatibility; render-only Cart remains synchronous. | This change |
 | 2026-11-06 | Phase 6 | Added the `author-async-request-paths` repository skill and extended async verification to the example request surface. | The skill records controller inheritance, generated CMS, public/admin dependency boundaries, provider-neutral DAL, native async, cancellation, concurrency, and retained-sync conventions. Its validator passes; the 30-project Release build has zero warnings/errors; focused architecture tests pass 3/3; focused demo integration tests pass 15/15; and the complete Podman/Chromium solution passes 76/76. | This change |
+| 2026-11-06 | Phase 6 | Completed the final Frontend async slice and removed the server-wide synchronous-I/O escape hatch. | Uploaded image/media actions and navbar startup/refresh now propagate cancellation through native async file and MongoDB APIs; partial JSON uses async response writes; host asset hashes are prepared once during registration; Kestrel and IIS no longer enable synchronous I/O. Routes, range responses, navbar order, asset URLs, and partial JSON remain unchanged. | This change |
+| 2026-11-06 | Phase 6 | Isolated the synchronous Serilog sink contract behind pinned `Serilog.Sinks.Async` 2.1.0 and closed the Phase 6 exit gate. | A bounded 1,000-event warning queue drops rather than blocks when full; dependency/licence and compatibility documentation are current. All five frontend outputs are current; the 30-project Release build passes with zero warnings/errors; architecture tests pass 4/4; MongoDB contracts pass 19/19 across 4.0.3, 8.0.32, and 9.0.4; demo integration passes 17/17; and the complete Podman/Chromium solution passes 80/80. | This change |
+| 2026-11-07 | Phase 6 | Removed the duplicate synchronous repository and I/O-bound service surface from public `main`. | CMS, Common, Ecommerce, Media, Frontend, email, PayPal, MongoDB helpers, public-example repositories, audio enrichment, and demo seeding are async-only; seeding now runs as an async hosted service. CPU-only APIs remain synchronous, and Serilog `Emit` remains the sole framework-mandated queued sync-I/O contract. Production sites remain untouched on `support/legacy-production`. | This change |
+| 2026-11-07 | Phase 6 | Updated repository guidance and added an architecture guard against synchronous public I/O contracts. | The async authoring skill validates; Release builds with 0 warnings/errors; architecture tests pass 5/5; and the complete rootless-Podman/Chromium solution passes 77/77. Three compatibility-only tests were removed while behavioral coverage continues through async characterisation tests. | This change |
 
 ## Immediate next actions
 
-1. Review custom MVC result execution and the remaining `AllowSynchronousIO` settings.
-2. Complete the Phase 6 exit-gate verification and mark the phase complete if green.
-3. Begin Phase 7 CI and public-release documentation.
-4. Re-scan the exact final commit immediately before changing repository visibility.
+1. Begin Phase 7 CI and public-release documentation.
+2. Re-scan the exact final commit immediately before changing repository visibility.

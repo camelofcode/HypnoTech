@@ -54,23 +54,27 @@ Linux is the required development/CI and production platform for the first publi
 release. Windows previously worked as a development platform but is not a release gate.
 A future Windows smoke job may be informative and non-blocking.
 
-## Async API transition
+## Async API boundary
 
-The Phase 6 CMS, Common-backed admin, Ecommerce, and Media request paths use native
-async MongoDB, file, stream, SMTP, and HTTP APIs and propagate the request cancellation
-token. Existing synchronous repository and service members remain available through
-v0.1 for source compatibility. They retain native synchronous implementations rather
-than calling the new async members. Async members are the primary API used by engine
-controllers, module tag helpers, and the public example. Removal or obsolescence of the
-sync surface is deferred to a separately documented breaking release.
+The Phase 6 CMS, Common-backed admin, Ecommerce, Media, Frontend, and public-example
+request paths use native async MongoDB, file, stream, SMTP, response, and HTTP APIs and
+propagate the request cancellation token. Public repository and I/O-bound service
+contracts on `main` are async-only; their duplicate synchronous members and concrete
+implementations were removed before the first public release. The unchanged production
+sites remain pinned to `support/legacy-production`, which preserves the historic API.
+Kestrel and IIS synchronous I/O are not enabled.
 
 PayPal v1 is the narrow documented exception. Its 2018 SDK exposes only a task-returning
 HTTP transport and no cancellation-token overload. Engine request paths await that SDK
-directly; the two old synchronous `IPayPalService` members remain as an isolated blocking
-compatibility adapter and are allowlisted by the architecture check. Once a side-effecting
-PayPal call starts, the async path awaits it to completion rather than abandoning a remote
-payment operation that the SDK cannot actually cancel. No live or sandbox payment is made
-by the automated tests.
+directly. Once a side-effecting PayPal call starts, the async path awaits it to completion
+rather than abandoning a remote payment operation that the SDK cannot actually cancel.
+No live or sandbox payment is made by the automated tests.
+
+Serilog's `ILogEventSink.Emit` contract is synchronous. The MongoDB sink therefore keeps
+its native synchronous driver implementation, but `Serilog.Sinks.Async` 2.1.0 invokes it
+on a bounded background worker rather than on request threads. The warning-only queue is
+capped at 1,000 events and drops new events instead of blocking when full; Serilog SelfLog
+reports those drops. Normal host disposal flushes the queue during shutdown.
 
 ## Example application verification
 

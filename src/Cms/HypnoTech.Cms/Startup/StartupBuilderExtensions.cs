@@ -39,13 +39,8 @@ namespace HypnoTech.Cms.Startup
                 options.Limits.MaxRequestBodySize = int.MaxValue; // if don't set default value is: 30 MB
             });
 
-            //This is needed to allow AjaxPartialViewResult to be written.
-            //See: https://stackoverflow.com/questions/47735133/asp-net-core-synchronous-operations-are-disallowed-call-writeasync-or-set-all
-            //TODO: Work out what is needed to convert whatever option is throwing this error to async.
-            //TODO: Check on server what needs to be done as we will not be hiding behind IIS there.
             services.Configure<IISServerOptions>(options =>
             {
-                options.AllowSynchronousIO = true;
                 options.MaxRequestBodySize = int.MaxValue; // if don't set default value is: 30 MB
             });
 

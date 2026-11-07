@@ -34,16 +34,16 @@ public sealed class Startup
         services.UseMongoDbForEcommerce(Configuration);
         services.UseMongoDbForMedia(Configuration);
 
+        if (Configuration.GetValue("Demo:SeedOnStartup", true))
+        {
+            services.AddHostedService<DemoSeederHostedService>();
+        }
+
         DemoModelMappings.Map();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
     {
         app.ConfigureCms(environment, Configuration);
-
-        if (Configuration.GetValue("Demo:SeedOnStartup", true))
-        {
-            DemoSeeder.Seed(app.ApplicationServices, environment);
-        }
     }
 }

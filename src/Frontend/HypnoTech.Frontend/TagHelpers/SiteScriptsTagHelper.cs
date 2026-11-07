@@ -1,5 +1,3 @@
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HypnoTech.Frontend.Caching;
@@ -22,15 +20,9 @@ namespace HypnoTech.Frontend.TagHelpers
         {
             StringBuilder sb = new StringBuilder();
 
-            var files = Directory.EnumerateFiles(Path.Combine("wwwroot", "js"), "*.js");
-
-            files = _environment.IsDevelopment() ? files.Where(p => !p.ToLowerInvariant().EndsWith(".min.js")) : files.Where(p => p.ToLowerInvariant().EndsWith(".min.js"));
-
-            foreach (var file in files)
+            foreach (var asset in SiteAssetManifest.GetScripts(_environment))
             {
-                var hash = HashCache.GetHash(file);
-                var fileInfo = new FileInfo(file);
-                sb.AppendLine($"<script src=\"/js/{fileInfo.Name}?_={hash}\"></script>");
+                sb.AppendLine($"<script src=\"/js/{asset.Name}?_={asset.Hash}\"></script>");
             }
 
             output.TagName = null;

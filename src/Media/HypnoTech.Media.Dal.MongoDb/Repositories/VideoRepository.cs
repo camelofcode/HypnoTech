@@ -15,11 +15,6 @@ namespace HypnoTech.Media.Dal.MongoDb.Repositories
         {
         }
 
-        public ICollection<YouTubeVideo> GetVideos()
-        {
-            return GetAll<YouTubeVideo>().ToList();
-        }
-
         public async Task<ICollection<YouTubeVideo>> GetVideosAsync(CancellationToken cancellationToken = default)
         {
             return (await GetAllAsync<YouTubeVideo>(

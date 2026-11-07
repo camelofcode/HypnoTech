@@ -16,19 +16,9 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
         {
         }
 
-        public List<Country> GetCountries()
-        {
-            return GetAll<Country>("displayText").ToList();
-        }
-
         public async Task<List<Country>> GetCountriesAsync(CancellationToken cancellationToken = default)
         {
             return (await GetAllAsync<Country>("displayText", cancellationToken: cancellationToken)).ToList();
-        }
-
-        public Country GetCountryByCode(string code)
-        {
-            return GetOne<Country>(new BsonDocument("code", code));
         }
 
         public Task<Country> GetCountryByCodeAsync(string code, CancellationToken cancellationToken = default)

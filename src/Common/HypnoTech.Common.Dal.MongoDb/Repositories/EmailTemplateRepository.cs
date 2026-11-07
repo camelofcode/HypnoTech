@@ -14,11 +14,6 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
         {
         }
 
-        public EmailTemplate GetEmailTemplate(string type)
-        {
-            return GetOne<EmailTemplate>(new BsonDocument("type", type));
-        }
-
         public Task<EmailTemplate> GetEmailTemplateAsync(string type, CancellationToken cancellationToken = default)
         {
             return GetOneAsync<EmailTemplate>(new BsonDocument("type", type), cancellationToken);

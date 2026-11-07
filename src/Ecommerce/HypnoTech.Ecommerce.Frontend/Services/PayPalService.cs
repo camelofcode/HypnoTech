@@ -26,37 +26,6 @@ namespace HypnoTech.Ecommerce.Frontend.Services
             _configRepository = config;
         }
 
-        // Compatibility-only synchronous surface. The PayPal v1 SDK has no synchronous
-        // transport API, so this remains the one documented blocking adapter. Engine
-        // request paths use CreatePaymentAsync instead.
-        public PaypalCreateResponse CreatePayment(CheckoutDetails details, PostageAddress address)
-        {
-            var config = _configRepository.GetConfig().Paypal;
-            var client = BuildClient(config);
-            PaymentCreateRequest request = new PaymentCreateRequest();
-            request.RequestBody(BuildPayment(details, address, config));
-
-            try
-            {
-                HttpResponse response = client.Execute(request).Result;
-                Payment result = response.Result<Payment>();
-                return ToCreateResponse(result, details);
-            }
-            catch (HttpException httpException)
-            {
-                return HandleCreateHttpException(httpException);
-            }
-            catch (AggregateException aggregateException)
-            {
-                if (aggregateException.InnerException is HttpException httpException)
-                {
-                    return HandleCreateHttpException(httpException);
-                }
-
-                throw new Exception("Paypal Failed - Reason Unknown");
-            }
-        }
-
         public async Task<PaypalCreateResponse> CreatePaymentAsync(
             CheckoutDetails details,
             PostageAddress address,
@@ -80,26 +49,6 @@ namespace HypnoTech.Ecommerce.Frontend.Services
             {
                 return HandleCreateHttpException(httpException);
             }
-        }
-
-        // Compatibility-only synchronous surface; see CreatePayment above.
-        public PaypalExecuteResponse ExecutePayment(string paymentId, string payerId)
-        {
-            var config = _configRepository.GetConfig().Paypal;
-            var client = BuildClient(config);
-            var execution = new PaymentExecution
-            {
-                PayerId = payerId
-            };
-
-            var request = new PaymentExecuteRequest(paymentId)
-            {
-                Body = execution
-            };
-
-            HttpResponse response = client.Execute(request).Result;
-            Payment result = response.Result<Payment>();
-            return ToExecuteResponse(result, paymentId, payerId, config);
         }
 
         public async Task<PaypalExecuteResponse> ExecutePaymentAsync(

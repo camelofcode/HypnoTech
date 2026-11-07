@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using HypnoTech.Common.Dal.Repositories;
 using HypnoTech.Common.Models.Settings;
 using HypnoTech.MongoDb;
@@ -15,9 +16,13 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
         {
         }
 
-        public List<NavBarLink> GetEnabledNavBarLinks()
+        public async Task<List<NavBarLink>> GetEnabledNavBarLinksAsync(
+            CancellationToken cancellationToken = default)
         {
-            return GetAll<NavBarLink>().Where(p => p.Enabled).OrderBy(p => p.Order).ToList();
+            return (await GetAllAsync<NavBarLink>(cancellationToken: cancellationToken))
+                .Where(p => p.Enabled)
+                .OrderBy(p => p.Order)
+                .ToList();
         }
     }
 }

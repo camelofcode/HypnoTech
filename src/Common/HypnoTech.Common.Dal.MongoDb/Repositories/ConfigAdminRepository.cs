@@ -15,19 +15,9 @@ namespace HypnoTech.Common.Dal.MongoDb.Repositories
         {
         }
 
-        public Config GetConfig()
-        {
-            return GetAll<Config>().FirstOrDefault();
-        }
-
         public async Task<Config> GetConfigAsync(CancellationToken cancellationToken = default)
         {
             return (await GetAllAsync<Config>(cancellationToken: cancellationToken)).FirstOrDefault();
-        }
-
-        public void SetConfig(Config config)
-        {
-            Collection.ReplaceOne(new BsonDocument(), config.ToBsonDocument());
         }
 
         public async Task SetConfigAsync(Config config, CancellationToken cancellationToken = default)

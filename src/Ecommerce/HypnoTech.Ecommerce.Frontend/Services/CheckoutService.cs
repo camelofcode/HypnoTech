@@ -36,36 +36,9 @@ namespace HypnoTech.Ecommerce.Frontend.Services
             _config = config;
         }
 
-        public CheckoutViewModel GetCheckout()
-        {
-            return new CheckoutViewModel(_countryRepository.GetCountries());
-        }
-
         public async Task<CheckoutViewModel> GetCheckoutAsync(CancellationToken cancellationToken = default)
         {
             return new CheckoutViewModel(await _countryRepository.GetCountriesAsync(cancellationToken));
-        }
-
-        public CheckoutDetails GetCheckoutDetails(CheckoutSummary summary)
-        {
-            var region = _countryRepository.GetCountryByCode(summary.CountryCode).Region;
-            var merchItems = _merchRepository.GetMerchFlattened();
-
-            CheckoutDetails details = new CheckoutDetails(summary.SpecialDelivery);
-
-            foreach (var summaryItem in summary.Items)
-            {
-                var merchItem = merchItems.FirstOrDefault(p => p.Id == summaryItem.MerchId);
-                if (merchItem != null)
-                {
-                    var postageProfile = _postageProfileRepository.GetProfile(merchItem.PostageProfile);
-                    details.AddItem(summaryItem, merchItem, postageProfile, region);
-                }
-            }
-
-            details.Items = details.Items.OrderBy(p => p.DisplayName).ToList();
-
-            return details;
         }
 
         public async Task<CheckoutDetails> GetCheckoutDetailsAsync(
@@ -94,18 +67,6 @@ namespace HypnoTech.Ecommerce.Frontend.Services
             return details;
         }
 
-        public PaypalCreateResponse Pay(CheckoutSummary summary, PostageAddress address)
-        {
-            var payPalResponse = _payPalService.CreatePayment(GetCheckoutDetails(summary), address);
-
-            if (payPalResponse.Status == "SUCCESS")
-            {
-                _orderRepository.SaveOrder(payPalResponse.Order);
-            }
-
-            return payPalResponse;
-        }
-
         public async Task<PaypalCreateResponse> PayAsync(
             CheckoutSummary summary,
             PostageAddress address,
@@ -121,33 +82,6 @@ namespace HypnoTech.Ecommerce.Frontend.Services
             {
                 await _orderRepository.SaveOrderAsync(payPalResponse.Order, cancellationToken);
             }
-
-            return payPalResponse;
-        }
-
-        public PaypalExecuteResponse Complete(string paymentId, string payerId)
-        {
-            var emailConfig = _config.GetConfig().Email;
-            var payPalResponse = _payPalService.ExecutePayment(paymentId, payerId);
-
-            if (payPalResponse.Status == "SUCCESS")
-            {
-                payPalResponse.Order = _orderRepository.CompleteOrder(payPalResponse.ToPaymentCompletion());
-
-                if (!string.IsNullOrEmpty(payPalResponse.Order.EmailAddress))
-                {
-                    var response = _downloadCodeRepository.AssignDownloadCodes(payPalResponse.Order);
-                    _emailService.SendEmail(payPalResponse.Order.EmailAddress, "CustomerOrder", "Order", new CustomerOrderEmailViewModel(payPalResponse.Order, response.AssignedDownloadCodes));
-
-                    if (response.ExpiredCollections.Any())
-                    {
-                        _emailService.SendEmail(emailConfig.DefaultRecipient, "DownloadCodesDepleted", "DownloadCodesDepleted", new DownloadCodesDepletedEmailViewModel(response.ExpiredCollections));
-                    }
-                }
-
-                _emailService.SendEmail(emailConfig.DefaultRecipient, "AdminOrder", "Order", new OrderEmailViewModel(payPalResponse.Order));
-            }
-
 
             return payPalResponse;
         }
@@ -203,11 +137,6 @@ namespace HypnoTech.Ecommerce.Frontend.Services
             }
 
             return payPalResponse;
-        }
-
-        public void Cancel(string paymentId)
-        {
-            _orderRepository.CancelOrder(paymentId);
         }
 
         public Task CancelAsync(string paymentId, CancellationToken cancellationToken = default)
