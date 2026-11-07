@@ -18,10 +18,19 @@ test covers the combination.
 | MongoDB Server | 4.0.3 | Current live-site version; repository contracts pass against the exact container image |
 | Supported MongoDB target | 8.0.32 | Same repository contracts pass against the pinned supported release |
 | Current MongoDB target | 9.0.4 | Same repository contracts pass against the pinned current major release |
+| EF Core / Relational / SQL Server provider | 10.0.14 | Release build and inherited relational contracts |
+| Npgsql EF provider / Npgsql | 10.0.3 | PostgreSQL contracts against `postgres:18.1-alpine` |
+| SQL Server | 2022 CU22 GDR1 | SQL Server contracts against the exact Microsoft container tag |
 | Container runtime | Podman 5.8.9 | Testcontainers exercised through the rootless Docker-compatible API socket |
 
 The complete captured fingerprints are in
 [`docs/baselines/production-2026-11-06.md`](baselines/production-2026-11-06.md).
+
+The relational targets are v1.1 development evidence, not claims about the unchanged
+v1.0 production sites. PostgreSQL and SQL Server run the same CMS, Common, Ecommerce,
+Media, and migrate-before-seed assertions. The SQL Server adapter directly pins the
+patched `System.Security.Cryptography.Pkcs` 9.0.22 servicing release because the
+current SQL client dependency floor otherwise resolves the vulnerable 9.0.11 release.
 
 ## Toolchain policy
 

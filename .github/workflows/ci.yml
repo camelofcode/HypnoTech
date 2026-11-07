@@ -115,6 +115,25 @@ jobs:
       - name: Test MongoDB 4.0, 8.0, and 9.0 contracts
         run: dotnet test tests/HypnoTech.Cms.MongoDb.IntegrationTests -c Release
 
+  relational-integration:
+    name: EF Core relational compatibility
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+      - name: Test PostgreSQL and SQL Server contracts
+        run: >-
+          dotnet test
+          tests/HypnoTech.Cms.EntityFrameworkCore.PostgreSql.IntegrationTests
+          -c Release
+
   demo-integration:
     name: Example integration
     runs-on: ubuntu-22.04

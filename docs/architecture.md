@@ -24,7 +24,9 @@ flowchart LR
 
     subgraph Persistence[Replaceable persistence]
         Mongo[MongoDB implementations]
-        Future[Future relational implementations]
+        EF[Driver-free EF implementations]
+        PostgreSQL[PostgreSQL driver]
+        SqlServer[SQL Server driver]
     end
 
     Admin --> CMS
@@ -42,7 +44,9 @@ flowchart LR
     Media --> Contracts
     Focused --> Persistence
     Contracts --> Mongo
-    Contracts -. provider contract .-> Future
+    Contracts --> EF
+    EF --> PostgreSQL
+    EF --> SqlServer
 ```
 
 The Admin host owns edit mappings and the generic CMS write path. The public website
@@ -58,13 +62,14 @@ different models or persistence even when both hosts read the same underlying da
 | Common | Shared models, services, security, email, and repository contracts | `HypnoTech.Common*` |
 | Ecommerce | Products, orders, discounts, postage, settings, cart/checkout, admin UI | `HypnoTech.Ecommerce*` |
 | Media | Media models, administration, player/frontend support | `HypnoTech.Media*` |
-| Persistence | Provider contracts, MongoDB options, repository base code, backup and logging infrastructure | `HypnoTech.Persistence.ContractTests`, `HypnoTech.MongoDb`, and module `*.MongoDb` projects |
+| Persistence | Provider contracts, MongoDB infrastructure, driver-free EF repositories, and thin PostgreSQL/SQL Server adapters | `HypnoTech.Persistence.ContractTests`, `HypnoTech.MongoDb`, module `*.MongoDb`/`*.EntityFrameworkCore` projects, and thin provider projects |
 | Frontend | General MVC/Ajax helpers plus authored and generated browser assets | `HypnoTech.Frontend*` and module frontend projects |
 
-The `*.Dal` projects contain provider-neutral repository contracts. The current
-`*.Dal.MongoDb` projects implement them. CMS uses its own contract project and generic
-MongoDB repository. Entity Framework Core providers are deliberately deferred until
-the async contracts and provider-independent behaviour suite are established.
+The `*.Dal` projects contain provider-neutral repository contracts. The
+`*.Dal.MongoDb` and `*.Dal.EntityFrameworkCore` projects implement them. CMS uses its
+own contract project plus generic MongoDB and EF repositories. EF module projects
+contain no database driver; the selected thin PostgreSQL or SQL Server project supplies
+the driver and context registration.
 
 The provider-neutral suite uses plain models and only the public async repository
 interfaces. A small provider adapter supplies real repositories and disposable storage,
@@ -103,7 +108,20 @@ services.UseMongoDbForEcommerce(configuration);
 services.UseMongoDbForMedia(configuration);
 ```
 
-This seam is intended to support other persistence providers later. A host also calls
+The equivalent relational composition selects one provider once, then the four
+driver-free module registrations:
+
+```csharp
+services.AddHypnoTechPostgreSql<AdminDbContext>(connectionString);
+services.UseEntityFrameworkCoreForCms();
+services.UseEntityFrameworkCoreForCommon();
+services.UseEntityFrameworkCoreForEcommerce();
+services.UseEntityFrameworkCoreForMedia(configuration);
+```
+
+`AddHypnoTechSqlServer<AdminDbContext>` changes the driver without changing repository
+implementations. See [entity-framework-core.md](entity-framework-core.md) for context
+mapping order, migrations, seeding, and dependency boundaries. A host also calls
 the relevant CMS, Ecommerce, Media, and frontend registration/configuration methods.
 The Phase 4 example applications will become the canonical executable composition.
 

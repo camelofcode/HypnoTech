@@ -55,6 +55,42 @@ public sealed class RepositoryArchitectureTests
     }
 
     [Fact]
+    public void Shared_entity_framework_projects_do_not_reference_database_drivers()
+    {
+        var root = FindRepositoryRoot();
+        var driverFreeProjects = new[]
+        {
+            "src/Persistence/HypnoTech.EntityFrameworkCore/HypnoTech.EntityFrameworkCore.csproj",
+            "src/Cms/HypnoTech.Cms.EntityFrameworkCore/HypnoTech.Cms.EntityFrameworkCore.csproj",
+            "src/Common/HypnoTech.Common.Dal.EntityFrameworkCore/HypnoTech.Common.Dal.EntityFrameworkCore.csproj",
+            "src/Ecommerce/HypnoTech.Ecommerce.Dal.EntityFrameworkCore/HypnoTech.Ecommerce.Dal.EntityFrameworkCore.csproj",
+            "src/Media/HypnoTech.Media.Dal.EntityFrameworkCore/HypnoTech.Media.Dal.EntityFrameworkCore.csproj"
+        };
+        var databaseDriverNames = new[]
+        {
+            "Npgsql",
+            "SqlServer",
+            "SqlClient",
+            "MySql",
+            "Pomelo"
+        };
+
+        var violations = driverFreeProjects.SelectMany(relativePath =>
+                XDocument.Load(Path.Combine(root, relativePath))
+                    .Descendants()
+                    .Where(element =>
+                        element.Name.LocalName == "PackageReference" ||
+                        element.Name.LocalName == "ProjectReference")
+                    .Select(reference => (string)reference.Attribute("Include"))
+                    .Where(reference => reference != null && databaseDriverNames.Any(driver =>
+                        reference.Contains(driver, StringComparison.OrdinalIgnoreCase)))
+                    .Select(reference => $"{relativePath}: {reference}"))
+            .ToList();
+
+        Assert.Empty(violations);
+    }
+
+    [Fact]
     public void Request_path_source_does_not_block_on_tasks()
     {
         var root = FindRepositoryRoot();

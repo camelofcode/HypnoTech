@@ -8,8 +8,9 @@ use only the public async repository interfaces.
 The executable contracts are in `tests/HypnoTech.Persistence.ContractTests`. A provider
 test project supplies the relevant contract context, creates its real repository
 implementations, and inherits the CMS, Common, Ecommerce, and Media abstract suites.
-The MongoDB adapters run every inherited fact against MongoDB 4.0.3, 8.0.32, and 9.0.4
-through Testcontainers.
+The MongoDB adapters run every inherited fact against MongoDB 4.0.3, 8.0.32, and 9.0.4.
+The EF adapters run the same facts against PostgreSQL 18.1 and SQL Server 2022 CU22
+GDR1 through Testcontainers.
 
 ## Current contract
 
@@ -22,7 +23,8 @@ Every provider must preserve these behaviours:
 - Search is case-insensitive, treats its input literally, and spans all searchable
   members; a model with no searchable members returns an empty page for a search.
 - Ordered movement swaps adjacent values and treats collection boundaries as no-ops.
-- Nested list and gallery values receive non-empty, unique identifiers.
+- Nested list and gallery values receive non-empty, unique identifiers, and edits
+  preserve their declared order while replacing removed values.
 - Registered CMS children populate through their opaque reference ID, while a null
   reference leaves the child unset.
 - Registered select-list models round trip through their logical data store.
@@ -73,11 +75,14 @@ then run seed operations. Seeding must never run against an older schema. Migrat
 seed failure must fail startup rather than serving against a partially prepared
 database.
 
-The shared EF package will expose an explicit opt-out for deployments that apply
+The shared EF package exposes an explicit opt-out for deployments that apply
 migrations as a separate controlled release step. The default examples and normal
 HypnoTech registration path will remain migrate-then-seed with no manual command
-required. Provider integration tests must prove this ordering against real PostgreSQL
-and SQL Server containers; EF's in-memory provider is not sufficient evidence.
+required. Provider integration tests prove this ordering against real PostgreSQL and
+SQL Server containers; EF's in-memory provider is not accepted as evidence.
+
+See [entity-framework-core.md](entity-framework-core.md) for package selection, context
+composition, migration ownership, and complete startup registration examples.
 
 ## Adding a provider
 
