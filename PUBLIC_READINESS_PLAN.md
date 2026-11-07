@@ -231,7 +231,7 @@ tested migration decision.
       found, so no rotation was required.
 - [x] If required, clean history with a reviewed procedure or publish a deliberately
       clean public history while retaining the private bundle. No cleanup was indicated.
-- [ ] Re-scan the exact history intended for publication immediately before visibility
+- [x] Re-scan the exact history intended for publication immediately before visibility
       changes.
 - [x] Record the scanner, version, command, date, and result in the work log and
       `docs/audits/publication-history-2026-11-06.md`.
@@ -323,7 +323,7 @@ Repeated implementation work has since justified these workflow-backed additions
 
 ### Exit gate
 
-- [ ] The exact publication history has passed the final pre-publication secret scan.
+- [x] The exact publication history has passed the final pre-publication secret scan.
 - [x] Source and third-party licensing are explicit, including dependencies whose
       restored metadata does not declare a licence.
 - [ ] GitHub language classification represents authored code honestly after the remote
@@ -1004,11 +1004,11 @@ stating that work was done.
 | 2026-11-07 | Phase 7 preparation | Strengthened test-boundary guidance and added the `test-external-http-integrations` skill. | The guidance now defines when to add unit, integration, architecture, and browser coverage; prefers observable outcomes over mock-call trivia; and standardises safe local protocol stubs without live/sandbox traffic. All five repository skills validate, the 30-project Release build passes with 0 warnings/errors, and demo integration tests pass 15/15 through rootless Podman. | This change |
 | 2026-11-07 | Phase 7 preparation | Added a measured code-style and static-analysis gate to the Phase 7 plan. | Built-in Roslyn analyzers will be baselined and selected diagnostics enforced before considering warnings-as-errors; `dotnet format` remains optional unless a timed no-restore CI run proves fast and stable. Formatting churn must remain separate from behavioural changes. | This change |
 | 2026-11-07 | Phase 7 | Added the GitHub Actions release-candidate workflow, public CI documentation, and a `main`-branch README status badge. | The workflow uses immutable official-action SHAs and standard Ubuntu, Windows, and Intel macOS labels; PyYAML and actionlint 1.7.12 accept it; frontend freshness passes; coverage-producing unit/architecture suites pass 40/40; MongoDB and demo integration suites pass 32/32 through rootless Podman; and the Chromium journeys pass 5/5. The first hosted three-engine/platform run remains the public PR gate. | This change |
+| 2026-11-07 | Phase 7 | Re-ran the publication security gate against the complete reachable history and an archive of the exact committed candidate tree. | Gitleaks 8.30.1 found no leaks across 35 commits/~27.8 MB or the tracked tree/~20.7 MB. Four matches from a broad developer-directory scan were confined to ignored Playwright package output under `bin/` and are absent from Git and the publication tree. | This change |
 
 ## Immediate next actions
 
-1. Re-scan the exact final commit immediately before changing repository visibility.
-2. Publish the repository, open the CI pull request without spending private-repository
+1. Publish the repository, open the CI pull request without spending private-repository
    runner allowance, and make the required Linux checks green.
-3. Complete the remaining public presentation, analyzer, branch-protection, and v0.1
+2. Complete the remaining public presentation, analyzer, branch-protection, and v0.1
    release tasks.
