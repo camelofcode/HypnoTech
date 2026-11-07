@@ -15,7 +15,7 @@ namespace HypnoTech.Media.Frontend.Services
     {
         private readonly IAudioTrackRepository _repository;
         private readonly IAudioTrackEnrichmentService _audioTrackEnrichmentService;
-        
+
         public AudioTrackService(IAudioTrackEnrichmentService audioTrackEnrichmentService, IAudioTrackRepository repository)
         {
             _audioTrackEnrichmentService = audioTrackEnrichmentService;

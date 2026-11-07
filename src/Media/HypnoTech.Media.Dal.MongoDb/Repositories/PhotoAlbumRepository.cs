@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using HypnoTech.Media.Dal.Repositories;
 using HypnoTech.Media.Models;

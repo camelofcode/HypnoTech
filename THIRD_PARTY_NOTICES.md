@@ -7,23 +7,25 @@ It is an attribution record, not a substitute for the upstream licence terms.
 
 ## Browser assets distributed in this repository
 
-The `src/**/lib` trees are vendored source snapshots and copies may also appear in
-generated `src/**/wwwroot` output. Existing upstream licence files and headers must be
-kept with these files. The common MIT and SIL OFL 1.1 texts are preserved under
-`docs/licenses/`; TinyMCE, Bootstrap, jQuery, jQuery Validation, and jQuery Validation
-Unobtrusive also retain their upstream licence files in place.
+The `src/**/lib` trees contain vendored source snapshots, while selected exact npm
+development dependencies are compiled directly into generated `src/**/wwwroot` output.
+Existing upstream licence files and headers must be kept with these files. The common
+MIT and SIL OFL 1.1 texts are preserved under `docs/licenses/`; TinyMCE, Bootstrap,
+jQuery Validation, and jQuery Validation Unobtrusive also retain their upstream licence
+files in place. Exact npm packages retain their licence metadata in `package-lock.json`
+and their notices in the generated bundle headers.
 
-| Component | Vendored version/evidence | Licence and attribution | Tracked location |
+| Component | Version/evidence | Licence and attribution | Source/runtime location |
 | --- | --- | --- | --- |
 | Bootstrap | 4.3.1 | MIT; Copyright 2011–2019 The Bootstrap Authors and Twitter, Inc. | `src/Cms/HypnoTech.Cms.Frontend/lib/bootstrap` |
 | Popper.js | Snapshot bundled in 2017; exact version was not recorded | MIT; Copyright Federico Zivolo 2017; notice embedded in the file | `src/Cms/HypnoTech.Cms.Frontend/lib/bootstrap/popper.min.js` |
 | Start Bootstrap Simple Sidebar | 2019 snapshot; exact release was not recorded | MIT; Copyright 2013–2019 Start Bootstrap; notice embedded in the file | `src/Cms/HypnoTech.Cms.Frontend/lib/bootstrapSidebar` |
 | Cookies.js | 1.2.4-pre | Public-domain dedication; Scott Hamper; notice embedded in the file | CMS and Ecommerce frontend `lib/cookie-js` |
 | Font Awesome Free | 5.13.0 | Code: MIT; icons: CC BY 4.0; fonts: SIL OFL 1.1; Fonticons, Inc.; terms are identified in the SCSS header | `src/Cms/HypnoTech.Cms.Frontend/lib/fontawesome` |
-| jQuery | 3.3.1 (CMS), 3.5.1 (Frontend) | MIT; JS Foundation and other contributors | CMS and Frontend `lib/jquery` |
+| jQuery | 3.7.1 | MIT; OpenJS Foundation and other contributors | Exact root npm development dependency; compiled into the committed CMS and Frontend bundles |
 | jQuery Validation | 1.17.0 | MIT; Copyright Jörn Zaefferer and contributors | `src/Cms/HypnoTech.Cms.Frontend/lib/jquery-validation` |
 | jQuery Validation Unobtrusive | 3.2.11 | Apache-2.0; .NET Foundation | `src/Cms/HypnoTech.Cms.Frontend/lib/jquery-validation-unobtrusive` |
-| Knockout | 3.5.1 | MIT; Knockout.js team | CMS, Ecommerce, and Media frontend `lib/knockout/knockout.js` |
+| Knockout | 3.5.3 | MIT; Knockout.js team | Exact root npm development dependency; compiled into the committed CMS, Ecommerce, and Media bundles |
 | Knockout Validation | Vendored snapshot; upstream version was not recorded | MIT; Eric M. Barnard and contributors; notice embedded in the file | Ecommerce and Media frontend `lib/knockout/knockout.validation.js` |
 | Lodash core custom build | 4.17.15 | MIT; OpenJS Foundation and other contributors; notice embedded in the file | `src/Cms/HypnoTech.Cms.Frontend/lib/lodash` |
 | TinyMCE Community | 5.2.1 | LGPL-2.1-or-later or commercial licence; Copyright Tiny Technologies, Inc.; full LGPL 2.1 text retained | `src/Cms/HypnoTech.Cms.Frontend/lib/tinymce` |

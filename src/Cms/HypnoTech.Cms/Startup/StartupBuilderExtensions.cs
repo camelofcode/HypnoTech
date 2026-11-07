@@ -45,8 +45,8 @@ namespace HypnoTech.Cms.Startup
             });
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options => 
-                { 
+                .AddCookie(options =>
+                {
                     options.LoginPath = "/Home/Login";
                     options.Cookie.IsEssential = true;
                 });

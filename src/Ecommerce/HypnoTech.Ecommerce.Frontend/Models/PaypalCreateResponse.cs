@@ -20,7 +20,7 @@ namespace HypnoTech.Ecommerce.Frontend.Models
             {
                 Status = "SUCCESS",
                 Order = order,
-                RedirectUrl = redirectUrl,             
+                RedirectUrl = redirectUrl,
             };
         }
 

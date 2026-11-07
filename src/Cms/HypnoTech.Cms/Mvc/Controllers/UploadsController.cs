@@ -37,9 +37,9 @@ namespace HypnoTech.Cms.Mvc.Controllers
         public async Task<IActionResult> UploadRichTextImage(List<IFormFile> files)
         {
             var file = files[0];
-            if (!new[] {"image/png", "image/jpeg"}.Contains(file.ContentType))
+            if (!new[] { "image/png", "image/jpeg" }.Contains(file.ContentType))
             {
-                return Ok(new {error = "Image must be a .png or .jpg"});
+                return Ok(new { error = "Image must be a .png or .jpg" });
             }
             var url = await _imageUploadService.AddImageAsync(
                 file,
@@ -47,7 +47,7 @@ namespace HypnoTech.Cms.Mvc.Controllers
                 800,
                 800,
                 HttpContext.RequestAborted);
-            return Ok(new { url } );
+            return Ok(new { url });
         }
     }
 }

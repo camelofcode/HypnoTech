@@ -9,7 +9,7 @@ namespace HypnoTech.Cms.Helpers
 
         public string GetActiveClass(string page)
         {
-            if (page == (string) _context.RouteData.Values["Controller"])
+            if (page == (string)_context.RouteData.Values["Controller"])
             {
                 return "active";
             }

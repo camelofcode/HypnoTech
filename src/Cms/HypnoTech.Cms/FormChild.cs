@@ -7,7 +7,7 @@ namespace HypnoTech.Cms
     {
         public MemberInfo TypeInfo { get; }
 
-        public Type Type{ get; }
+        public Type Type { get; }
 
         public MemberInfo IdInfo { get; }
 

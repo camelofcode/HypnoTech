@@ -74,7 +74,7 @@ namespace HypnoTech.Cms.Forms.Controls
                 }
                 else
                 {
-                    var list = (IList) GetPropertyValue(obj, ListName);
+                    var list = (IList)GetPropertyValue(obj, ListName);
                     foreach (var subObj in list)
                     {
                         string key = GetPropertyValue(subObj, KeyName).ToString();

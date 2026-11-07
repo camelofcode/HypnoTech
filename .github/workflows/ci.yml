@@ -57,6 +57,8 @@ jobs:
         run: dotnet restore HypnoTech.slnx
       - name: Build
         run: dotnet build HypnoTech.slnx -c Release --no-restore
+      - name: Verify formatting
+        run: dotnet format HypnoTech.slnx --no-restore --verify-no-changes --verbosity minimal
 
   unit-tests:
     name: Unit and architecture tests

@@ -2,9 +2,9 @@ namespace HypnoTech.Cms.Lists
 {
     public class ListMemberValidationInfo
     {
-        public string Name { get;}
+        public string Name { get; }
 
-        public string DisplayName { get;}
+        public string DisplayName { get; }
 
         public string Id { get; }
 

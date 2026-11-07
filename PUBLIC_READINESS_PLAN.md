@@ -41,10 +41,10 @@ forcing a MongoDB migration.
 
 The programme has two intended releases:
 
-1. **v0.1 — public MongoDB baseline:** preserve current behaviour, improve repository
+1. **v1.0 — public MongoDB baseline:** preserve current behaviour, improve repository
    structure and documentation, add representative examples, and establish automated
    tests and CI, then modernise genuine I/O paths to use async APIs before publication.
-2. **v0.2 — interchangeable persistence:** add provider-neutral Entity Framework Core
+2. **v1.1 — interchangeable persistence:** add provider-neutral Entity Framework Core
    implementations and thin database-provider packages after the MongoDB baseline is
    stable and public.
 
@@ -70,7 +70,7 @@ The programme has two intended releases:
 - Changes to the SelfHypnosis repository or its committed files.
 - Publishing private content, branding, seed data, templates, or imagery from either
   site.
-- Migrating the production MongoDB deployment as part of v0.1. A deferred, non-
+- Migrating the production MongoDB deployment as part of v1.0. A deferred, non-
   executable runbook is recorded in
   [`docs/operations/mongodb-production-migration.md`](docs/operations/mongodb-production-migration.md).
 - PayPal v2, Stripe, or other work described in `ecommerce-payments-plan.md`.
@@ -128,15 +128,15 @@ date.
 | --- | --- | --- | --- |
 | Planning | Evidence-based roadmap and tracking system | Complete | Pre-work |
 | 0 | Stable baseline preserved | Complete | Pre-work |
-| 1 | Repository safe and understandable for public release | In progress | v0.1 |
-| 2 | CMS and MongoDB behaviour characterised by tests | Complete | v0.1 |
-| 3 | Projects physically organised without semantic changes | Complete | v0.1 |
-| 4 | Original public example admin and website | Complete | v0.1 |
-| 5 | Focused Playwright portfolio smoke suite | Complete | v0.1 |
-| 6 | Async I/O modernisation | Complete | v0.1 |
-| 7 | CI, documentation, `main`, and public release | In progress | v0.1 |
-| 8 | Persistence contracts hardened | Not started | v0.2 |
-| 9 | EF Core implementations and provider packaging | Not started | v0.2 |
+| 1 | Repository safe and understandable for public release | In progress | v1.0 |
+| 2 | CMS and MongoDB behaviour characterised by tests | Complete | v1.0 |
+| 3 | Projects physically organised without semantic changes | Complete | v1.0 |
+| 4 | Original public example admin and website | Complete | v1.0 |
+| 5 | Focused Playwright portfolio smoke suite | Complete | v1.0 |
+| 6 | Async I/O modernisation | Complete | v1.0 |
+| 7 | CI, documentation, `main`, and public release | In progress | v1.0 |
+| 8 | Persistence contracts hardened | Not started | v1.1 |
+| 9 | EF Core implementations and provider packaging | Not started | v1.1 |
 
 ### Ordering constraints
 
@@ -165,7 +165,7 @@ These remain proposals until marked **Accepted** in the decision log.
 | Source licence | PolyForm Noncommercial 1.0.0 plus separate commercial licensing terms |
 | Public examples | New neutral demo content, never sanitised private-site content |
 | Persistence | Shared provider-neutral EF code plus thin provider-specific packages |
-| Payments | Keep the existing payment plan deferred and out of v0.1/v0.2 scope |
+| Payments | Keep the existing payment plan deferred and out of v1.0/v1.1 scope |
 
 ### Deferred operational plans
 
@@ -442,7 +442,7 @@ src/
 ### Compatibility policy
 
 The private sites currently reference engine project paths directly. The recommended
-v0.1 policy is:
+v1.0 policy is:
 
 - Production sites remain on the preserved support branch/checkout.
 - The public `main` branch receives the clean layout.
@@ -678,7 +678,7 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [x] CPU-only code has not been wrapped in fake async.
 - [x] All unit, integration, and browser tests pass without route or behaviour changes.
 
-## Phase 7 — CI, documentation, and the v0.1 public release
+## Phase 7 — CI, documentation, and the v1.0 public release
 
 ### GitHub Actions jobs
 
@@ -690,9 +690,9 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [x] `end-to-end`: required Ubuntu matrix for Playwright Chromium, Firefox, and
       WebKit, with engine-specific failure artifacts.
 - [x] `platform-smoke`: build and container-free tests on Ubuntu, Windows, and macOS.
-- [ ] Add scheduled Windows browser and macOS WebKit journeys if Phase 7 confirms a
-      reliable MongoDB/container strategy on GitHub-hosted runners; keep them
-      informative until repeatably green.
+- [x] Keep Windows/macOS browser journeys deferred: the v1.0 Linux matrix is the
+      required browser environment, while container-free builds and tests provide
+      informative portability coverage on standard Windows and macOS runners.
 
 ### Workflow controls
 
@@ -710,38 +710,49 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 
 ### Code style and static analysis
 
-- [ ] Audit the built-in .NET/Roslyn analyzers against the current source and record a
+- [x] Audit the built-in .NET/Roslyn analyzers against the current source and record a
       clean, intentional baseline before increasing severities.
-- [ ] Enforce selected correctness and code-style diagnostics during normal builds,
+- [x] Enforce selected correctness and code-style diagnostics during normal builds,
       excluding generated and vendored source where appropriate.
-- [ ] Decide whether CI should treat all build warnings as errors after the analyzer
+- [x] Decide whether CI should treat all build warnings as errors after the analyzer
       baseline is repeatably clean.
-- [ ] Keep `dotnet format` optional unless a timed `--no-restore` verification run is
-      fast and stable enough for CI; analyzer enforcement is the primary style gate.
-- [ ] If baseline formatting is needed, make it a dedicated mechanical change rather
+- [x] Add `dotnet format --no-restore --verify-no-changes` to CI after a clean timed
+      run completed in roughly nine seconds; analyzer enforcement remains the primary
+      semantic quality gate.
+- [x] If baseline formatting is needed, make it a dedicated mechanical change rather
       than mixing it with behavioural work.
 
 ### Public presentation
 
-- [ ] Add a concise architecture diagram.
-- [ ] Add screenshots or a short demo recording.
-- [ ] Document the feature set and intended audience honestly.
-- [ ] Document known limitations and compatibility versions.
+- [x] Add a concise architecture diagram.
+- [x] Add screenshots or a short demo recording.
+- [x] Document the feature set and intended audience honestly.
+- [x] Document known limitations and compatibility versions.
 - [x] Link the example, tests, CI, agent guidance, skills, and roadmap from the README.
 - [x] Add a `main`-branch CI status badge at the top of the README.
-- [ ] Ensure repository topics and description represent the engine accurately.
+- [x] Ensure repository topics and description represent the engine accurately.
 
 ### Branch and release transition
 
 - [x] Create `main` from the preserved pre-public base during Phase 0.
 - [x] Make `main` the default branch during Phase 0.
 - [x] Merge the public-readiness phases through reviewed pull requests to `main`.
-- [ ] Require the agreed CI checks on `main`.
+- [x] Require the agreed CI checks on `main`.
 - [x] Retain `support/legacy-production`.
-- [ ] Decide how long to retain or redirect `master`.
-- [ ] Publish an annotated `v0.1.0` release.
-- [ ] Enable public-repository secret scanning and dependency alerts.
-- [ ] Configure Dependabot only after its update policy is documented.
+- [x] Retain `master` as a frozen alias of `support/legacy-production` through the v1.0
+      release; revisit deletion after external links and consumers have moved to the
+      named support branch.
+- [ ] Publish an annotated `v1.0.0` release.
+- [x] Enable public-repository secret scanning and dependency alerts.
+- [x] Enable private vulnerability reporting so the channel documented in
+      `SECURITY.md` is available.
+- [x] Configure Dependabot only after its update policy is documented.
+- [ ] Complete hosted verification of the candidate that replaces CMS jQuery 3.3.1
+      and public jQuery 3.5.1 with exact jQuery 3.7.1, and Knockout 3.5.1 with exact
+      Knockout 3.5.3.
+- [ ] Enable CodeQL with its default query suite, review the initial C#/JavaScript
+      baseline without making it a required check, and decide whether vendored and
+      generated paths need an explicit exclusion after seeing the real results.
 
 ### Exit gate
 
@@ -749,9 +760,9 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [x] Required CI is green.
 - [x] No unresolved secret, copyright, or licensing blocker remains.
 - [x] `main` is the public default branch.
-- [ ] `v0.1.0` is published with useful release notes.
+- [ ] `v1.0.0` is published with useful release notes.
 
-## Phase 8 — Persistence contracts for v0.2
+## Phase 8 — Persistence contracts for v1.1
 
 Before implementing EF Core, create a provider-independent contract suite that defines
 the behaviour every persistence implementation must share.
@@ -791,7 +802,6 @@ src/Persistence/
   HypnoTech.EntityFrameworkCore/
   HypnoTech.EntityFrameworkCore.SqlServer/
   HypnoTech.EntityFrameworkCore.PostgreSql/
-  HypnoTech.EntityFrameworkCore.MySql/        # conditional/later
 
 src/Cms/
   HypnoTech.Cms.EntityFrameworkCore/
@@ -813,8 +823,11 @@ src/Media/
       registration/configuration.
 - [ ] A host installs exactly one provider unless it intentionally uses multiple
       contexts.
-- [ ] Site-specific migrations live in the host/provider example because consumer CMS
-      model types contribute to the EF model.
+- [ ] Admin/CMS and public Website contexts and mappings remain independent. Admin owns
+      write mappings and migrations; Website owns focused read repositories and may
+      use different models, mappings, DAL, or ORM entirely.
+- [ ] Site-specific migrations live in the Admin host/provider example because
+      consumer CMS model types contribute to the EF model.
 - [ ] Generic CMS repositories use `DbContext.Set<T>()` only after model registration,
       key, naming, search, ordering, relationship, and conversion requirements are
       defined.
@@ -822,13 +835,13 @@ src/Media/
 Illustrative registration target:
 
 ```csharp
-services.AddHypnoTechEntityFrameworkCore<DemoDbContext>(
+services.AddHypnoTechEntityFrameworkCore<DemoAdminDbContext>(
     options => options.UseNpgsql(connectionString));
 
-services.UseEntityFrameworkCoreForCms<DemoDbContext>();
-services.UseEntityFrameworkCoreForCommon<DemoDbContext>();
-services.UseEntityFrameworkCoreForEcommerce<DemoDbContext>();
-services.UseEntityFrameworkCoreForMedia<DemoDbContext>();
+services.UseEntityFrameworkCoreForCms<DemoAdminDbContext>();
+services.UseEntityFrameworkCoreForCommon<DemoAdminDbContext>();
+services.UseEntityFrameworkCoreForEcommerce<DemoAdminDbContext>();
+services.UseEntityFrameworkCoreForMedia<DemoAdminDbContext>();
 ```
 
 Exact public APIs should be decided through tests and an implementation review rather
@@ -841,8 +854,11 @@ than copied blindly from this illustration.
 - [ ] Prefer PostgreSQL as the first Linux-friendly target if an aligned provider exists
       for the chosen EF Core major version.
 - [ ] Add SQL Server with the same contract suite.
-- [ ] Evaluate Oracle MySQL versus Pomelo licensing, support, and EF major-version
-      compatibility before adding MySQL/MariaDB.
+- [x] Defer MySQL/MariaDB from v1.1; evaluate Oracle versus Pomelo licensing, support,
+      and EF-major compatibility only when a concrete consumer justifies it.
+- [x] Defer NHibernate from v1.1. Keep repository contracts and provider suites capable
+      of accepting a later NHibernate implementation without creating an ORM-neutral
+      query abstraction or coupling Website mappings to Admin.
 - [ ] Run contract tests against real containerised databases, not only EF's in-memory
       provider.
 
@@ -887,7 +903,7 @@ These apply throughout all phases:
 | Q-006 | What neutral theme should the public demo use? | Phase 4 | Answered: Lantern House, a fictional independent arts venue |
 | Q-007 | Should external contributions be accepted before a contributor-licensing process exists? | Phase 7 | Answered: no external contributions will be accepted |
 | Q-008 | Which relational provider should be implemented first once the provider matrix is rechecked? | Phase 9 | Proposed: PostgreSQL if compatible |
-| Q-009 | How long should synchronous compatibility methods remain after public controllers move to async APIs? | Phase 6 | Answered: remove before v0.1; production remains pinned to `support/legacy-production` |
+| Q-009 | How long should synchronous compatibility methods remain after public controllers move to async APIs? | Phase 6 | Answered: remove before v1.0; production remains pinned to `support/legacy-production` |
 | Q-010 | Which verified Montserrat release should replace the 18 corrupted baseline font files, or should Montserrat be removed? | Phase 1 | Answered: remove them; all 18 were corrupted and unreferenced |
 | Q-011 | Is the legacy PayPal/Braintree NuGet provenance gap acceptable until the deferred payment work, given that binaries are restored rather than vendored? | Phase 1 | Answered: accept as a documented risk until existing-PayPal work; no package binaries are committed |
 
@@ -895,11 +911,12 @@ These apply throughout all phases:
 
 | Risk | Impact | Mitigation | Status |
 | --- | --- | --- | --- |
-| MongoDB 4.0.3 compatibility regresses after a driver change | Production failure | Preserve driver 3.4.3 on support branch and run the exact 4.0.3 contract target before changes | Resolved for v0.1; the 4.0.3/8.0/9.0 contract matrix is green in required hosted CI |
+| MongoDB 4.0.3 compatibility regresses after a driver change | Production failure | Preserve driver 3.4.3 on support branch and run the exact 4.0.3 contract target before changes | Resolved for v1.0; the 4.0.3/8.0/9.0 contract matrix is green in required hosted CI |
 | Secrets exist in compact Git history | Credential exposure on publication | Full-history scan, rotation, clean history, final pre-publication scan | Resolved for publication; the final 35-commit history and exact candidate-tree scans are clean |
 | Third-party assets lack clear notices | Copyright/licensing problem | Inventory files and dependencies; preserve licences; add notices | Resolved for publication; unknown legacy package metadata is stated explicitly |
 | Tracked Montserrat fonts are corrupted | Broken fonts or an unreviewed visual change | Remove only after confirming no authored/generated CSS reference and retain recovery through the baseline refs/bundle | Resolved; owner approved removal of all 18 unreferenced files |
 | Legacy PayPal packages declare no licence metadata | Unclear provenance and public maintenance risk | Do not misstate the licence; document that packages are restored, then resolve provenance during later existing-PayPal work | Accepted known risk; binaries are not committed and provider replacement remains out of scope |
+| Vendored CMS jQuery 3.3.1 predates jQuery 3.5.0 DOM-manipulation XSS fixes and is invisible to the npm lockfile | Public security alerts or exploitable DOM handling | Deliberately upgrade the self-hosted CMS copy to a tested supported release; retain exact version provenance and full browser coverage | Candidate resolved with exact jQuery 3.7.1 and Knockout 3.5.3 dependencies; npm audit, Release build, 77-test Chromium solution, and Firefox journeys are green; hosted WebKit remains the merge gate |
 | Physical moves break private site references | Consumer builds fail | Pin production to support branch; temporary smoke builds; optional shims | Open |
 | Static registries make tests order-dependent | Flaky test suite | Serial collections and explicit reset of mutable public registries; make BSON and model registration idempotent | Resolved for current registrations; tests remain serial where global mappings are intentionally mutated |
 | Example becomes a disguised private site | Privacy and portfolio risk | New theme, models, prose, seed data, and imagery | Resolved; Lantern House is wholly original and the example tree contains no private-site references |
@@ -920,8 +937,8 @@ These apply throughout all phases:
 | 2026-11-06 | D-005 | Preserve production with a tag and support branch before public work. | Accepted | Allows public `main` to evolve without forcing production dependency upgrades. |
 | 2026-11-06 | D-006 | Keep self-hosted JavaScript and use Linguist vendor/generated classification. | Accepted | Fixes misleading statistics without weakening runtime reliability. |
 | 2026-11-06 | D-007 | Use xUnit v3, Testcontainers, and a focused Playwright suite. | Accepted | Matches current experience and provides layered verification. |
-| 2026-11-06 | D-008 | Use a provider-neutral EF implementation with thin driver packages. | Proposed | Avoids duplicated repositories and unnecessary database drivers. |
-| 2026-11-06 | D-009 | Add an async-I/O modernisation phase before the v0.1 public release. | Accepted | Public CMS and other request paths should use genuine async provider APIs while preserving compatibility and avoiding fake async. |
+| 2026-11-06 | D-008 | Use a provider-neutral EF implementation with thin driver packages. | Accepted | Avoids duplicated repositories and unnecessary database drivers. |
+| 2026-11-06 | D-009 | Add an async-I/O modernisation phase before the v1.0 public release. | Accepted | Public CMS and other request paths should use genuine async provider APIs while preserving compatibility and avoiding fake async. |
 | 2026-11-06 | D-010 | Complete async contracts while MongoDB is still the only DAL. | Accepted | Prevents building a synchronous EF Core DAL and then repeating the async conversion. |
 | 2026-11-06 | D-011 | Build the example admin and website before the Playwright suite. | Accepted | Browser tests need a stable public example as their system under test. |
 | 2026-11-06 | D-012 | Introduce `main` during Phase 0 and retain frozen `master` temporarily. | Accepted | Establishes the intended PR target early without breaking an unknown checkout that still pulls `master`. |
@@ -937,8 +954,12 @@ These apply throughout all phases:
 | 2026-11-06 | D-022 | Keep unchanged production consumers pinned to `support/legacy-production` while public `main` adopts the functional source layout. | Accepted | Avoids private-site edits and path shims while the preserved branch remains an exact, buildable production dependency. |
 | 2026-11-06 | D-023 | Use Lantern House, a fictional independent arts venue, for the public example. | Accepted | It can demonstrate editorial, programme, media, and ecommerce features with wholly original synthetic content and branding. |
 | 2026-11-06 | D-024 | Keep the Phase 4 checkout as a fail-closed pricing demonstration and defer a reusable mock provider to the payment plan. | Accepted | Basket and postage calculations remain demonstrable, while payment/completion/cancellation routes return 410 before provider, order, email, download-code, or fulfilment code can run. |
-| 2026-11-07 | D-025 | Make public `main` async-only for repository and I/O-bound service contracts before v0.1. | Accepted | Both production sites are pinned to the preserved support branch, so duplicate sync implementations add maintenance risk without protecting an in-solution caller. CPU-only APIs stay synchronous and Serilog's required sync contract remains queued. |
+| 2026-11-07 | D-025 | Make public `main` async-only for repository and I/O-bound service contracts before v1.0. | Accepted | Both production sites are pinned to the preserved support branch, so duplicate sync implementations add maintenance risk without protecting an in-solution caller. CPU-only APIs stay synchronous and Serilog's required sync contract remains queued. |
 | 2026-11-07 | D-026 | Run public CI only on standard GitHub-hosted runners and keep retained artifacts small and short-lived. | Accepted | Standard public runners are free and unlimited, while larger runners are billed and artifact storage has a separate allowance. |
+| 2026-11-07 | D-027 | Publish the first stable public baseline as `v1.0.0`, not `v0.1.0`. | Accepted | The engine is production-proven and extensively tested; v1 establishes the supported public contract while the legacy production API remains on its support branch. |
+| 2026-11-07 | D-028 | Implement EF Core for PostgreSQL and SQL Server first; defer MySQL and NHibernate. | Accepted | One shared EF repository layer plus thin drivers demonstrates portability without doubling ORM mappings, repositories, transactions, and tests before a consumer needs them. |
+| 2026-11-07 | D-029 | Keep Admin/CMS and public Website persistence mappings independent. | Accepted | The public host must remain free to use focused read models and a different DAL or ORM rather than inheriting edit-oriented Admin mappings. |
+| 2026-11-07 | D-030 | Defer public NuGet publication until a dedicated package audit and local-feed consumer rehearsal pass. | Accepted | nuget.org versions are immutable; the GitHub v1 source release should not force premature package IDs or dependency boundaries. |
 
 ## Work log
 
@@ -953,7 +974,7 @@ stating that work was done.
 | 2026-11-06 | Phase 0 | Recorded the live engine and database baseline. | Both live sites use engine commit `95c9f6a` and MongoDB Server 4.0.3; GitHub repository was private with `master` as default at capture. | This change |
 | 2026-11-06 | Phase 0 | Created the portable Git bundle backup outside the engine repository. | `git bundle verify` reports complete history for `master` and `dotnet10-upgrade-plan`; size 6.0 MB; SHA-256 `8b963e6c86e214acca9532912bbf0b4b29ff5c579f2705d7f045cadd60f17cc6`. | Backup file, not committed |
 | 2026-11-06 | Phase 0 | Verified authenticated GitHub CLI and Git access before remote changes. | Active `camelofcode` account; token scopes include `repo` and `workflow`; repository permissions report `admin` and `push`; authenticated `git ls-remote` succeeded. | This change |
-| 2026-11-06 | Planning | Audited current asynchronous usage and added a late v0.1 async-I/O modernisation phase. | Of 287 tracked C# files, only three contained actual `await`; primary blocking I/O areas and compatibility rules are recorded in Phase 6. | This change |
+| 2026-11-06 | Planning | Audited current asynchronous usage and added a late v1.0 async-I/O modernisation phase. | Of 287 tracked C# files, only three contained actual `await`; primary blocking I/O areas and compatibility rules are recorded in Phase 6. | This change |
 | 2026-11-06 | Planning | Made example-to-Playwright and Mongo-async-to-EF ordering explicit. | Ordering constraints and phase prerequisites recorded; decisions D-010 and D-011 accepted. | This change |
 | 2026-11-06 | Phase 0 | Published immutable baseline refs and introduced the future default branch. | Remote tag `production-baseline-2026-11-06`, `support/legacy-production`, and `main` point to `95c9f6a`; GitHub default changed to `main`; frozen `master` retained. | This change |
 | 2026-11-06 | Phase 0 | Created and published `public-readiness` from the preserved baseline. | Local branch tracks `origin/public-readiness`; roadmap is its first change. | This change |
@@ -1005,11 +1026,22 @@ stating that work was done.
 | 2026-11-07 | Phase 7 preparation | Added a measured code-style and static-analysis gate to the Phase 7 plan. | Built-in Roslyn analyzers will be baselined and selected diagnostics enforced before considering warnings-as-errors; `dotnet format` remains optional unless a timed no-restore CI run proves fast and stable. Formatting churn must remain separate from behavioural changes. | This change |
 | 2026-11-07 | Phase 7 | Added the GitHub Actions release-candidate workflow, public CI documentation, and a `main`-branch README status badge. | The workflow uses immutable official-action SHAs and standard Ubuntu, Windows, and Intel macOS labels; PyYAML and actionlint 1.7.12 accept it; frontend freshness passes; coverage-producing unit/architecture suites pass 40/40; MongoDB and demo integration suites pass 32/32 through rootless Podman; and the Chromium journeys pass 5/5 locally. | This change |
 | 2026-11-07 | Phase 7 | Re-ran the publication security gate against the complete reachable history and an archive of the exact committed candidate tree. | Gitleaks 8.30.1 found no leaks across 35 commits/~27.8 MB or the tracked tree/~20.7 MB. Four matches from a broad developer-directory scan were confined to ignored Playwright package output under `bin/` and are absent from Git and the publication tree. | This change |
-| 2026-11-07 | Phase 7 | Published the repository with `main` as its default branch and opened the public CI pull request. | The repository is public at `camelofcode/HypnoTech`; `support/legacy-production` remains available; PR #12 is mergeable; and the publication scan preceded the visibility change. | This change |
+| 2026-11-07 | Phase 7 | Published the repository with `main` as its default branch and opened the public CI pull request. | The repository is public at `camelofcode/HypnoTech`; `support/legacy-production` remains available; PR #12 merged after its required hosted checks passed; and the publication scan preceded the visibility change. | This change |
 | 2026-11-07 | Phase 7 | Completed the first successful hosted release-candidate run on standard free public runners. | Run `42321468198` passed all 11 jobs: frontend freshness, Release build, 40 unit/architecture tests with coverage, 19 MongoDB contracts across 4.0.3/8.0/9.0, 15 example integration tests, five journeys in each of Chromium/Firefox/WebKit, and informative Ubuntu/Windows/macOS builds. Container-backed jobs use Ubuntu 22.04 because Ubuntu 24.04's hosted kernel is incompatible with the pinned MongoDB images; WebKit's cold dependency install made its successful job approximately 20 minutes. | This change |
+| 2026-11-07 | Phase 7 | Established the v1 formatting and analyzer baseline. | A dedicated mechanical commit normalised 59 C# files with no non-whitespace source change beyond removing five UTF-8 BOMs; `dotnet format --verify-no-changes` is clean and takes roughly nine seconds. Minimum/Recommended analysis identified 18/233 legacy advisories; the clean .NET 10 Default warning set is enforced as errors while the wider backlog remains documented. | This change |
+| 2026-11-07 | Phase 7 | Added the public architecture/presentation and release documentation. | README feature/audience text and authentic local-demo screenshots show the Website and authenticated generated CMS; the architecture diagram records the Admin/Website boundary; limitations, code-quality, NuGet packaging, and v1.0.0 release notes are explicit. | This change |
+| 2026-11-07 | Phase 7 | Hardened public repository governance. | Eight Linux release checks are required on `main` for administrators; force-push/deletion are disabled; secret scanning, push protection, Dependabot security updates, monthly reviewed NuGet/GitHub Actions version updates, private vulnerability reporting, accurate topics, and a portfolio description are enabled. npm receives security-fix pull requests only. | GitHub repository settings plus this change |
+| 2026-11-07 | Phase 7 | Audited the CodeQL and vendored-browser-library boundary before enabling code scanning. | CodeQL is available but not configured or merge-blocking. The actual bundles use CMS jQuery 3.3.1, public jQuery 3.5.1, and Knockout 3.5.1; upstream evidence shows Knockout remains maintained at 3.5.3, while the CMS jQuery snapshot predates the 3.5.0 XSS fixes and must be resolved before v1.0. | This change |
+| 2026-11-07 | Phase 7 | Replaced the obsolete vendored jQuery and Knockout core snapshots with exact, integrity-locked npm development dependencies while preserving committed self-hosted bundles. | Clean `npm ci` reports zero vulnerabilities and enforces the fail-closed install-script allowlist; all five frontend bundles are current; the 30-project Release build has zero warnings/errors; formatting is clean; the complete Podman/Chromium solution passes 77/77 and Firefox passes 5/5. Hosted WebKit is the remaining authoritative browser gate. | This change |
+| 2026-11-07 | Phase 7 | Corrected a WebKit-only CMS browser-test race exposed by two post-merge `main` runs. | Traces showed the public Articles request starting before the edit POST completed. The journey now waits for the exact server-rendered Added/Updated success alert after each save; the complete stateful Chromium suite passes repeatedly and again after the dependency upgrades. | This change |
 
 ## Immediate next actions
 
-1. Merge PR #12 and confirm the push-to-`main` workflow and README badge remain green.
-2. Require the agreed checks on `main`, then complete the remaining public presentation,
-   analyzer, and v0.1 release tasks.
+1. Push the release-closeout branch and require the complete hosted CI matrix, including
+   the WebKit save-race regression.
+2. Verify the release-closeout branch from a fresh Linux clone and merge it through the
+   protected `main` checks.
+3. Enable CodeQL default setup on the merged release candidate and triage its initial
+   non-blocking C#/JavaScript scan.
+4. Tag that exact `main` commit as annotated `v1.0.0`, publish the GitHub Release, then
+   begin Phase 8 by extracting provider-independent persistence contracts.

@@ -33,7 +33,7 @@ runners; Ubuntu 24.04 continues to cover the normal build and container-free sui
 
 `Platform smoke` builds the solution and runs the CMS, Common, and architecture suites
 on standard `ubuntu-24.04`, `windows-2025`, and `macos-15-intel` runners. The matrix is
-informative and non-blocking for v0.1 because Linux is the only production platform
+informative and non-blocking for v1.0 because Linux is the only production platform
 currently claimed.
 
 ## Cost and security controls

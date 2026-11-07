@@ -361,7 +361,7 @@ namespace HypnoTech.Cms.Services
             var mapping = FormClassMapping.GetMapping<TClass>();
             foreach (var checkbox in mapping.MemberMappings.Where(p => p is CheckboxInputMapping))
             {
-                var isChecked = (bool) checkbox.GetPropertyValue(model);
+                var isChecked = (bool)checkbox.GetPropertyValue(model);
                 var cast = (CheckboxInputMapping)checkbox;
 
                 var propertiesToDefault = isChecked ? cast.HiddenWhenChecked : cast.HiddenWhenUnchecked;
@@ -395,7 +395,7 @@ namespace HypnoTech.Cms.Services
                             property.SetValue(model, value);
                         }
                     }
-                }    
+                }
             }
         }
 

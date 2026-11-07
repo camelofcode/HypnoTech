@@ -9,7 +9,7 @@ namespace HypnoTech.Cms.Mvc
 
         static AdminCmsNavbarCache()
         {
-              Links = new List<AdminCmsLink>();  
+            Links = new List<AdminCmsLink>();
         }
 
         public static void Add(string text, string url, string icon, string controller, string role)

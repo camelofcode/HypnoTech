@@ -45,8 +45,8 @@ namespace HypnoTech.Cms.FormMemberImplementations
 
         private void SetText(string name, MemberInfo info)
         {
-           TextName = name;
-           TextInfo = info;
+            TextName = name;
+            TextInfo = info;
         }
 
         private void SetSubClassText(string name, MemberInfo info)
@@ -82,8 +82,8 @@ namespace HypnoTech.Cms.FormMemberImplementations
 
         public SelectListInputMapping SetListOptions<TListClass, TListMember, TSubClass, TKeyMember, TTextMember>(
             Expression<Func<TListClass, TListMember>> listLambda,
-            Expression<Func<TSubClass, TKeyMember>> keyLambda, 
-            Expression<Func<TSubClass, TTextMember>> textLambda, 
+            Expression<Func<TSubClass, TKeyMember>> keyLambda,
+            Expression<Func<TSubClass, TTextMember>> textLambda,
             bool optional = false)
         {
             ListType = typeof(TListClass);
@@ -97,9 +97,9 @@ namespace HypnoTech.Cms.FormMemberImplementations
 
         public SelectListInputMapping SetListOptions<TListClass, TListMember, TSubClass, TKeyMember, TTextMember>(
             Expression<Func<TListClass, TListMember>> listLambda,
-            Expression<Func<TSubClass, TKeyMember>> keyLambda, 
-            Expression<Func<TListClass, TTextMember>> listClassTextLambda, 
-            Expression<Func<TSubClass, TTextMember>> subClassLTextLambda, 
+            Expression<Func<TSubClass, TKeyMember>> keyLambda,
+            Expression<Func<TListClass, TTextMember>> listClassTextLambda,
+            Expression<Func<TSubClass, TTextMember>> subClassLTextLambda,
             bool optional = false)
         {
             ListType = typeof(TListClass);

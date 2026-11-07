@@ -16,7 +16,7 @@ namespace HypnoTech.Common.Models
 
         public string Body { get; set; }
 
-        public string FooterText { get; set; }     
+        public string FooterText { get; set; }
     }
 
     public enum EmailTypes

@@ -16,7 +16,7 @@ namespace HypnoTech.Cms.Areas.Settings.ViewModels
 
         public EditUserViewModel()
         {
-            
+
         }
 
         public new string Validate()

@@ -21,7 +21,7 @@ namespace HypnoTech.Cms
                 existing.Folder = folder;
                 return;
             }
-         
+
             Mappings.Add(new ModelFolder
             {
                 ModelDisplayName = displayName,

@@ -24,7 +24,7 @@ namespace HypnoTech.Ecommerce.Models.Basket
 
         public BasketItemDetails()
         {
-            
+
         }
 
         public BasketItemDetails(MerchItem item, BasketItemSummary summary)

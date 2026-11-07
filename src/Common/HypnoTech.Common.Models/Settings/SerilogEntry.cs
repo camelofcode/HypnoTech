@@ -3,7 +3,7 @@ using System;
 namespace HypnoTech.Common.Models.Settings
 {
     public class SerilogEntry
-    { 
+    {
         public string Id { get; set; }
 
         public DateTime DateTime { get; set; }

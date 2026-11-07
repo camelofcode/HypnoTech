@@ -6,7 +6,7 @@ namespace HypnoTech.Cms.Models
     {
         public string ResetUrl { get; }
 
-        public string Username { get;  }
+        public string Username { get; }
 
         public PasswordResetEmailViewModel(string resetUrl, string username)
         {

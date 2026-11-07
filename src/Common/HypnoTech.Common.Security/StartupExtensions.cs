@@ -66,7 +66,7 @@ namespace HypnoTech.Common.Security
             sb.Append($"style-src 'self' 'unsafe-inline' {string.Join(" ", HostUrls(configuration))} {AppendDirective(configuration, "style-src")};");
             sb.Append($"script-src 'self' 'unsafe-inline' 'unsafe-eval' {string.Join(" ", HostUrls(configuration))} {AppendDirective(configuration, "script-src")};");
 
-            var additionalDirectives = new[] {"child-src", "connect-src", "font-src", "frame-src", "manifest-src", "media-src", "object-src", "prefetch-src", "worker-src" };
+            var additionalDirectives = new[] { "child-src", "connect-src", "font-src", "frame-src", "manifest-src", "media-src", "object-src", "prefetch-src", "worker-src" };
             foreach (var additionalDirective in additionalDirectives)
             {
                 var directive = BuildDirective(configuration, additionalDirective);

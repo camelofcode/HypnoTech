@@ -28,7 +28,9 @@
   },
   "devDependencies": {
     "browserslist": "4.29.1",
+    "jquery": "3.7.1",
     "lightningcss": "1.33.0",
+    "knockout": "3.5.3",
     "sass": "1.105.0",
     "terser": "5.51.2"
   }

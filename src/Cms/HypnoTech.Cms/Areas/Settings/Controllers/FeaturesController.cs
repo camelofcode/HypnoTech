@@ -35,7 +35,7 @@ namespace HypnoTech.Cms.Areas.Settings.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update([FromForm]List<NavBarLink> links)
+        public async Task<IActionResult> Update([FromForm] List<NavBarLink> links)
         {
             await _navBarRepository.UpdateNavBarLinksAsync(links, HttpContext.RequestAborted);
             await _apiService.ClearSiteNavbarCacheAsync(HttpContext.RequestAborted);
