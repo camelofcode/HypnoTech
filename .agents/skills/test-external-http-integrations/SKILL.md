@@ -10,8 +10,8 @@ safety depend on a provider account, network access, sandbox state, or SDK inter
 
 ## Establish the seam
 
-1. Read `AGENTS.md`, `tests/README.md`, `docs/compatibility.md`, and the current phase
-   in `PUBLIC_READINESS_PLAN.md`.
+1. Read `AGENTS.md`, `tests/README.md`, `docs/compatibility.md`, and any current plan
+   explicitly governing the requested work.
 2. Identify the HypnoTech adapter, the real `HttpClient` or provider SDK it uses, and
    the observable engine response.
 3. Introduce only the smallest test seam needed to select a loopback endpoint or client,
@@ -59,5 +59,5 @@ UI safety boundary, but it should not replace protocol-level adapter coverage.
 1. Run the focused integration project and repeat stateful cases when lifecycle leaks
    are plausible.
 2. Run architecture and unit tests affected by a new client seam.
-3. Run `verify-engine-change` and update `PUBLIC_READINESS_PLAN.md` with the provider
-   behaviours covered, commands, results, skips, and remaining limitations.
+3. Run `verify-engine-change` and record provider behaviours, commands, results, skips,
+   and remaining limitations in the current task or its explicitly active plan.
