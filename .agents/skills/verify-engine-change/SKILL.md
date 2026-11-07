@@ -9,8 +9,8 @@ Verify what changed, not merely what is convenient to run.
 
 ## Inspect
 
-1. Read `AGENTS.md`, `docs/compatibility.md`, and the relevant phase of
-   `PUBLIC_READINESS_PLAN.md`.
+1. Read `AGENTS.md`, `docs/compatibility.md`, and any current plan explicitly governing
+   the requested work. The plan under `docs/archive/` is historical context only.
 2. Inspect `git status --short` and the complete diff. Separate authored source,
    generated output, dependency, documentation, and structure changes.
 3. Identify compatibility-sensitive paths: public APIs, routes, mappings, MongoDB

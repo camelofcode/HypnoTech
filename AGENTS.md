@@ -82,5 +82,6 @@ required checks before handoff. Record commands, results, skips, and remaining g
 
 Keep mechanical moves, dependency updates, behavioural changes, and formatting changes
 separate. Do not reformat unrelated legacy code. Preserve user changes in a dirty tree.
-Update `PUBLIC_READINESS_PLAN.md` whenever work advances a phase, changes ordering or
-scope, resolves a question, accepts a decision, or discovers a material risk.
+The completed public-readiness plan under `docs/archive/` is historical and must not be
+used as a living work log. Create or update a purpose-specific current plan when future
+work genuinely needs one.

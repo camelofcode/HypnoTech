@@ -188,5 +188,6 @@ MongoDB Server 4.0.3. Until targeted tests and a migration plan say otherwise:
 - generated bundles change only through their source and build tool;
 - production sites remain on the preserved support branch.
 
-See [compatibility.md](compatibility.md) and the living
-[public-readiness plan](../PUBLIC_READINESS_PLAN.md) for the detailed gates.
+See [compatibility.md](compatibility.md) for current guarantees. The completed
+[public-readiness programme](archive/public-readiness-plan.md) is retained as a
+historical record of the original gates.

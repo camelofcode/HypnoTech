@@ -32,8 +32,7 @@ Any agreed change must:
 - keep required runtime assets self-hosted and dependency versions pinned;
 - edit frontend sources rather than committed generated bundles;
 - avoid private client-site content and changes;
-- leave additional payment-provider work out of scope;
-- update `PUBLIC_READINESS_PLAN.md` when roadmap work or a material decision changes.
+- leave additional payment-provider work out of scope.
 
 Use the build and verification commands in [README.md](README.md). More detailed agent
 and maintainer guidance is recorded in [AGENTS.md](AGENTS.md).

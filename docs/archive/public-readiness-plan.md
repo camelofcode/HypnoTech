@@ -1,29 +1,25 @@
-# HypnoTech public-readiness plan
+# HypnoTech public-readiness programme (archived)
 
-> **Document type:** Living roadmap and delivery record
+> **Archived:** This programme completed with the publication of `v1.1.0` on
+> 2026-11-07. This file is retained as a historical delivery record and is no longer
+> the active repository roadmap.
+
+> **Document type:** Archived programme plan and delivery record
 >
 > **Repository:** `camelofcode/HypnoTech`
 >
 > **Last updated:** 2026-11-07
 >
-> **Current phase:** v1.1.0 published; public-readiness programme complete
->
-> **Next action:** Maintain the published compatibility gates and open a new phase only
-> when its scope is explicitly prioritised.
+> **Final outcome:** v1.1.0 published; public-readiness programme complete
 
-## How to maintain this document
+## Archive status
 
-This file is the source of truth for preparing the HypnoTech engine for public release.
-Update it in every pull request or work session that advances this programme:
+This is the frozen record of the programme that prepared HypnoTech for publication and
+added interchangeable persistence. Do not append new work or use it as the current
+source of truth. Current guarantees and release state belong in `README.md`,
+`docs/compatibility.md`, `docs/limitations.md`, and `docs/releases/`.
 
-1. Update the summary and phase status table.
-2. Check off only work that is complete and verified.
-3. Record material decisions in the decision log.
-4. Record completed work and its verification in the work log.
-5. Add newly discovered risks or questions instead of silently expanding scope.
-6. Keep the **Next action** field at the top accurate.
-
-Use these statuses consistently:
+The programme used these status labels:
 
 - **Not started** — no implementation work has begun.
 - **In progress** — implementation has begun but the exit gate has not passed.
@@ -31,8 +27,7 @@ Use these statuses consistently:
 - **Complete** — every required item and the phase exit gate have been verified.
 - **Deferred** — explicitly outside the current release, with a reason recorded.
 
-The work log should identify the commit or pull request when one exists. A phase is not
-complete merely because its code was written; its exit gate must also pass.
+The work log records the evidence available when each phase completed.
 
 ## Goal
 
@@ -71,7 +66,7 @@ The programme has two intended releases:
 - Publishing private client content, branding, seed data, templates, or imagery.
 - Migrating the production MongoDB deployment as part of v1.0. A deferred, non-
   executable runbook is recorded in
-  [`docs/operations/mongodb-production-migration.md`](docs/operations/mongodb-production-migration.md).
+  [`docs/operations/mongodb-production-migration.md`](../operations/mongodb-production-migration.md).
 - PayPal v2, Stripe, or other work described in `ecommerce-payments-plan.md`.
 - Exhaustive test coverage.
 - Windows as a required CI or production platform.
@@ -168,7 +163,7 @@ These remain proposals until marked **Accepted** in the decision log.
 
 ### Deferred operational plans
 
-- [Future production MongoDB migration](docs/operations/mongodb-production-migration.md)
+- [Future production MongoDB migration](../operations/mongodb-production-migration.md)
   — prefer a rehearsed blue/green logical BSON migration to a pinned Podman container;
   retain successive in-place major upgrades as the fallback. No production work is
   authorised by this plan.
@@ -1065,8 +1060,8 @@ stating that work was done.
 | 2026-11-07 | Phase 9 | Prepared the v1.1.0 release candidate, codified the exercised release workflow, and closed the Phase 9 exit gate. | PR #23 merged as `c5cb69e` after every hosted CI, CodeQL, relational-provider, browser, and platform check passed. Shared version metadata now resolves `Version`, `VersionPrefix`, and `PackageVersion` to `1.1.0`; the release-only 39-project build and formatting gate are clean; current documentation and release notes describe the completed provider support and compatibility boundaries; and the `release-engine` skill passes its validator. | This change |
 | 2026-11-07 | Phase 9 | Published the stable v1.1.0 source release and completed the public-readiness programme. | PR #24 merged as `1bdc0cd`; post-merge CI run `42344620176` and CodeQL run `42344620263` passed on that exact commit. Annotated tag `v1.1.0` peels to `1bdc0cd`, and the non-draft, non-prerelease GitHub Release is marked Latest with the tracked release notes. | [`v1.1.0`](https://github.com/camelofcode/HypnoTech/releases/tag/v1.1.0) |
 
-## Immediate next actions
+## Deferred follow-on work
 
-1. Keep the `v1.0.0` and `v1.1.0` tags and GitHub Release artifacts immutable.
-2. Treat NuGet publication, additional database/ORM providers, payment providers, and
-   production MongoDB migration as separately authorised future work.
+- Keep the `v1.0.0` and `v1.1.0` tags and GitHub Release artifacts immutable.
+- Treat NuGet publication, additional database/ORM providers, payment providers, and
+  production MongoDB migration as separately authorised future work.

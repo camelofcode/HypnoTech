@@ -10,8 +10,8 @@ making CPU-only work artificially asynchronous.
 
 ## Establish the boundary
 
-1. Read `AGENTS.md`, `docs/architecture.md`, `docs/compatibility.md`, and the current
-   phase in `PUBLIC_READINESS_PLAN.md`.
+1. Read `AGENTS.md`, `docs/architecture.md`, `docs/compatibility.md`, and any current
+   plan explicitly governing the requested work.
 2. Run `cms-compatibility-review` before changing a public repository contract,
    persistence behavior, dynamic CMS path, route, BSON mapping, or collection name.
 3. Trace the complete path: controller or tag helper → service → provider-neutral
@@ -70,4 +70,4 @@ making CPU-only work artificially asynchronous.
 3. Run affected unit and repository contracts, including MongoDB 4.0.3 when persistence
    changes, then the relevant example integration or Playwright journey.
 4. Run `verify-engine-change` and record the change, checks, skips, and remaining work
-   in `PUBLIC_READINESS_PLAN.md`.
+   in the current task or its explicitly active plan.

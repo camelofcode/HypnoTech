@@ -31,8 +31,7 @@ adapters. Both real databases pass the inherited CMS, Common, Ecommerce, Media, 
 startup lifecycle contracts. The public example can run against any of the three
 providers while keeping its Admin write model independent from its Website read model.
 
-See [PUBLIC_READINESS_PLAN.md](PUBLIC_READINESS_PLAN.md) for the phased roadmap and
-work record, [docs/architecture.md](docs/architecture.md) for the design,
+See [docs/architecture.md](docs/architecture.md) for the design,
 [docs/compatibility.md](docs/compatibility.md) for tested versions,
 [docs/persistence-contracts.md](docs/persistence-contracts.md) for interchangeable
 database-provider behaviour,
@@ -42,6 +41,8 @@ migrations, and provider packaging, and
 areas. The automated gates are described in [docs/ci.md](docs/ci.md) and
 [docs/code-quality.md](docs/code-quality.md).
 Release details are in [docs/releases/v1.1.0.md](docs/releases/v1.1.0.md).
+The completed public-readiness programme is retained in the
+[documentation archive](docs/archive/public-readiness-plan.md).
 
 ## Lantern House example
 

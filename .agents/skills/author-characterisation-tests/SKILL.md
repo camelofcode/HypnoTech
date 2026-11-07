@@ -10,8 +10,8 @@ result is evidence to record, not permission to silently correct production code
 
 ## Establish the test boundary
 
-1. Read `AGENTS.md`, `docs/compatibility.md`, and the current phase in
-   `PUBLIC_READINESS_PLAN.md`.
+1. Read `AGENTS.md`, `docs/compatibility.md`, and any current plan explicitly governing
+   the requested work.
 2. For dynamic CMS or persistence behaviour, run `cms-compatibility-review` before
    changing production code.
 3. Choose the narrowest layer that proves the behaviour:
@@ -56,7 +56,7 @@ result is evidence to record, not permission to silently correct production code
 ## Keep fixtures safe and deterministic
 
 - Create minimal synthetic models, documents, names, files, and content. Never import
-  private Esoteric or SelfHypnosis data, configuration, branding, or assets.
+  private client-site data, configuration, branding, or assets.
 - Give test-only mapped model types unique names. Clear or restore mutable public
   registries used by the test, and disable parallel execution where global state makes
   isolation impossible.
@@ -101,5 +101,5 @@ a focused test or roadmap note first; fix it only in a separately reviewed chang
 3. Run the full unit/architecture selection, then all MongoDB targets when changed.
 4. Generate coverage as information; do not add a high global threshold without a
    reviewed baseline.
-5. Run `verify-engine-change`, then update `PUBLIC_READINESS_PLAN.md` with commands,
-   results, skips, discoveries, and remaining exit-gate work.
+5. Run `verify-engine-change`, then record commands, results, skips, discoveries, and
+   remaining work in the current task or its explicitly active plan.
