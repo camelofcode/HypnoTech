@@ -6,9 +6,9 @@
 >
 > **Last updated:** 2026-11-07
 >
-> **Current phase:** Phase 7 complete; `v1.0.0` is public
+> **Current phase:** Phase 8 complete; interchangeable persistence behaviour is executable
 >
-> **Next action:** Begin Phase 8 by extracting the provider-independent persistence contract suite.
+> **Next action:** Begin Phase 9 with the driver-free EF Core context and mapping architecture.
 
 ## How to maintain this document
 
@@ -135,7 +135,7 @@ date.
 | 5 | Focused Playwright portfolio smoke suite | Complete | v1.0 |
 | 6 | Async I/O modernisation | Complete | v1.0 |
 | 7 | CI, documentation, `main`, and public release | Complete | v1.0 |
-| 8 | Persistence contracts hardened | Not started | v1.1 |
+| 8 | Persistence contracts hardened | Complete | v1.1 |
 | 9 | EF Core implementations and provider packaging | Not started | v1.1 |
 
 ### Ordering constraints
@@ -770,25 +770,28 @@ the behaviour every persistence implementation must share.
 The suite must start from the async-first contracts completed in Phase 6 rather than
 designing a parallel synchronous provider surface.
 
-- [ ] CRUD semantics.
-- [ ] Ordering and movement semantics.
-- [ ] Search semantics, including case behaviour.
-- [ ] Pagination and stable ordering.
-- [ ] Identifier generation.
-- [ ] Child and nested-value handling.
-- [ ] Concurrency expectations.
-- [ ] Transaction boundaries.
-- [ ] Duplicate or idempotent operation behaviour where relevant.
-- [ ] Legacy MongoDB document compatibility where relevant.
-- [ ] A clear distinction between engine contracts and MongoDB implementation accidents.
-- [ ] Treat the async contracts introduced in Phase 6 as the primary provider API.
-- [ ] Keep provider contracts async-only; do not design a parallel synchronous surface.
+- [x] CRUD semantics.
+- [x] Ordering and movement semantics.
+- [x] Search semantics, including case behaviour.
+- [x] Pagination and stable ordering.
+- [x] Identifier generation.
+- [x] Nested-value identifier handling.
+- [x] Provider-neutral child relationship handling.
+- [x] Concurrency expectations.
+- [x] Transaction boundaries.
+- [x] Duplicate or idempotent operation behaviour where relevant.
+- [x] Legacy MongoDB document compatibility where relevant.
+- [x] A clear distinction between engine contracts and MongoDB implementation accidents.
+- [x] Treat the async contracts introduced in Phase 6 as the primary provider API.
+- [x] Keep provider contracts async-only; do not design a parallel synchronous surface.
+- [x] Extract Common, Ecommerce, and Media repository behaviour into inherited provider
+      suites rather than copying assertions into each provider.
 
 ### Exit gate
 
-- [ ] MongoDB passes the provider-independent contract suite.
-- [ ] Required relational semantics are documented.
-- [ ] Known semantic differences have explicit decisions.
+- [x] MongoDB passes the provider-independent contract suite.
+- [x] Required relational semantics are documented.
+- [x] Known semantic differences have explicit decisions.
 
 ## Phase 9 — EF Core implementations and provider packaging
 
@@ -829,6 +832,10 @@ src/Media/
       use different models, mappings, DAL, or ORM entirely.
 - [ ] Site-specific migrations live in the Admin host/provider example because
       consumer CMS model types contribute to the EF model.
+- [ ] Normal EF startup applies pending migrations before any seed operation and fails
+      startup if either step fails; no manual migration command is required by default.
+- [ ] Provide an explicit automatic-migration opt-out for controlled deployment
+      pipelines without changing the migrate-then-seed default used by the examples.
 - [ ] Generic CMS repositories use `DbContext.Set<T>()` only after model registration,
       key, naming, search, ordering, relationship, and conversion requirements are
       defined.
@@ -963,6 +970,8 @@ These apply throughout all phases:
 | 2026-11-07 | D-030 | Defer public NuGet publication until a dedicated package audit and local-feed consumer rehearsal pass. | Accepted | nuget.org versions are immutable; the GitHub v1 source release should not force premature package IDs or dependency boundaries. |
 | 2026-11-07 | D-031 | Use Dependabot for security fixes only across NuGet, npm, and GitHub Actions. | Accepted | The pinned repository is maintained by one developer; routine version PRs create review and CI churn without a concrete upgrade need, while automated vulnerability updates remain valuable and are never auto-merged. |
 | 2026-11-07 | D-032 | Keep CodeQL non-blocking and scan authored C#, JavaScript, and Actions through a pinned advanced workflow. | Accepted | Default setup produced 104 mostly duplicated alerts from third-party and generated JavaScript and cannot apply a repository-local exclusion file in this personal repository. The advanced workflow retains the default query suite while excluding only `lib` trees and generated `wwwroot/js` outputs. |
+| 2026-11-07 | D-033 | Define persistence behaviour once in inherited provider-neutral suites while retaining storage-format compatibility in provider-specific tests. | Accepted | Plain contract models and public async interfaces prevent BSON or EF accidents becoming universal requirements; the Mongo adapter proves the same facts on 4.0.3, 8.0.32, and 9.0.4. |
+| 2026-11-07 | D-034 | Make EF Core startup apply migrations before seeding by default, with an explicit opt-out for controlled deployment pipelines. | Accepted | A newly configured HypnoTech host should become usable without a manual migration command, while operators who separate schema deployment retain a supported path. |
 
 ## Work log
 
@@ -1043,12 +1052,13 @@ stating that work was done.
 | 2026-11-07 | Phase 7 | Established a clean authored-source CodeQL baseline. | The pinned advanced workflow runs the default query suite across C#, JavaScript/TypeScript, and Actions while excluding only third-party `lib` trees and committed `wwwroot/js` build outputs. All three hosted analyses pass and PR #19 has zero open code-scanning alerts after the authored findings were fixed. CodeQL remains informative rather than merge-required for v1.0. | PR #19 |
 | 2026-11-07 | Phase 7 | Corrected the end-to-end public host to use test-only HTTPS after antiforgery hardening exposed WebKit's strict secure-cookie handling. | Chromium and Firefox permit `Secure` cookies on plain localhost, but WebKit correctly withheld the public antiforgery cookie over HTTP. The fixture now serves both Admin and Website with the same ephemeral certificate, preserving production cookie policy and testing the intended HTTPS deployment boundary. | PR #19 |
 | 2026-11-07 | Phase 7 | Published the first stable public release and closed the Phase 7 exit gate. | PR #19 merged as `ceec378`; the exact `main` commit passed all 11 CI jobs and the C#, JavaScript/TypeScript, and Actions CodeQL analyses. Obsolete default-setup analyses were removed, the one containment-guard false positive was dismissed with rationale, and the repository has zero open code-scanning alerts. Annotated tag `v1.0.0` and the GitHub Release were published with the prepared release notes. | [`v1.0.0`](https://github.com/camelofcode/HypnoTech/releases/tag/v1.0.0) |
+| 2026-11-07 | Phase 8 | Added inherited provider-neutral CMS, Common, Ecommerce, and Media repository contracts and removed their duplicated Mongo assertions. | Plain CMS models plus every current module repository interface exercise CRUD, generated/nested IDs, children, select lists, idempotent seeding, users/accounts, config, countries, email templates, logs, backups, navbar, catalogue, postage, orders, download codes, Media queries, search, paging, sorting, ordering, and cancellation. MongoDB passes 31/31 contract and storage checks on 4.0.3, 8.0.32, and 9.0.4; the 31-project Release build and formatting gate are clean, and the complete rootless-Podman/Chromium solution passes 93/93. | This change |
 
 ## Immediate next actions
 
-1. Trace the existing MongoDB repository behaviours into a provider-independent Phase 8
-   contract matrix without changing the public interfaces.
-2. Decide the shared contract-test host and fixture shape before adding relational
-   implementations.
-3. Make MongoDB pass the extracted provider-independent suite before beginning the
-   Phase 9 EF Core implementation.
+1. Re-check the .NET 10 EF Core provider matrix and pin compatible PostgreSQL and SQL
+   Server packages.
+2. Implement the driver-free EF Core context, mapping contributors, repository base,
+   transaction boundary, and migrate-before-seed startup lifecycle.
+3. Add the PostgreSQL thin provider first and make it pass the complete inherited
+   contract suite against a real container.

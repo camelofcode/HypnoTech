@@ -58,13 +58,19 @@ different models or persistence even when both hosts read the same underlying da
 | Common | Shared models, services, security, email, and repository contracts | `HypnoTech.Common*` |
 | Ecommerce | Products, orders, discounts, postage, settings, cart/checkout, admin UI | `HypnoTech.Ecommerce*` |
 | Media | Media models, administration, player/frontend support | `HypnoTech.Media*` |
-| Persistence | MongoDB options, repository base code, backup and logging infrastructure | `HypnoTech.MongoDb` and module `*.MongoDb` projects |
+| Persistence | Provider contracts, MongoDB options, repository base code, backup and logging infrastructure | `HypnoTech.Persistence.ContractTests`, `HypnoTech.MongoDb`, and module `*.MongoDb` projects |
 | Frontend | General MVC/Ajax helpers plus authored and generated browser assets | `HypnoTech.Frontend*` and module frontend projects |
 
 The `*.Dal` projects contain provider-neutral repository contracts. The current
 `*.Dal.MongoDb` projects implement them. CMS uses its own contract project and generic
 MongoDB repository. Entity Framework Core providers are deliberately deferred until
 the async contracts and provider-independent behaviour suite are established.
+
+The provider-neutral suite uses plain models and only the public async repository
+interfaces. A small provider adapter supplies real repositories and disposable storage,
+so the same inherited assertions run without being copied into each implementation.
+See [persistence-contracts.md](persistence-contracts.md) for the current semantic matrix,
+the provider-specific boundary, and the relational transaction/migration rules.
 
 ## Dynamic CMS flow
 

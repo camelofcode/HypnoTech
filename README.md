@@ -27,7 +27,9 @@ and MongoDB Server 4.0.3 compatibility remains a required CI gate.
 
 See [PUBLIC_READINESS_PLAN.md](PUBLIC_READINESS_PLAN.md) for the phased roadmap and
 work record, [docs/architecture.md](docs/architecture.md) for the design,
-[docs/compatibility.md](docs/compatibility.md) for tested versions, and
+[docs/compatibility.md](docs/compatibility.md) for tested versions,
+[docs/persistence-contracts.md](docs/persistence-contracts.md) for interchangeable
+database-provider behaviour, and
 [docs/limitations.md](docs/limitations.md) for intentionally unsupported or deferred
 areas. The automated gates are described in [docs/ci.md](docs/ci.md) and
 [docs/code-quality.md](docs/code-quality.md).
