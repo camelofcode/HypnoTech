@@ -682,27 +682,30 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 
 ### GitHub Actions jobs
 
-- [ ] `frontend`: pinned Node/npm, `npm ci`, and frontend freshness check.
-- [ ] `build`: SDK from `global.json`, restore, and Release build.
-- [ ] `unit-tests`: xUnit tests and coverage artifact.
-- [ ] `mongo-integration`: production and supported-current MongoDB images.
-- [ ] `end-to-end`: required Ubuntu matrix for Playwright Chromium, Firefox, and
+- [x] `frontend`: pinned Node/npm, `npm ci`, and frontend freshness check.
+- [x] `build`: SDK from `global.json`, restore, and Release build.
+- [x] `unit-tests`: xUnit tests and coverage artifact.
+- [x] `mongo-integration`: production and supported-current MongoDB images.
+- [x] `demo-integration`: isolated public-example host, data, and safety coverage.
+- [x] `end-to-end`: required Ubuntu matrix for Playwright Chromium, Firefox, and
       WebKit, with engine-specific failure artifacts.
-- [ ] `platform-smoke`: build and container-free tests on Ubuntu, Windows, and macOS.
+- [x] `platform-smoke`: build and container-free tests on Ubuntu, Windows, and macOS.
 - [ ] Add scheduled Windows browser and macOS WebKit journeys if Phase 7 confirms a
       reliable MongoDB/container strategy on GitHub-hosted runners; keep them
       informative until repeatably green.
 
 ### Workflow controls
 
-- [ ] Run on pull requests and pushes to `main`.
-- [ ] Use minimal permissions, normally `contents: read`.
-- [ ] Cancel superseded pull-request runs.
-- [ ] Pin action versions.
-- [ ] Keep deployment and production credentials out of test workflows.
-- [ ] Keep Linux as the required release platform while exercising Windows and macOS
+- [x] Run on pull requests and pushes to `main`.
+- [x] Use minimal permissions, normally `contents: read`.
+- [x] Cancel superseded pull-request runs.
+- [x] Pin actions to immutable commit SHAs.
+- [x] Keep deployment and production credentials out of test workflows.
+- [x] Use only standard public-repository hosted runners; do not opt into paid larger
+      runners or custom hosted images.
+- [x] Keep Linux as the required release platform while exercising Windows and macOS
       through non-blocking portability jobs.
-- [ ] Do not claim a browser/OS combination until it has a repeatable CI environment;
+- [x] Do not claim a browser/OS combination until it has a repeatable CI environment;
       prefer the full cross-platform matrix where runner/container support permits it.
 
 ### Code style and static analysis
@@ -724,16 +727,17 @@ the existing PayPal v1 service used `.Result` on HTTP operations.
 - [ ] Add screenshots or a short demo recording.
 - [ ] Document the feature set and intended audience honestly.
 - [ ] Document known limitations and compatibility versions.
-- [ ] Link the example, tests, CI, agent guidance, skills, and roadmap from the README.
+- [x] Link the example, tests, CI, agent guidance, skills, and roadmap from the README.
+- [x] Add a `main`-branch CI status badge at the top of the README.
 - [ ] Ensure repository topics and description represent the engine accurately.
 
 ### Branch and release transition
 
 - [x] Create `main` from the preserved pre-public base during Phase 0.
 - [x] Make `main` the default branch during Phase 0.
-- [ ] Merge `public-readiness` through a reviewed pull request.
+- [x] Merge the public-readiness phases through reviewed pull requests to `main`.
 - [ ] Require the agreed CI checks on `main`.
-- [ ] Retain `support/legacy-production`.
+- [x] Retain `support/legacy-production`.
 - [ ] Decide how long to retain or redirect `master`.
 - [ ] Publish an annotated `v0.1.0` release.
 - [ ] Enable public-repository secret scanning and dependency alerts.
@@ -934,6 +938,7 @@ These apply throughout all phases:
 | 2026-11-06 | D-023 | Use Lantern House, a fictional independent arts venue, for the public example. | Accepted | It can demonstrate editorial, programme, media, and ecommerce features with wholly original synthetic content and branding. |
 | 2026-11-06 | D-024 | Keep the Phase 4 checkout as a fail-closed pricing demonstration and defer a reusable mock provider to the payment plan. | Accepted | Basket and postage calculations remain demonstrable, while payment/completion/cancellation routes return 410 before provider, order, email, download-code, or fulfilment code can run. |
 | 2026-11-07 | D-025 | Make public `main` async-only for repository and I/O-bound service contracts before v0.1. | Accepted | Both production sites are pinned to the preserved support branch, so duplicate sync implementations add maintenance risk without protecting an in-solution caller. CPU-only APIs stay synchronous and Serilog's required sync contract remains queued. |
+| 2026-11-07 | D-026 | Run public CI only on standard GitHub-hosted runners and keep retained artifacts small and short-lived. | Accepted | Standard public runners are free and unlimited, while larger runners are billed and artifact storage has a separate allowance. |
 
 ## Work log
 
@@ -998,8 +1003,12 @@ stating that work was done.
 | 2026-11-07 | Phase 6 | Updated repository guidance and added an architecture guard against synchronous public I/O contracts. | The async authoring skill validates; Release builds with 0 warnings/errors; architecture tests pass 5/5; and the complete rootless-Podman/Chromium solution passes 77/77. Three compatibility-only tests were removed while behavioral coverage continues through async characterisation tests. | This change |
 | 2026-11-07 | Phase 7 preparation | Strengthened test-boundary guidance and added the `test-external-http-integrations` skill. | The guidance now defines when to add unit, integration, architecture, and browser coverage; prefers observable outcomes over mock-call trivia; and standardises safe local protocol stubs without live/sandbox traffic. All five repository skills validate, the 30-project Release build passes with 0 warnings/errors, and demo integration tests pass 15/15 through rootless Podman. | This change |
 | 2026-11-07 | Phase 7 preparation | Added a measured code-style and static-analysis gate to the Phase 7 plan. | Built-in Roslyn analyzers will be baselined and selected diagnostics enforced before considering warnings-as-errors; `dotnet format` remains optional unless a timed no-restore CI run proves fast and stable. Formatting churn must remain separate from behavioural changes. | This change |
+| 2026-11-07 | Phase 7 | Added the GitHub Actions release-candidate workflow, public CI documentation, and a `main`-branch README status badge. | The workflow uses immutable official-action SHAs and standard Ubuntu, Windows, and Intel macOS labels; PyYAML and actionlint 1.7.12 accept it; frontend freshness passes; coverage-producing unit/architecture suites pass 40/40; MongoDB and demo integration suites pass 32/32 through rootless Podman; and the Chromium journeys pass 5/5. The first hosted three-engine/platform run remains the public PR gate. | This change |
 
 ## Immediate next actions
 
-1. Begin Phase 7 CI and public-release documentation.
-2. Re-scan the exact final commit immediately before changing repository visibility.
+1. Re-scan the exact final commit immediately before changing repository visibility.
+2. Publish the repository, open the CI pull request without spending private-repository
+   runner allowance, and make the required Linux checks green.
+3. Complete the remaining public presentation, analyzer, branch-protection, and v0.1
+   release tasks.
