@@ -64,6 +64,6 @@ and manual dispatches. Its configuration excludes third-party `lib` trees and co
 covered by the dependency audit and frontend build instead. Authored frontend sources
 remain in scope so an exclusion cannot hide application JavaScript.
 
-CodeQL is deliberately separate from the required CI gate for the v1.0 baseline. New
+CodeQL is deliberately separate from the required CI gate. New
 authored-code alerts must still be triaged before a release; do not dismiss a finding
 solely to obtain a green status.

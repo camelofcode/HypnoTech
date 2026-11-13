@@ -1,9 +1,8 @@
 # Public NuGet packaging plan
 
-Public NuGet distribution is deferred until after the GitHub 1.0 source release. The
-goal is to let future consumers use exact package versions instead of project
-references without accidentally publishing incomplete, inseparable, or misleading
-packages.
+Public NuGet distribution remains deferred after the GitHub source releases. The goal
+is to let future consumers use exact package versions instead of project references
+without accidentally publishing incomplete, inseparable, or misleading packages.
 
 ## Hosting decision
 
@@ -37,7 +36,8 @@ a short-lived OIDC credential rather than storing a long-lived NuGet API key.
    local folder feed.
 4. Build and run representative CMS, frontend, Media, Ecommerce, and persistence paths
    without project references back into the repository.
-5. Publish a prerelease such as `1.0.0-rc.1` only after the local-feed consumers pass.
+5. Publish a prerelease such as `x.y.z-rc.1` only after the local-feed consumers pass,
+   using the actual planned package version in place of `x.y.z`.
 6. Remember that nuget.org versions are immutable: an incorrect version can be
    unlisted but not replaced.
 

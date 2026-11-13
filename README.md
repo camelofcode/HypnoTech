@@ -124,7 +124,7 @@ generated `wwwroot` bundles directly.
 This repository contains only the reusable engine. Private client websites and their
 content, branding, seed data, and imagery are deliberately excluded.
 Additional payment-provider work described in `ecommerce-payments-plan.md` is also
-outside the current public-readiness programme.
+outside the current engine scope and remains separately planned.
 
 ## Security, contributions, and licensing
 

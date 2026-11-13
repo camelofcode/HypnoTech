@@ -1,8 +1,8 @@
 # Contributing
 
-HypnoTech is undergoing a compatibility-sensitive public-readiness programme. Bug
-reports and design feedback are welcome once the repository is public, but external
-code or documentation contributions are not accepted.
+HypnoTech is a public, compatibility-sensitive source project. Bug reports and design
+feedback are welcome, but external code or documentation contributions are not
+accepted.
 
 The engine is maintained as a single-copyright-holder project so Christopher Clayton
 can continue using it in commercial/client work while offering the public source under
@@ -14,7 +14,7 @@ grant permission to relicense the submitted work.
 
 Before opening an issue:
 
-1. Check the roadmap and existing issues.
+1. Check the current documentation and existing issues.
 2. Reproduce the problem against the current public branch if possible.
 3. Remove credentials, private URLs, production data, and material from private sites.
 4. For security issues, follow [SECURITY.md](SECURITY.md) instead of filing publicly.

@@ -78,7 +78,7 @@ Cover the end-to-end convention when relevant:
 Explicitly consider capability gates, verbs and antiforgery, view and redirect names,
 flash text, validation, title and sort defaults, file/list/gallery handling, roles,
 navigation, and duplicate registration. If current behaviour appears defective, write
-a focused test or roadmap note first; fix it only in a separately reviewed change.
+a focused test or issue/plan note first; fix it only in a separately reviewed change.
 
 ## Exercise MongoDB compatibility
 

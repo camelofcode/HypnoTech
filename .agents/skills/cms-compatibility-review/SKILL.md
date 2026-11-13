@@ -10,8 +10,8 @@ not permission to modify code.
 
 ## Trace the affected behaviour
 
-1. Read `AGENTS.md`, `docs/architecture.md`, `docs/compatibility.md`, and the relevant
-   roadmap phase.
+1. Read `AGENTS.md`, `docs/architecture.md`, `docs/compatibility.md`, and any current
+   plan explicitly governing the requested work.
 2. Trace the proposed change end to end where applicable:
    model/registry registration → `FormClassMapping` → generated controller and route →
    form/table/service behaviour → repository contract → MongoDB implementation and

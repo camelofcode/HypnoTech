@@ -95,4 +95,5 @@ composition, migration ownership, and complete startup registration examples.
 
 Do not weaken a shared assertion to accommodate a provider accident. Record and review
 the semantic difference first; either fix the provider or make the exception explicit
-in this document and the public-readiness decision log.
+in this document. Historical provider decisions remain available in the
+[archived public-readiness record](archive/public-readiness-plan.md#decision-log).
