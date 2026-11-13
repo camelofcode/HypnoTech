@@ -3,8 +3,9 @@
 ## Purpose and scope
 
 This repository is the reusable HypnoTech ASP.NET Core engine. Its modules are CMS,
-Common, Ecommerce, Media, Frontend, and MongoDB persistence. `HypnoTech.slnx` is the
-authoritative solution map; projects are physically grouped under `src/Cms`,
+Common, Ecommerce, Media, Frontend, and swappable persistence through MongoDB or shared
+EF Core implementations with PostgreSQL and SQL Server adapters. `HypnoTech.slnx` is
+the authoritative solution map; projects are physically grouped under `src/Cms`,
 `src/Common`, `src/Ecommerce`, `src/Media`, `src/Frontend`, and `src/Persistence`.
 
 Work only in this engine repository. Do not edit or copy content, configuration, seed

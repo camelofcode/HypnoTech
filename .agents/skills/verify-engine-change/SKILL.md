@@ -1,6 +1,6 @@
 ---
 name: verify-engine-change
-description: Select and run proportionate HypnoTech verification from the current diff. Use after engine code, frontend, build, test, example, dependency, or repository-structure changes, and before handing off or committing public-readiness work.
+description: Select and run proportionate HypnoTech verification from the current diff. Use after engine code, frontend, build, test, example, dependency, documentation, or repository-structure changes, and before handing off or committing repository work.
 ---
 
 # Verify an engine change
@@ -37,7 +37,8 @@ Use the smallest relevant checks during iteration, then the required aggregate c
   approved read-only or temporary consumer compatibility checks.
 
 Do not claim a missing test, example, browser suite, database service, or platform as
-passed. State that it is unavailable and identify the roadmap gate that will add it.
+passed. State that it is unavailable and identify any current plan or prerequisite that
+would add it.
 
 ## Report
 

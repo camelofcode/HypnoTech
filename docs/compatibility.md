@@ -4,7 +4,7 @@ This document distinguishes configurations that have actually been exercised fro
 future support goals. Version numbers are not support claims unless a recorded build or
 test covers the combination.
 
-## Verified public-readiness baseline
+## Verified compatibility baseline
 
 | Component | Verified version | Evidence/meaning |
 | --- | --- | --- |
@@ -61,10 +61,10 @@ they do not claim support for every MongoDB 9.0 feature.
 
 ## Platform policy
 
-Linux is the required development/CI and production platform for the first public
-release. The CI workflow also builds and runs the container-free suites on standard
+Linux is the required development/CI and supported production platform. The CI
+workflow also builds and runs the container-free suites on standard
 Windows and Intel macOS runners as informative, non-blocking portability checks. Those
-jobs are visibility, not support claims; only the required Linux jobs gate v1.0.
+jobs are visibility, not support claims; only the required Linux jobs gate releases.
 
 GitHub's current Ubuntu 24.04 runner uses Linux kernel 7.0. The pinned MongoDB 4.0.3,
 8.0.32, and 9.0.4 compatibility containers include releases that reject Linux kernel
